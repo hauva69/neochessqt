@@ -43,6 +43,9 @@ func main() {
 	dbdock := initDBDock(qwin)
 	qwin.AddDockWidget(core.Qt__LeftDockWidgetArea, dbdock)
 
+	pgndock := initPGNDock(qwin)
+	qwin.AddDockWidget(core.Qt__RightDockWidgetArea, pgndock)
+
 	qwin.Show()
 	widgets.QApplication_Exec()
 
