@@ -16,3 +16,12 @@
 deploy/
 
 neochess
+
+moc*.go
+moc*.h
+moc.cpp
+rcc*.go
+rcc.cpp
+rcc.qrc
+
+
