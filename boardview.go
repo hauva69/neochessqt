@@ -9,12 +9,14 @@ import (
 // BoardView struct
 type BoardView struct {
 	widgets.QGraphicsView
+	board *BoardType
 	scene *BoardScene
 }
 
-func initBoardView(w *widgets.QMainWindow) *BoardView {
+func initBoardView(b *BoardType, w *widgets.QMainWindow) *BoardView {
 	var this = NewBoardView(w)
 	var boardview = this
+	boardview.board = b
 	size := w.FrameSize().Width()
 	squaresize := (size / 2) / 8
 

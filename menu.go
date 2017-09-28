@@ -11,7 +11,7 @@ type Menu struct {
 }
 
 func initMenu(w *widgets.QMainWindow, a *widgets.QApplication) *Menu {
-	var this = NewMenu(w)
+	this := NewMenu(w)
 	var menu = this
 	fileMenu := menu.AddMenu2("&File")
 	fileMenu.SetEnabled(true)

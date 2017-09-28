@@ -17,6 +17,7 @@ Chess Database System written in Go using Qt
 - [ ] Create Import for PGN files to Binary Game Storage
 - [ ] Create Import for SCID format to Binary Game Storage
 - [ ] Create Import for Chessbase format (at least for known formats) to Binary Game Storage
+- [ ] Review Licensing 
 
 ## How to build
 
