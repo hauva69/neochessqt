@@ -40,6 +40,9 @@ func main() {
 	menu := initMenu(qwin, qapp)
 	qwin.SetMenuBar(menu)
 
+	dbdock := initDBDock(qwin)
+	qwin.AddDockWidget(core.Qt__LeftDockWidgetArea, dbdock)
+
 	qwin.Show()
 	widgets.QApplication_Exec()
 
