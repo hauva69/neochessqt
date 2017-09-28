@@ -46,6 +46,9 @@ func main() {
 	pgndock := initPGNDock(qwin)
 	qwin.AddDockWidget(core.Qt__RightDockWidgetArea, pgndock)
 
+	boardview := initBoardView(qwin)
+	qwin.SetCentralWidget(boardview)
+
 	qwin.Show()
 	widgets.QApplication_Exec()
 
