@@ -1,0 +1,19 @@
+p.comment { 
+    color:#336600; 
+    display: table; margin:0 auto; 
+    display: inline-block; 
+    font-style: italic; 
+} 
+
+span.move { 
+    color: #aaa;    
+} 
+
+span.currentmove { 
+    color:#ff7729;    
+} 
+
+span.movenumber {  
+    font-weight:bold; 
+    color: #aaa;
+}
