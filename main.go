@@ -37,6 +37,9 @@ func main() {
 	qwin.SetStatusBar(statusbar)
 	statusbar.AddItem("Screen W:%d x H:%d", screen.Width()*80/100, screen.Height()*90/100)
 
+	menu := initMenu(qwin, qapp)
+	qwin.SetMenuBar(menu)
+
 	qwin.Show()
 	widgets.QApplication_Exec()
 
