@@ -1,6 +1,8 @@
 # neochess
 Chess Database System written in Go using Qt
 
+![Early Prototype](/screenshots/EarlyProtoType.png?raw=true "Early Prototype")
+
 ## Key Fatures
 
 ## How to build
