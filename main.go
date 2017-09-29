@@ -64,9 +64,7 @@ func main() {
 
 	qwin.Show()
 	// DisplayLog(qwin)
-	log.WithFields(log.Fields{
-		"version": VERSION,
-	}).Info("Starting Application")
+	log.Info("Starting Application")
 
 	widgets.QApplication_Exec()
 

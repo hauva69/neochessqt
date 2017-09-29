@@ -51,7 +51,7 @@ func updatelog() {
 		"warning": "WARN",
 		"error":   "FATA",
 	}
-	loghtml := "<p>"
+	loghtml := "<pre>"
 	file, err := os.Open("neochess.log")
 	if err != nil {
 		log.Fatal(err)
@@ -67,7 +67,7 @@ func updatelog() {
 		loghtml = loghtml + "<span>" + stamp.Format("3:04PM") + "</span> | "
 		loghtml = loghtml + "<span>" + results["msg"] + "</span><br/>"
 	}
-	loghtml = loghtml + "</p>"
+	loghtml = loghtml + "</pre>"
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
 	}

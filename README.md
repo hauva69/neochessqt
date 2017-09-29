@@ -1,13 +1,14 @@
 # neochess
+
 Chess Database System written in Go using Qt
 
 ![Early Prototype](/screenshots/EarlyProtoType.png?raw=true "Early Prototype")
 
-## Key Fatures and Progress
+## Key Features and Progress
 
-- [x] Setup Github Environment 
+- [x] Setup Github Environment
 - [x] Commit early pilot assets
-- [ ] Refactor current code prior to commiting to repository
+- [ ] Refactor current code prior to committing to repository
 - [ ] Commit all of the current application code
 - [x] Initial Move Gen Engine for use with Game Board View
 - [ ] Add Support for UCI engines
@@ -17,11 +18,11 @@ Chess Database System written in Go using Qt
 - [ ] Create Import for PGN files to Binary Game Storage
 - [ ] Create Import for SCID format to Binary Game Storage
 - [ ] Create Import for Chessbase format (at least for known formats) to Binary Game Storage
-- [ ] Review Licensing 
+- [ ] Review Licensing
 
 ## How to build
 
-### Prerequisets
+### Prerequisites
 
 - [Git](https://git-scm.com) 
 - [Go](https://golang.org) Currently developing and testing with version 1.9
@@ -32,19 +33,19 @@ Chess Database System written in Go using Qt
 
 High level steps for now:
 
-- Install prequisets
+- Install prerequisites
 - Clone this repository
 - Run qtdeploy in directory
 
 ### Windows
 
-- Install prequisets
+- Install prerequisites
 - Clone this repository
 - Run qtdeploy in directory
 
 ### OS X
 
-- Install prequisets
+- Install prerequisites
 - Clone this repository
 - Run qtdeploy in directory
 
