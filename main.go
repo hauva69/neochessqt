@@ -5,20 +5,39 @@ import (
 	"runtime"
 
 	"github.com/allan-simon/go-singleinstance"
+	"github.com/nicksnyder/go-i18n/i18n"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/therecipe/qt/core"
 	"github.com/therecipe/qt/widgets"
 )
 
-// VERSION of Application
-var VERSION = "0.0.1"
+var (
+	// VERSION of Application
+	VERSION = "0.0.1"
+
+	// T translate function
+	T i18n.TranslateFunc
+)
 
 func main() {
 	_, err := singleinstance.CreateLockFile("neochess.lock")
 	if err != nil {
 		os.Exit(1)
 	}
+
+	qfile := core.NewQFile2(":qml/translate/en-us.all.json")
+	if !qfile.Open(core.QIODevice__ReadOnly | core.QIODevice__Text) {
+		log.Error("Could not open translation file")
+		os.Exit(1)
+	}
+	qstream := core.NewQTextStream2(qfile)
+	qtext := qstream.ReadAll()
+
+	i18n.ParseTranslationFileBytes("en-us.all.json", []byte(qtext))
+	// i18n.MustLoadTranslationFile("en-us.all.json")
+	T, _ = i18n.Tfunc("en-US")
+
 	core.QCoreApplication_SetOrganizationDomain("neodevelop.net")
 	core.QCoreApplication_SetOrganizationName("NeoDevelop")
 	core.QCoreApplication_SetApplicationName("NeoChess")

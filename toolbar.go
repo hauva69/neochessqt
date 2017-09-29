@@ -16,10 +16,10 @@ func initToolBar(w *widgets.QMainWindow) *ToolBar {
 	this := NewToolBar("MainToolBar", w)
 	var toolbar = this
 	toolbar.SetIconSize(core.NewQSize2(24, 24))
-	toolbar.SetToolButtonStyle(core.Qt__ToolButtonTextUnderIcon)
+	toolbar.SetToolButtonStyle(core.Qt__ToolButtonIconOnly) // core.Qt__ToolButtonTextUnderIcon
 
-	toolbar.addbutton("Create DB", "Create Database", ":/qml/assets/address-book-blue.png", defaultbutton)
-	toolbar.addbutton("Open DB", "Open PGN Database", ":/qml/assets/blue-folder-open.png", defaultbutton)
+	toolbar.addbutton(T("new_database_label"), T("new_database_label"), ":/qml/assets/address-book-blue.png", defaultbutton)
+	toolbar.addbutton(T("open_database_label"), T("open_database_label"), ":/qml/assets/blue-folder-open.png", defaultbutton)
 	toolbar.addbutton("Import DB", "Import Database", ":/qml/assets/blue-folder-import.png", defaultbutton)
 	toolbar.addbutton("Export DB", "Open Database", ":/qml/assets/blue-folder-export.png", defaultbutton)
 	toolbar.addbutton("Import Game", "Import Game", ":/qml/assets/blue-document-import.png", defaultbutton)

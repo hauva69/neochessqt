@@ -1,0 +1,38 @@
+[
+    {
+      "id": "file_menu_label",
+      "translation": "File"
+    },
+    {
+      "id": "new_database_label",
+      "translation": "New Database"
+    },
+    {
+      "id": "open_database_label",
+      "translation": "Open Database"
+    },
+    {
+      "id": "save_database_label",
+      "translation": "Save Database"
+    },
+    {
+      "id": "close_database_label",
+      "translation": "Close Database"
+    },
+    {
+      "id": "new_game_label",
+      "translation": "New Game"
+    },
+    {
+      "id": "open_game_label",
+      "translation": "Open Game"
+    },
+    {
+      "id": "save_game_label",
+      "translation": "Save Game"
+    },
+    {
+      "id": "close_game_label",
+      "translation": "Close Game"
+    }
+  ]

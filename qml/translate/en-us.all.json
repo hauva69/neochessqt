@@ -1,0 +1,32 @@
+{
+  "FileMenu": {
+    "other": "File"
+  },
+  "close_database_label": {
+    "other": "Close Database"
+  },
+  "close_game_label": {
+    "other": "Close Game"
+  },
+  "file_menu_label": {
+    "other": "File"
+  },
+  "new_database_label": {
+    "other": "New Database"
+  },
+  "new_game_label": {
+    "other": "New Game"
+  },
+  "open_database_label": {
+    "other": "Open Database"
+  },
+  "open_game_label": {
+    "other": "Open Game"
+  },
+  "save_database_label": {
+    "other": "Save Database"
+  },
+  "save_game_label": {
+    "other": "Save Game"
+  }
+}
