@@ -1,6 +1,7 @@
 package main
 
 import (
+	log "github.com/sirupsen/logrus"
 	"github.com/therecipe/qt/core"
 	"github.com/therecipe/qt/gui"
 	"github.com/therecipe/qt/widgets"
@@ -34,14 +35,13 @@ func initPieceItem(bs *BoardScene, p PieceType, s SquareType) *PieceItem {
 
 // MouseRelease Piece is released
 func (pi *PieceItem) MouseRelease(event *widgets.QGraphicsSceneMouseEvent) {
-
-	//	Log.Info("Mouse Released")
+	log.Info("Mouse Released")
 	pi.qpix.MouseReleaseEventDefault(event)
 }
 
 // MousePress Piece is pressed
 func (pi *PieceItem) MousePress(event *widgets.QGraphicsSceneMouseEvent) {
-	//	Log.Info("Mouse Pressed")
+	log.Info("Mouse Pressed")
 	pi.qpix.MousePressEventDefault(event)
 }
 

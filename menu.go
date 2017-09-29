@@ -22,5 +22,9 @@ func initMenu(w *widgets.QMainWindow, a *widgets.QApplication) *Menu {
 	quitAction.SetShortcut(gui.NewQKeySequence2("Ctrl+Q", gui.QKeySequence__NativeText))
 	quitAction.ConnectTriggered(func(checked bool) { a.Quit() })
 
+	logAction := fileMenu.AddAction("Log")
+	logAction.SetEnabled(true)
+	logAction.ConnectTriggered(func(checked bool) { DisplayLog(w) })
+
 	return this
 }

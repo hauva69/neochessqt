@@ -17,6 +17,7 @@ deploy/
 
 neochess
 neochess.log
+neochess.lock
 
 moc*.go
 moc*.h

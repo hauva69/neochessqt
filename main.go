@@ -4,6 +4,7 @@ import (
 	"os"
 	"runtime"
 
+	"github.com/allan-simon/go-singleinstance"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/therecipe/qt/core"
@@ -13,23 +14,11 @@ import (
 // VERSION of Application
 var VERSION = "0.0.1"
 
-func init() {
-	// log.SetFormatter(&log.JSONFormatter{})
-	// You could set this to any `io.Writer` such as a file
-	file, err := os.OpenFile("neochess.log", os.O_CREATE|os.O_WRONLY, 0666)
-	if err == nil {
-		log.SetOutput(file)
-	} else {
-		log.Info("Failed to log to file, using default stderr")
-		// log.SetOutput(os.Stdout)
-	}
-	log.SetLevel(log.InfoLevel)
-}
-
 func main() {
-	log.WithFields(log.Fields{
-		"version": VERSION,
-	}).Info("Starting Application")
+	_, err := singleinstance.CreateLockFile("neochess.lock")
+	if err != nil {
+		os.Exit(1)
+	}
 	core.QCoreApplication_SetOrganizationDomain("neodevelop.net")
 	core.QCoreApplication_SetOrganizationName("NeoDevelop")
 	core.QCoreApplication_SetApplicationName("NeoChess")
@@ -71,6 +60,11 @@ func main() {
 	qwin.SetCentralWidget(boardview)
 
 	qwin.Show()
+	DisplayLog(qwin)
+	log.WithFields(log.Fields{
+		"version": VERSION,
+	}).Info("Starting Application")
+
 	widgets.QApplication_Exec()
 
 }
