@@ -35,13 +35,13 @@ func initPieceItem(bs *BoardScene, p PieceType, s SquareType) *PieceItem {
 
 // MouseRelease Piece is released
 func (pi *PieceItem) MouseRelease(event *widgets.QGraphicsSceneMouseEvent) {
-	log.Info("Mouse Released")
+	log.Error("Mouse Released")
 	pi.qpix.MouseReleaseEventDefault(event)
 }
 
 // MousePress Piece is pressed
 func (pi *PieceItem) MousePress(event *widgets.QGraphicsSceneMouseEvent) {
-	log.Info("Mouse Pressed")
+	log.Warn("Mouse Pressed")
 	pi.qpix.MousePressEventDefault(event)
 }
 
