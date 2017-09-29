@@ -47,6 +47,9 @@ func main() {
 	menu := initMenu(qwin, qapp)
 	qwin.SetMenuBar(menu)
 
+	toolbar := initToolBar(qwin)
+	qwin.AddToolBar2(toolbar)
+
 	dbdock := initDBDock(qwin)
 	qwin.AddDockWidget(core.Qt__LeftDockWidgetArea, dbdock)
 
@@ -60,7 +63,7 @@ func main() {
 	qwin.SetCentralWidget(boardview)
 
 	qwin.Show()
-	DisplayLog(qwin)
+	// DisplayLog(qwin)
 	log.WithFields(log.Fields{
 		"version": VERSION,
 	}).Info("Starting Application")
