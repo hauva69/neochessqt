@@ -72,13 +72,14 @@ func main() {
 	dbdock := initDBDock(qwin)
 	qwin.AddDockWidget(core.Qt__LeftDockWidgetArea, dbdock)
 
-	cb := NewBoard()
-	cb.InitFromFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
-
 	pgndock := initPGNDock(qwin)
 	qwin.AddDockWidget(core.Qt__RightDockWidgetArea, pgndock)
 
-	boardview := initBoardView(cb, qwin)
+	cg := NewGame()
+	cb := NewBoard()
+	cb.InitFromFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
+	cg.LoadMoves(cb)
+	boardview := initBoardView(cg, cb, qwin)
 	qwin.SetCentralWidget(boardview)
 
 	qwin.Show()

@@ -9,12 +9,16 @@ import (
 // BoardScene struct
 type BoardScene struct {
 	widgets.QGraphicsScene
-	view *BoardView
+	view       *BoardView
+	pieceitems map[SquareType]*PieceItem
+	dragging   bool
 }
 
 func initBoardScene(bv *BoardView) *BoardScene {
 	this := NewBoardScene(bv)
 	this.view = bv
+	this.pieceitems = make(map[SquareType]*PieceItem, 64)
+	this.dragging = false
 	this.AddSquares()
 	this.AddPieces()
 	return this
@@ -23,11 +27,21 @@ func initBoardScene(bv *BoardView) *BoardScene {
 func (bs *BoardScene) AddPieces() {
 	for rank := 7; rank >= 0; rank-- {
 		for file := 7; file >= 0; file-- {
+			var square = CoordsToSquare(rank, file)
 			var squareIdx = uint(rank*8 + file)
 			piece := bs.view.board.Squares[squareIdx]
-			pi := initPieceItem(bs, piece, CoordsToSquare(rank, file))
+			pi := initPieceItem(bs, piece, square)
 			bs.AddItem(pi.qpix)
+			bs.pieceitems[square] = pi
 		}
+	}
+}
+
+func (bs *BoardScene) RemovePieceItemOnSquare(sq SquareType) {
+	if bs.pieceitems[sq] != nil {
+		pitem := bs.pieceitems[sq]
+		bs.RemoveItem(pitem.qpix)
+		delete(bs.pieceitems, sq)
 	}
 }
 
@@ -54,6 +68,14 @@ func (bs *BoardScene) AddSquares() {
 			//      item.ConnectDragEnterEvent(boardview.DragEnter)
 		}
 	}
+}
+
+func (bs *BoardScene) SquareFromPos(pos *core.QPointF) SquareType {
+	posX := pos.X()
+	posY := pos.Y()
+	sqRank := int(posY) / bs.view.squaresize
+	sqFile := int(posX) / bs.view.squaresize
+	return CoordsToSquare(sqRank, sqFile)
 }
 
 //func (bs *BoardScene) AddPiece(pieceitem *PieceItem) {
