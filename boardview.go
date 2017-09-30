@@ -9,8 +9,9 @@ import (
 // BoardView struct
 type BoardView struct {
 	widgets.QGraphicsView
-	board *BoardType
-	scene *BoardScene
+	squaresize int
+	board      *BoardType
+	scene      *BoardScene
 }
 
 func initBoardView(b *BoardType, w *widgets.QMainWindow) *BoardView {
@@ -18,9 +19,9 @@ func initBoardView(b *BoardType, w *widgets.QMainWindow) *BoardView {
 	var boardview = this
 	boardview.board = b
 	size := w.FrameSize().Width()
-	squaresize := (size / 2) / 8
+	boardview.squaresize = (size / 2) / 8
 
-	boardview.scene = initBoardScene(boardview, squaresize)
+	boardview.scene = initBoardScene(boardview)
 	boardview.SetScene(boardview.scene)
 	boardview.ConnectResizeEvent(boardview.ResizeBoardView)
 	return this
