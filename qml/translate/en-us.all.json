@@ -1,15 +1,33 @@
 {
-  "FileMenu": {
-    "other": "File"
-  },
   "close_database_label": {
     "other": "Close Database"
   },
   "close_game_label": {
     "other": "Close Game"
   },
+  "edit_label": {
+    "other": "Edit"
+  },
   "file_menu_label": {
     "other": "File"
+  },
+  "game_label": {
+    "other": "Game"
+  },
+  "help_label": {
+    "other": "Help"
+  },
+  "import_chessbase_label": {
+    "other": "Import Chessbase Database"
+  },
+  "import_pgn_label": {
+    "other": "Import PGN Database"
+  },
+  "import_scid_label": {
+    "other": "Import SCID Database"
+  },
+  "log_label": {
+    "other": "Log"
   },
   "new_database_label": {
     "other": "New Database"
@@ -23,10 +41,22 @@
   "open_game_label": {
     "other": "Open Game"
   },
+  "play_label": {
+    "other": "Play"
+  },
+  "quit_label": {
+    "other": "Quit"
+  },
   "save_database_label": {
     "other": "Save Database"
   },
   "save_game_label": {
     "other": "Save Game"
+  },
+  "search_label": {
+    "other": "Search"
+  },
+  "tools_label": {
+    "other": "Tools"
   }
 }

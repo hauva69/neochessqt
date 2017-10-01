@@ -72,62 +72,62 @@ func initMenu(w *widgets.QMainWindow, a *widgets.QApplication) *Menu {
 
 	// File / Import PGN
 
-	importPGNAction := fileMenu.AddAction("Import PGN")
+	importPGNAction := fileMenu.AddAction(T("import_pgn_label"))
 	importPGNAction.SetEnabled(true)
 	importPGNAction.ConnectTriggered(func(checked bool) {})
 
 	// File / Import SCID
 
-	importSCIDAction := fileMenu.AddAction("Import SCID")
+	importSCIDAction := fileMenu.AddAction(T("import_scid_label"))
 	importSCIDAction.SetEnabled(true)
 	importSCIDAction.ConnectTriggered(func(checked bool) {})
 
 	// File / Import Chessbase
 
-	importCBAction := fileMenu.AddAction("Import ChessBase")
+	importCBAction := fileMenu.AddAction(T("import_chessbase_label"))
 	importCBAction.SetEnabled(true)
 	importCBAction.ConnectTriggered(func(checked bool) {})
 
 	fileMenu.AddSeparator()
 
 	// File / Quit
-	quitAction := fileMenu.AddAction("&Quit")
+	quitAction := fileMenu.AddAction(T("quit_label"))
 	quitAction.SetEnabled(true)
 	quitAction.SetShortcut(gui.NewQKeySequence2("Ctrl+Q", gui.QKeySequence__NativeText))
 	quitAction.ConnectTriggered(func(checked bool) { a.Quit() })
 
 	// Play
-	playMenu := menu.AddMenu2("Play")
+	playMenu := menu.AddMenu2(T("play_label"))
 	playMenu.SetEnabled(true)
 	playMenu.AddSeparator()
 
 	// Edit
-	editMenu := menu.AddMenu2("Edit")
+	editMenu := menu.AddMenu2(T("edit_label"))
 	editMenu.SetEnabled(true)
 	editMenu.AddSeparator()
 
 	// Game
-	gameMenu := menu.AddMenu2("Game")
+	gameMenu := menu.AddMenu2(T("game_label"))
 	gameMenu.SetEnabled(true)
 	gameMenu.AddSeparator()
 
 	// Search
-	searchMenu := menu.AddMenu2("Search")
+	searchMenu := menu.AddMenu2(T("search_label"))
 	searchMenu.SetEnabled(true)
 	searchMenu.AddSeparator()
 
 	// Tools
-	toolsMenu := menu.AddMenu2("Tools")
+	toolsMenu := menu.AddMenu2(T("tools_label"))
 	toolsMenu.SetEnabled(true)
 	toolsMenu.AddSeparator()
 
 	// Tools / Log
-	logAction := toolsMenu.AddAction("Log")
+	logAction := toolsMenu.AddAction(T("log_label"))
 	logAction.SetEnabled(true)
 	logAction.ConnectTriggered(func(checked bool) { DisplayLog(w) })
 
 	// Help
-	helpMenu := menu.AddMenu2("Help")
+	helpMenu := menu.AddMenu2(T("help_label"))
 	helpMenu.SetEnabled(true)
 	helpMenu.AddSeparator()
 

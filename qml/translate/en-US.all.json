@@ -34,5 +34,49 @@
     {
       "id": "close_game_label",
       "translation": "Close Game"
+    },
+    {
+      "id": "import_pgn_label",
+      "translation": "Import PGN Database"
+    },
+    {
+      "id": "import_scid_label",
+      "translation": "Import SCID Database"
+    },
+    {
+      "id": "import_chessbase_label",
+      "translation": "Import Chessbase Database"
+    },
+    {
+      "id": "quit_label",
+      "translation": "Quit"
+    },
+    {
+      "id": "play_label",
+      "translation": "Play"
+    },
+    {
+      "id": "edit_label",
+      "translation": "Edit"
+    },
+    {
+      "id": "game_label",
+      "translation": "Game"
+    },
+    {
+      "id": "search_label",
+      "translation": "Search"
+    },
+    {
+      "id": "tools_label",
+      "translation": "Tools"
+    },
+    {
+      "id": "log_label",
+      "translation": "Log"
+    },
+    {
+      "id": "help_label",
+      "translation": "Help"
     }
   ]
