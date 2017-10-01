@@ -79,7 +79,7 @@ func main() {
 	cb := NewBoard()
 	cb.InitFromFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
 	cg.LoadMoves(cb)
-	boardview := initBoardView(cg, cb, qwin)
+	boardview := initBoardView(cg, cb, pgndock.editor, qwin)
 	qwin.SetCentralWidget(boardview)
 
 	qwin.Show()

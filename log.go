@@ -83,7 +83,7 @@ func DisplayLog(w *widgets.QMainWindow) {
 		vbox := widgets.NewQVBoxLayout()
 
 		logedit = widgets.NewQTextEdit(nil)
-		logedit.SetFixedWidth(400)
+		logedit.SetFixedWidth(600)
 		logedit.SetReadOnly(true)
 
 		vbox.AddWidget(logedit, 0, core.Qt__AlignTop)

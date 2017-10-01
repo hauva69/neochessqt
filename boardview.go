@@ -13,6 +13,7 @@ type BoardView struct {
 	game        *Game
 	board       *BoardType
 	scene       *BoardScene
+	editor      *widgets.QTextEdit
 	thighlights []*widgets.QGraphicsPathItem
 	hhighlight  *widgets.QGraphicsPathItem
 }
@@ -25,11 +26,12 @@ var (
 	}
 )
 
-func initBoardView(g *Game, b *BoardType, w *widgets.QMainWindow) *BoardView {
+func initBoardView(g *Game, b *BoardType, e *widgets.QTextEdit, w *widgets.QMainWindow) *BoardView {
 	var this = NewBoardView(w)
 	var boardview = this
 	boardview.game = g
 	boardview.board = b
+	boardview.editor = e
 	size := w.FrameSize().Width()
 	boardview.squaresize = (size / 2) / 8
 

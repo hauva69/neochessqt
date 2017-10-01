@@ -66,7 +66,7 @@ func (pi *PieceItem) MouseRelease(event *widgets.QGraphicsSceneMouseEvent) {
 		pi.square = toSq
 		pi.qpix.SetPos2(float64(toSq.file()*piecescale), float64(toSq.rank()*piecescale))
 		pi.scene.pieceitems[toSq] = pi
-		//		pgneditorwidget.SetPGN(boardview.game.CurrentPgn)
+		pi.scene.view.editor.SetHtml(pi.scene.view.game.CurrentPgn)
 		//		pi.bv.UpdateSideToMoveIndicator()
 	} else {
 		log.Info("Illegal Move returning piece.")
