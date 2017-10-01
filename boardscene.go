@@ -47,8 +47,27 @@ func (bs *BoardScene) RemovePieceItemOnSquare(sq SquareType) {
 
 // AddSquares to board scene
 func (bs *BoardScene) AddSquares() {
+	// Default Borderwitdh for no Labels
+	borderwidth := 10
+	topborderwidth := 10
+
+	// Board Labels Adjust border
+	if AppSettings.IsOption("ShowBoardLables") {
+		font := gui.NewQFont2("Arial", 11, 2, false)
+		fm := gui.NewQFontMetrics(font)
+		borderwidth = fm.Height() * 2
+	}
+
+	rightborderwidth := borderwidth
+	// Side to Move Marker
+	if AppSettings.IsOption("ShowSideToMoveMarker") {
+		indicatorwidth := bs.view.squaresize / 4
+		indicatorspace := bs.view.squaresize / 8
+		rightborderwidth = indicatorwidth + indicatorspace
+	}
+
 	gpen := gui.NewQPen2(core.Qt__NoPen)
-	// gtransparent := gui.NewQBrush4(core.Qt__transparent, core.Qt__NoBrush)
+	gtransparent := gui.NewQBrush4(core.Qt__transparent, core.Qt__NoBrush)
 	darkpixmap := gui.NewQPixmap5(":qml/assets/darktexture.png", "png", core.Qt__AutoColor)
 	gbrushdarktex := gui.NewQBrush6(core.Qt__white, darkpixmap)
 	lightpixmap := gui.NewQPixmap5(":qml/assets/lighttexture.png", "png", core.Qt__AutoColor)
@@ -68,6 +87,62 @@ func (bs *BoardScene) AddSquares() {
 			//      item.ConnectDragEnterEvent(boardview.DragEnter)
 		}
 	}
+	// bs.view.UpdateBoardLabels()
+	// For Nav Butttons
+	scalex := bs.view.squaresize / 2
+	scaley := bs.view.squaresize / 2
+	posy := float64(8*bs.view.squaresize + borderwidth)
+	buttonnumber := 1
+	posx := float64(8 * bs.view.squaresize)
+	bottomborderwidth := scaley + borderwidth
+
+	rewindarrow := gui.NewQPixmap5(":qml/assets/rewind.png", "png", core.Qt__AutoColor)
+	scaledrewindarrow := rewindarrow.Scaled2(scalex, scaley, core.Qt__KeepAspectRatio, core.Qt__SmoothTransformation)
+	rewindarrowitem := widgets.NewQGraphicsPixmapItem2(scaledrewindarrow, nil)
+	rewindarrowitem.SetTransformationMode(core.Qt__SmoothTransformation)
+	bs.AddItem(rewindarrowitem)
+	rewindarrowitem.SetPos2(posx-float64(buttonnumber*scalex), posy)
+	rewindarrowitem.SetFlag(widgets.QGraphicsItem__ItemIsMovable, false)
+
+	buttonnumber++
+	playarrow := gui.NewQPixmap5(":qml/assets/play.png", "png", core.Qt__AutoColor)
+	scaledplayarrow := playarrow.Scaled2(scalex, scaley, core.Qt__KeepAspectRatio, core.Qt__SmoothTransformation)
+	playarrowitem := widgets.NewQGraphicsPixmapItem2(scaledplayarrow, nil)
+	playarrowitem.SetTransformationMode(core.Qt__SmoothTransformation)
+	bs.AddItem(playarrowitem)
+	playarrowitem.SetPos2(posx-float64(buttonnumber*scalex), posy)
+	playarrowitem.SetFlag(widgets.QGraphicsItem__ItemIsMovable, false)
+
+	buttonnumber++
+	rightarrow := gui.NewQPixmap5(":qml/assets/rightarrow.png", "png", core.Qt__AutoColor)
+	scaledrightarrow := rightarrow.Scaled2(scalex, scaley, core.Qt__KeepAspectRatio, core.Qt__SmoothTransformation)
+	rightarrowitem := widgets.NewQGraphicsPixmapItem2(scaledrightarrow, nil)
+	rightarrowitem.SetTransformationMode(core.Qt__SmoothTransformation)
+	bs.AddItem(rightarrowitem)
+	rightarrowitem.SetPos2(posx-float64(buttonnumber*scalex), posy)
+	rightarrowitem.SetFlag(widgets.QGraphicsItem__ItemIsMovable, false)
+
+	buttonnumber++
+	stop := gui.NewQPixmap5(":qml/assets/stopplay.png", "png", core.Qt__AutoColor)
+	scaledstop := stop.Scaled2(scalex, scaley, core.Qt__KeepAspectRatio, core.Qt__SmoothTransformation)
+	stopitem := widgets.NewQGraphicsPixmapItem2(scaledstop, nil)
+	stopitem.SetTransformationMode(core.Qt__SmoothTransformation)
+	bs.AddItem(stopitem)
+	stopitem.SetPos2(posx-float64(buttonnumber*scalex), posy)
+	stopitem.SetFlag(widgets.QGraphicsItem__ItemIsMovable, false)
+
+	buttonnumber++
+	leftarrow := gui.NewQPixmap5(":qml/assets/leftarrow.png", "png", core.Qt__AutoColor)
+	scaledleftarrow := leftarrow.Scaled2(scalex, scaley, core.Qt__KeepAspectRatio, core.Qt__SmoothTransformation)
+	leftarrowitem := widgets.NewQGraphicsPixmapItem2(scaledleftarrow, nil)
+	leftarrowitem.SetTransformationMode(core.Qt__SmoothTransformation)
+	bs.AddItem(leftarrowitem)
+	leftarrowitem.SetPos2(posx-float64(buttonnumber*scalex), posy)
+	leftarrowitem.SetFlag(widgets.QGraphicsItem__ItemIsMovable, false)
+
+	// For Padding around Border
+	item := bs.AddRect2(float64(-1*borderwidth), float64(-1*topborderwidth), float64(bs.view.squaresize*8+rightborderwidth+borderwidth), float64(bs.view.squaresize*8+bottomborderwidth+topborderwidth*2), gpen, gtransparent)
+	item.SetFlag(widgets.QGraphicsItem__ItemIsSelectable, false)
 }
 
 func (bs *BoardScene) SquareFromPos(pos *core.QPointF) SquareType {

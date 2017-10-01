@@ -3,9 +3,12 @@ package main
 import (
 	"encoding/gob"
 	"io/ioutil"
-	"log"
 	"os"
+	"strconv"
 
+	"github.com/therecipe/qt/gui"
+
+	log "github.com/sirupsen/logrus"
 	"github.com/therecipe/qt/core"
 	"github.com/therecipe/qt/widgets"
 )
@@ -24,6 +27,8 @@ type OptionType struct {
 
 // AppConfig comment
 type AppConfig struct {
+	App          *widgets.QApplication
+	Window       *widgets.QMainWindow
 	SettingsFile string
 	Datadir      string
 	Options      []OptionType
@@ -49,7 +54,27 @@ func (ac *AppConfig) SetBoolOption(key string, val bool) {
 	}
 }
 
-// GetOption value of key
+// SetIntOption of key
+func (ac *AppConfig) SetIntOption(key string, val int) {
+	for _, option := range ac.Options {
+		if option.Key == key {
+			option.Intval = val
+			break
+		}
+	}
+}
+
+// SetStrOption of key
+func (ac *AppConfig) SetStrOption(key string, val string) {
+	for _, option := range ac.Options {
+		if option.Key == key {
+			option.Strval = val
+			break
+		}
+	}
+}
+
+// GetBoolOption value of key
 func (ac *AppConfig) GetBoolOption(key string) bool {
 	for _, option := range ac.Options {
 		if option.Key == key {
@@ -59,6 +84,7 @@ func (ac *AppConfig) GetBoolOption(key string) bool {
 	return false
 }
 
+// GetIntOption value of key
 func (ac *AppConfig) GetIntOption(key string) int {
 	for _, option := range ac.Options {
 		if option.Key == key {
@@ -68,6 +94,7 @@ func (ac *AppConfig) GetIntOption(key string) int {
 	return -1
 }
 
+// GetStrOption value of key
 func (ac *AppConfig) GetStrOption(key string) string {
 	for _, option := range ac.Options {
 		if option.Key == key {
@@ -78,15 +105,16 @@ func (ac *AppConfig) GetStrOption(key string) string {
 }
 
 // initAppConfig initialize
-func initAppConfig(qapp *widgets.QApplication) *AppConfig {
+func initAppConfig(qapp *widgets.QApplication, qwin *widgets.QMainWindow) *AppConfig {
 	appconfig := new(AppConfig)
+	appconfig.App = qapp
+	appconfig.Window = qwin
 	appconfig.Datadir = core.QStandardPaths_StandardLocations(core.QStandardPaths__AppDataLocation)[0]
 	appconfig.SettingsFile = appconfig.Datadir + "/settings.gob"
 	if err := os.MkdirAll(appconfig.Datadir, os.ModePerm); err != nil {
 		log.Fatal("Error creating application data directory")
 	}
-	appconfig.Options = LoadConfig(appconfig.SettingsFile)
-	if appconfig.Options == nil {
+	if !appconfig.Load() {
 		desktop := qapp.Desktop()
 		screenrect := desktop.AvailableGeometry(-1)
 		appconfig.Options = append(appconfig.Options, OptionType{"1.0.0", "LastWidth", "Last Application Width", "int", "Last width of application", false, "", int(screenrect.Width() * 80 / 100)})
@@ -142,27 +170,29 @@ func initAppConfig(qapp *widgets.QApplication) *AppConfig {
 	return appconfig
 }
 
-// LoadConfig comment
-func LoadConfig(sfile string) []OptionType {
-	_, err := os.Stat(sfile)
+// Load Config settings
+func (ac *AppConfig) Load() bool {
+	log.Info("Loading Config")
+	if _, err := os.Stat(ac.SettingsFile); err != nil {
+		return false
+	}
+	gobdata, err := os.Open(ac.SettingsFile)
+	defer gobdata.Close()
 	if err != nil {
-		return nil
+		return false
 	}
-	var options []OptionType
-	file, err := os.Open(sfile)
-	if err == nil {
-		decoder := gob.NewDecoder(file)
-		err = decoder.Decode(options)
+	decoder := gob.NewDecoder(gobdata)
+	if err := decoder.Decode(ac.Options); err != nil {
+		return false
 	}
-	file.Close()
-	if err != nil {
-		return nil
-	}
-	return options
+	return true
 }
 
-// SaveConfig comment
-func (ac *AppConfig) SaveConfig() error {
+// Save comment
+func (ac *AppConfig) Save() error {
+	log.Info("Saving Config")
+	ac.SetIntOption("LastWidth", int(ac.Window.Width()))
+	ac.SetIntOption("LastHeight", int(ac.Window.Height()))
 	file, err := os.Create(ac.SettingsFile)
 	if err == nil {
 		encoder := gob.NewEncoder(file)
@@ -172,83 +202,30 @@ func (ac *AppConfig) SaveConfig() error {
 	return err
 }
 
-/* EditConfig Dialog
-func (a *App) EditConfig() {
-	boolchanges = make(map[string]bool)
-	strchanges = make(map[string]string)
-
-	configdialog := widgets.NewQDialog(window, core.Qt__Dialog)
-	vbox := widgets.NewQVBoxLayout()
-	optionstable := widgets.NewQTableWidget2(0, 4, nil)
-	optionstable.SetHorizontalHeaderLabels([]string{"Key", "Option", "Value", "Description"})
-
-	propcolor := gui.NewQColor3(52, 57, 61, 255)
-	propbrush := gui.NewQBrush3(propcolor, core.Qt__SolidPattern)
-	for index, option := range a.Options {
-		optionstable.InsertRow(index)
-		key := widgets.NewQTableWidgetItem(0)
-		key.SetText(option.Key)
-		key.SetFlags(key.Flags() ^ core.Qt__ItemIsEditable)
-		optionstable.SetItem(index, 0, key)
-		label := widgets.NewQTableWidgetItem(0)
-		label.SetText(option.Label)
-		label.SetFlags(label.Flags() ^ core.Qt__ItemIsEditable)
-		optionstable.SetItem(index, 1, label)
-		optionstable.Item(index, 1).SetBackground(propbrush)
-		if option.Kind == "bool" {
-			item := widgets.NewQTableWidgetItem(1)
-			item.Data(int(core.Qt__CheckStateRole))
+// EditConfig Dialog
+func (ac *AppConfig) EditConfig() {
+	configdialog := widgets.NewQDialog(ac.Window, core.Qt__Dialog)
+	fbox := widgets.NewQFormLayout(nil)
+	for _, option := range ac.Options {
+		switch option.Kind {
+		case "bool":
+			item := widgets.NewQCheckBox(nil)
 			if option.Boolval {
 				item.SetCheckState(core.Qt__Checked)
-			} else {
-				item.SetCheckState(core.Qt__Unchecked)
 			}
-			optionstable.SetItem(index, 2, item)
+			fbox.AddRow3(option.Label, item)
+		case "string":
+			item := widgets.NewQLineEdit2(option.Strval, nil)
+			item.Home(true)
+			fbox.AddRow3(option.Label, item)
+		case "int":
+			strint := strconv.Itoa(option.Intval)
+			item := widgets.NewQLineEdit2(strint, nil)
+			validator := gui.NewQIntValidator2(0, 10000, nil)
+			item.SetValidator(validator)
+			fbox.AddRow3(option.Label, item)
 		}
-		if option.Kind == "string" {
-			item := widgets.NewQTableWidgetItem(2)
-			item.SetText(option.Strval)
-			optionstable.SetItem(index, 2, item)
-		}
-		itemdescr := widgets.NewQTableWidgetItem2(option.Descr, 0)
-		itemdescr.SetFlags(itemdescr.Flags() ^ core.Qt__ItemIsEditable)
-		optionstable.SetItem(index, 3, itemdescr)
 	}
-	minHeight := 300
-	minWidth := 500
-	if mainapp.Width/2 > minWidth {
-		minWidth = mainapp.Width / 2
-	}
-	if mainapp.Height/2 > minHeight {
-		minHeight = mainapp.Height / 2
-	}
-	optionstable.SetMinimumHeight(minHeight)
-	optionstable.SetMinimumWidth(minWidth)
-	optionstable.SetColumnHidden(0, true)
-	optionstable.ResizeRowsToContents()
-	optionsview := widgets.NewQTableViewFromPointer(widgets.PointerFromQTableWidget(optionstable))
-	optionsview.VerticalHeader().Hide()
-	optionsview.HorizontalHeader().SetSectionResizeMode(widgets.QHeaderView__Stretch)
-	optionsview.HorizontalHeader().SetStretchLastSection(true)
-	// optionsview.SetStyleSheet("QHeaderView::section { background-color:#90CAF9; }")
-
-	optionstable.ConnectItemChanged(func(item *widgets.QTableWidgetItem) {
-		row := item.Row()
-		currentitem := optionstable.Item(row, 0)
-		key := currentitem.Text()
-		if item.Type() == 2 {
-			strchanges[key] = item.Text()
-		}
-		if item.Type() == 1 {
-			if item.CheckState() == core.Qt__Checked {
-				boolchanges[key] = true
-			} else {
-				boolchanges[key] = false
-			}
-		}
-	})
-
-	vbox.AddWidget(optionstable, 0, core.Qt__AlignTop)
 
 	buttonBox := widgets.NewQDialogButtonBox(nil)
 	acceptButton := widgets.NewQPushButton2("Apply", nil)
@@ -264,37 +241,37 @@ func (a *App) EditConfig() {
 		configdialog.Done(int(widgets.QDialog__Rejected))
 	})
 
-	vbox.AddWidget(buttonBox, 0, core.Qt__AlignBottom)
+	fbox.AddRow5(buttonBox)
 
-	configdialog.SetLayout(vbox)
-	//		optionwidget := widgets.NewQWidget(nil, core.Qt__Widget)
-	//		optionwidget.SetLayout(vbox)
+	configdialog.SetLayout(fbox)
+
 	if configdialog.Exec() != int(widgets.QDialog__Accepted) {
-		Log.Info("Canceled option edit")
+		log.Info("Canceled option edit")
 	} else {
-		Log.Info("Options editied changes")
-		for k, v := range boolchanges {
-			for optindex, option := range mainapp.Options {
-				if option.Key == k {
-					mainapp.Options[optindex].Boolval = v
-					break
+		log.Info("Options editied changes")
+		/*
+			for k, v := range boolchanges {
+				for optindex, option := range mainapp.Options {
+					if option.Key == k {
+						mainapp.Options[optindex].Boolval = v
+						break
+					}
 				}
 			}
-		}
-		for k, v := range strchanges {
-			for optindex, option := range mainapp.Options {
-				if option.Key == k {
-					mainapp.Options[optindex].Strval = v
-					break
+			for k, v := range strchanges {
+				for optindex, option := range mainapp.Options {
+					if option.Key == k {
+						mainapp.Options[optindex].Strval = v
+						break
+					}
 				}
 			}
-		}
-		boardview.UpdateBoardLabels()
-		boardview.UpdateSideToMoveIndicator()
-		err := mainapp.SaveConfig()
-		if err != nil {
-			Log.Info("Error saving configuration")
-		}
+			boardview.UpdateBoardLabels()
+			boardview.UpdateSideToMoveIndicator()
+			err := mainapp.SaveConfig()
+			if err != nil {
+				Log.Info("Error saving configuration")
+			}
+		*/
 	}
 }
-*/

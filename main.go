@@ -18,6 +18,12 @@ var (
 
 	// T translate function
 	T i18n.TranslateFunc
+
+	// Application main
+	Application *widgets.QApplication
+
+	// AppSettings main
+	AppSettings *AppConfig
 )
 
 func main() {
@@ -42,26 +48,28 @@ func main() {
 	core.QCoreApplication_SetOrganizationName("NeoDevelop")
 	core.QCoreApplication_SetApplicationName("NeoChess")
 	core.QCoreApplication_SetApplicationVersion(VERSION)
-	qapp := widgets.NewQApplication(len(os.Args), os.Args)
+	Application = widgets.NewQApplication(len(os.Args), os.Args)
 	qwin := widgets.NewQMainWindow(nil, 0)
 	if runtime.GOOS == "darwin" {
 		qwin.SetUnifiedTitleAndToolBarOnMac(true)
 	}
 	qwin.SetWindowTitle(core.QCoreApplication_ApplicationName())
 
+	log.Info("Starting Application")
+
 	// Load or initialize settings
-	appconfig := initAppConfig(qapp)
+	AppSettings = initAppConfig(Application, qwin)
 
 	// Desktop Size
 	// desktop := qapp.Desktop()
 	// screen := desktop.AvailableGeometry(-1)
-	qwin.Resize(core.NewQSize2(appconfig.GetIntOption("LastWidth"), appconfig.GetIntOption("LastHeight")))
+	qwin.Resize(core.NewQSize2(AppSettings.GetIntOption("LastWidth"), AppSettings.GetIntOption("LastHeight")))
 
 	statusbar := initStatusBar(qwin)
 	qwin.SetStatusBar(statusbar)
-	statusbar.AddItem("Screen W:%d x H:%d", appconfig.GetIntOption("LastWidth"), appconfig.GetIntOption("LastHeight"))
+	statusbar.AddItem("Screen W:%d x H:%d", AppSettings.GetIntOption("LastWidth"), AppSettings.GetIntOption("LastHeight"))
 
-	menu := initMenu(qwin, qapp)
+	menu := initMenu(qwin, Application)
 	qwin.SetMenuBar(menu)
 
 	toolbar := initToolBar(qwin)
@@ -81,12 +89,7 @@ func main() {
 	qwin.SetCentralWidget(boardview)
 
 	qwin.Show()
-	// DisplayLog(qwin)
-	log.Info("Starting Application")
 
 	widgets.QApplication_Exec()
 
-	if err := appconfig.SaveConfig(); err != nil {
-		log.Fatal("Error saving settings")
-	}
 }

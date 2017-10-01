@@ -1,6 +1,7 @@
 package main
 
 import (
+	log "github.com/sirupsen/logrus"
 	"github.com/therecipe/qt/gui"
 	"github.com/therecipe/qt/widgets"
 )
@@ -94,7 +95,7 @@ func initMenu(w *widgets.QMainWindow, a *widgets.QApplication) *Menu {
 	quitAction := fileMenu.AddAction(T("quit_label"))
 	quitAction.SetEnabled(true)
 	quitAction.SetShortcut(gui.NewQKeySequence2("Ctrl+Q", gui.QKeySequence__NativeText))
-	quitAction.ConnectTriggered(func(checked bool) { a.Quit() })
+	quitAction.ConnectTriggered(SaveExit)
 
 	// Play
 	playMenu := menu.AddMenu2(T("play_label"))
@@ -132,4 +133,12 @@ func initMenu(w *widgets.QMainWindow, a *widgets.QApplication) *Menu {
 	helpMenu.AddSeparator()
 
 	return this
+}
+
+// SaveExit application
+func SaveExit(checked bool) {
+	if err := AppSettings.Save(); err != nil {
+		log.Fatal("Error saving settings")
+	}
+	Application.Quit()
 }

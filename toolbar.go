@@ -25,7 +25,7 @@ func initToolBar(w *widgets.QMainWindow) *ToolBar {
 	toolbar.addbutton("Import Game", "Import Game", ":/qml/assets/blue-document-import.png", defaultbutton)
 	toolbar.addbutton("Export Game", "Export Game", ":/qml/assets/blue-document-export.png", defaultbutton)
 	toolbar.addbutton("Search DB", "Search Database", ":/qml/assets/magnifier.png", defaultbutton)
-	toolbar.addbutton("Options", "Options", ":/qml/assets/system-monitor.png", defaultbutton)
+	toolbar.addbutton("Options", "Options", ":/qml/assets/system-monitor.png", openoptions)
 	spacer := widgets.NewQWidget(nil, core.Qt__Widget)
 	sp := widgets.NewQSizePolicy2(widgets.QSizePolicy__Expanding, widgets.QSizePolicy__Expanding, widgets.QSizePolicy__ToolButton)
 	spacer.SetSizePolicy(sp)
@@ -43,4 +43,9 @@ func (tb *ToolBar) addbutton(action string, tip string, iconname string, f func(
 
 func defaultbutton(checked bool) {
 	log.Info("Button Clicked")
+}
+
+func openoptions(checked bool) {
+	log.Info("Options Button Clicked")
+	AppSettings.EditConfig()
 }
