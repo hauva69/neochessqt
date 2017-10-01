@@ -122,8 +122,8 @@ func initAppConfig(qapp *widgets.QApplication, qwin *widgets.QMainWindow) *AppCo
 		appconfig.Options = append(appconfig.Options, OptionType{"1.0.0", "ShowBoardLables", "Show Board Labels", "bool", "Show Algebraic labels on the edges of the board.", true, "", 0})
 		appconfig.Options = append(appconfig.Options, OptionType{"1.0.0", "ShowSquareLables", "Show Square Labels", "bool", "Show Algebraic labels on each square of board.", false, "", 0})
 		appconfig.Options = append(appconfig.Options, OptionType{"1.0.0", "ShowSideToMoveMarker", "Show Side to move", "bool", "Display indicator to side of the board.", true, "", 0})
-		appconfig.Options = append(appconfig.Options, OptionType{"1.0.0", "StyleFile", "Style File", "string", "File for applications style", false, appconfig.Datadir + "/basedark.css", 0})
-		appconfig.Options = append(appconfig.Options, OptionType{"1.0.0", "PGNStyleFile", "PGN Style File", "string", "File for PGN Text Editor", false, appconfig.Datadir + "/pgntextstyle.css", 0})
+		appconfig.Options = append(appconfig.Options, OptionType{"1.0.0", "StyleFile", "Style File", "file", "CSS Files (*.css)", false, appconfig.Datadir + "/basedark.css", 0})
+		appconfig.Options = append(appconfig.Options, OptionType{"1.0.0", "PGNStyleFile", "PGN Style File", "file", "CSS Files (*.css)", false, appconfig.Datadir + "/pgntextstyle.css", 0})
 	}
 
 	stylefile := appconfig.GetStrOption("StyleFile")
@@ -218,6 +218,27 @@ func (ac *AppConfig) EditConfig() {
 			item := widgets.NewQLineEdit2(option.Strval, nil)
 			item.Home(true)
 			fbox.AddRow3(option.Label, item)
+		case "file":
+			layout := widgets.NewQHBoxLayout()
+			item := widgets.NewQLineEdit2(option.Strval, nil)
+			item.Home(true)
+			button := widgets.NewQPushButton2("...", nil)
+			button.ConnectClicked(func(checked bool) {
+				fileDialog := widgets.NewQFileDialog2(ac.Window, option.Label, ac.Datadir, option.Descr)
+				fileDialog.SetAcceptMode(widgets.QFileDialog__AcceptOpen)
+				fileDialog.SetFileMode(widgets.QFileDialog__ExistingFile)
+				if fileDialog.Exec() != int(widgets.QDialog__Accepted) {
+					return
+				}
+				filename := fileDialog.SelectedFiles()[0]
+				log.Infof("Picked: %s", filename)
+				item.SetText(filename)
+			})
+			layout.AddWidget(item, 0, core.Qt__AlignLeft)
+			layout.AddWidget(button, 0, core.Qt__AlignRight)
+			widget := widgets.NewQWidget(nil, core.Qt__Widget)
+			widget.SetLayout(layout)
+			fbox.AddRow3(option.Label, widget)
 		case "int":
 			strint := strconv.Itoa(option.Intval)
 			item := widgets.NewQLineEdit2(strint, nil)
