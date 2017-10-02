@@ -16,7 +16,7 @@ func initPGNDock(w *widgets.QMainWindow) *PGNDock {
 	var pgndock = this
 	pgndock.editor = widgets.NewQTextEdit(nil)
 	pgndock.editor.SetHtml("<p>1. </p>")
-	pgndock.editor.SetFixedWidth(w.Width() / 4)
+	pgndock.editor.SetFixedWidth(w.Width() / 5)
 	pgndock.SetWidget(pgndock.editor)
 	return this
 }

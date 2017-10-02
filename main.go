@@ -85,6 +85,13 @@ func main() {
 	cb := NewBoard()
 	cb.InitFromFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
 	cg.LoadMoves(cb)
+
+	gamedetaildock := initGameDetailDock(cg, qwin)
+	qwin.AddDockWidget(core.Qt__RightDockWidgetArea, gamedetaildock)
+	qwin.TabifyDockWidget(pgndock, gamedetaildock)
+	qwin.SetTabPosition(core.Qt__RightDockWidgetArea, widgets.QTabWidget__North)
+	pgndock.Raise()
+
 	boardview := initBoardView(cg, cb, pgndock.editor, qwin)
 	qwin.SetCentralWidget(boardview)
 
