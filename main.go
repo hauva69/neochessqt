@@ -81,6 +81,9 @@ func main() {
 	pgndock := initPGNDock(qwin)
 	qwin.AddDockWidget(core.Qt__RightDockWidgetArea, pgndock)
 
+	gamelistdock := initGameListDock(qwin)
+	qwin.AddDockWidget(core.Qt__BottomDockWidgetArea, gamelistdock)
+
 	cg := NewGame()
 	cb := NewBoard()
 	cb.InitFromFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
