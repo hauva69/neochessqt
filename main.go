@@ -93,6 +93,12 @@ func main() {
 	qwin.AddDockWidget(core.Qt__RightDockWidgetArea, gamedetaildock)
 	qwin.TabifyDockWidget(pgndock, gamedetaildock)
 	qwin.SetTabPosition(core.Qt__RightDockWidgetArea, widgets.QTabWidget__North)
+
+	pgntitlewidget := widgets.NewQWidget(qwin, core.Qt__Widget)
+	gamedetailtitlewidget := widgets.NewQWidget(qwin, core.Qt__Widget)
+	gamedetaildock.SetTitleBarWidget(gamedetailtitlewidget)
+	pgndock.SetTitleBarWidget(pgntitlewidget)
+
 	pgndock.Raise()
 
 	boardview := initBoardView(cg, cb, pgndock.editor, qwin)

@@ -203,7 +203,7 @@ func (m MoveType) piece() PieceType {
 }
 
 func (m MoveType) color() ColorType {
-	return 0 // ColorType((m.Move >> MovePieceBitLocation) & MovePieceColorMask)
+	return PieceType((m.Move >> MovePieceBitLocation) & MovePieceMask).Color()
 }
 
 func (m MoveType) captured() PieceType {

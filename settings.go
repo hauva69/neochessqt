@@ -32,6 +32,7 @@ type AppConfig struct {
 	Window       *widgets.QMainWindow
 	SettingsFile string
 	Datadir      string
+	PGNStyle     string
 	Options      []OptionType
 }
 
@@ -148,26 +149,24 @@ func initAppConfig(qapp *widgets.QApplication, qwin *widgets.QMainWindow) *AppCo
 		}
 	}
 
-	/*
-		pgnstylefile := appconfig.GetOption("PGNStyleFile")
-		if _, err := os.Stat(pgnstylefile); err == nil {
-			pgnstylebytes, err := ioutil.ReadFile(pgnstylefile)
-			if err == nil {
-				// pgnstyle := string(pgnstylebytes)
-			}
-		} else {
-			var file = core.NewQFile2(":qml/assets/pgntextstyle.css")
-			if file.Open(core.QIODevice__ReadOnly) {
-				qdata := file.ReadAll()
-				datastr := qdata.ConstData()
-				err = ioutil.WriteFile(pgnstylefile, []byte(datastr), 0644)
-				if err != nil {
-					log.Fatalf("Error writing file: %v", err)
-				}
-				// pgnstyle := datastr
-			}
+	pgnstylefile := appconfig.GetStrOption("PGNStyleFile")
+	if _, err := os.Stat(pgnstylefile); err == nil {
+		pgnstylebytes, err := ioutil.ReadFile(pgnstylefile)
+		if err == nil {
+			appconfig.PGNStyle = string(pgnstylebytes)
 		}
-	*/
+	} else {
+		var file = core.NewQFile2(":qml/assets/pgntextstyle.css")
+		if file.Open(core.QIODevice__ReadOnly) {
+			qdata := file.ReadAll()
+			datastr := qdata.ConstData()
+			err = ioutil.WriteFile(pgnstylefile, []byte(datastr), 0644)
+			if err != nil {
+				log.Fatalf("Error writing file: %v", err)
+			}
+			appconfig.PGNStyle = datastr
+		}
+	}
 
 	return appconfig
 }

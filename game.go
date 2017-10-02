@@ -303,8 +303,8 @@ func (g *Game) LoadMoves(cb *BoardType) {
 	countMoves := len(g.Moves)
 	cv := countMoves - 1
 	mn := 0
-	// g.CurrentPgn = "<style>" + mainapp.PGNTextStyle + "</style>"
-	g.CurrentPgn = "<style></style>"
+	g.CurrentPgn = "<style>" + AppSettings.PGNStyle + "</style>"
+	// g.CurrentPgn = "<style></style>"
 
 	for index, Move := range g.Moves {
 		if Move.color() == White {
