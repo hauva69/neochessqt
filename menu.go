@@ -1,9 +1,6 @@
 package main
 
 import (
-	"fmt"
-	"os/exec"
-
 	log "github.com/sirupsen/logrus"
 	"github.com/therecipe/qt/gui"
 	"github.com/therecipe/qt/widgets"
@@ -140,14 +137,20 @@ func initMenu(w *widgets.QMainWindow, a *widgets.QApplication) *Menu {
 	helpContentsAction := helpMenu.AddAction(T("help_contents_label"))
 	helpContentsAction.SetEnabled(true)
 	helpContentsAction.ConnectTriggered(func(checked bool) {
-		cmd := exec.Command("/opt/Qt5.8.0/5.8/gcc_64/bin/assistant", "-collectionFile", AppSettings.HelpFile, "-enableRemoteControl")
-		err := cmd.Start()
-		if err != nil {
-			log.Error(err)
-		}
-		log.Info("Waiting for command to finish...")
-		err = cmd.Wait()
-		log.Info(fmt.Sprintf("Command finished with error: %v", err))
+		/*
+			cmd := exec.Command("/opt/Qt5.8.0/5.8/gcc_64/bin/assistant", "-collectionFile", AppSettings.HelpFile, "-enableRemoteControl")
+			err := cmd.Start()
+			if err != nil {
+				log.Error(err)
+			}
+			log.Info("Waiting for command to finish...")
+			err = cmd.Wait()
+			log.Info(fmt.Sprintf("Command finished with error: %v", err))
+		*/
+		// helpengine := help.NewQHelpEngine(AppSettings.HelpFile, w)
+		// helpengine.SetupData()
+		// helpbrowser := widgets.NewQTextBrowser(w)
+		// helpbrowser.LoadResource()
 	})
 
 	// Help / About
