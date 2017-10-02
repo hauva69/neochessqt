@@ -78,5 +78,13 @@
     {
       "id": "help_label",
       "translation": "Help"
+    },
+    {
+      "id": "help_contents_label",
+      "translation": "Help Contents..."
+    },
+    {
+      "id": "help_about_label",
+      "translation": "About"
     }
   ]

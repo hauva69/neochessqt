@@ -33,6 +33,7 @@ type AppConfig struct {
 	SettingsFile string
 	Datadir      string
 	PGNStyle     string
+	HelpFile     string
 	Options      []OptionType
 }
 
@@ -126,7 +127,24 @@ func initAppConfig(qapp *widgets.QApplication, qwin *widgets.QMainWindow) *AppCo
 		appconfig.Options = append(appconfig.Options, OptionType{"1.0.0", "ShowSideToMoveMarker", "Show Side to move", "bool", "Display indicator to side of the board.", true, "", 0, nil})
 		appconfig.Options = append(appconfig.Options, OptionType{"1.0.0", "StyleFile", "Style File", "file", "CSS Files (*.css)", false, appconfig.Datadir + "/basedark.css", 0, nil})
 		appconfig.Options = append(appconfig.Options, OptionType{"1.0.0", "PGNStyleFile", "PGN Style File", "file", "CSS Files (*.css)", false, appconfig.Datadir + "/pgntextstyle.css", 0, nil})
+		appconfig.Options = append(appconfig.Options, OptionType{"1.0.0", "HelpFile", "Help File", "file", "Help File (*.qch)", false, appconfig.Datadir + "/neochess_US.qch", 0, nil})
 		appconfig.Options = append(appconfig.Options, OptionType{"1.0.0", "PossibleMove", "Possible Move Color", "color", "Possible Move Color", false, "", 0, gui.NewQColor3(8, 145, 17, 100)})
+	}
+
+	helpfile := appconfig.GetStrOption("HelpFile")
+	if _, err := os.Stat(helpfile); err == nil {
+		appconfig.HelpFile = helpfile
+	} else {
+		var file = core.NewQFile2(":qml/help/neochess_US.qch")
+		if file.Open(core.QIODevice__ReadOnly) {
+			qdata := file.ReadAll()
+			datastr := qdata.ConstData()
+			err = ioutil.WriteFile(helpfile, []byte(datastr), 0644)
+			if err != nil {
+				log.Fatalf("Error writing file: %v", err)
+			}
+			appconfig.HelpFile = helpfile
+		}
 	}
 
 	stylefile := appconfig.GetStrOption("StyleFile")

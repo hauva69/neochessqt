@@ -14,6 +14,12 @@
   "game_label": {
     "other": "Game"
   },
+  "help_about_label": {
+    "other": "About"
+  },
+  "help_contents_label": {
+    "other": "Help Contents..."
+  },
   "help_label": {
     "other": "Help"
   },

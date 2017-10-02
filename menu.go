@@ -1,6 +1,9 @@
 package main
 
 import (
+	"fmt"
+	"os/exec"
+
 	log "github.com/sirupsen/logrus"
 	"github.com/therecipe/qt/gui"
 	"github.com/therecipe/qt/widgets"
@@ -131,6 +134,30 @@ func initMenu(w *widgets.QMainWindow, a *widgets.QApplication) *Menu {
 	helpMenu := menu.AddMenu2(T("help_label"))
 	helpMenu.SetEnabled(true)
 	helpMenu.AddSeparator()
+
+	// Help / Help Contents
+
+	helpContentsAction := helpMenu.AddAction(T("help_contents_label"))
+	helpContentsAction.SetEnabled(true)
+	helpContentsAction.ConnectTriggered(func(checked bool) {
+		cmd := exec.Command("/opt/Qt5.8.0/5.8/gcc_64/bin/assistant", "-collectionFile", AppSettings.HelpFile, "-enableRemoteControl")
+		err := cmd.Start()
+		if err != nil {
+			log.Error(err)
+		}
+		log.Info("Waiting for command to finish...")
+		err = cmd.Wait()
+		log.Info(fmt.Sprintf("Command finished with error: %v", err))
+	})
+
+	// Help / About
+	helpMenu.AddSeparator()
+
+	helpAboutAction := helpMenu.AddAction(T("help_about_label"))
+	helpAboutAction.SetEnabled(true)
+	helpAboutAction.ConnectTriggered(func(checked bool) {
+		widgets.QMessageBox_About(w, "NeoChess Database", "Version "+VERSION)
+	})
 
 	return this
 }
