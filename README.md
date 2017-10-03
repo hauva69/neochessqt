@@ -115,10 +115,10 @@ building it is a bit difficult currently to use MSYS2 to get to a 64bit mingw ve
 
 Download and install [Docker CE for Windows](https://store.docker.com/editions/community/docker-ce-desktop-windows)
 
-This is for a 64bit build that uses the shared dll versions of the Qt library
+This is for a 64bit build that uses ~~shared dll versions of the Qt library~~ for now the static docker image works submitting an issue upstream to see what the issue is with the shared dll version
 
 ```powershell
-PS > docker pull therecipe/qt:windows_64_shared
+PS > docker pull therecipe/qt:windows_64_static
 ```
 
 Install Binding for Qt 
@@ -149,7 +149,7 @@ PS > cd %GOPATH%/src/github.com/rashwell/neochess
 *Somewhere here or when you first try to build Neochess Docker is going to want to Share a folder between the Docker Image and your host machine so that it can read your Go's work GOPATH directory*
 
 ```powershell
-PS > qtdeploy -docker build windows_64_shared
+PS > qtdeploy -docker build windows_64_static
 ```
 
 ### OS X
