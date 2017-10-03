@@ -7,14 +7,14 @@ Chess Database System written in Go using Qt
 ## Table of content
 
 - [Key Features and Progress](#Key-Features-and-Progress)
-- [How to build](#How-to-build)
-    - [Prerequisites](#Prerequisites)
-    - [Go Libraries](#Go-Libraries)
-    - [Linux]($Linux)
-    - [Windows](#Windows)
-    - [OS X](#OS-X)
-- [Credits](#Credits)
-- [Inspirations](#Inspirations)
+- [How to build](#how-to-build)
+    - [Prerequisites](#prerequisites)
+    - [Go Libraries](#go-libraries)
+    - [Linux](#inux)
+    - [Windows](#windows)
+    - [OS X](#os-x)
+- [Credits](#credits)
+- [Inspirations](#inspirations)
 
 ## Key Features and Progress
 
