@@ -128,16 +128,17 @@ func initAppConfig(qapp *widgets.QApplication, qwin *widgets.QMainWindow) *AppCo
 		appconfig.Options = append(appconfig.Options, OptionType{"1.0.0", "ShowSideToMoveMarker", "Show Side to move", "bool", "Display indicator to side of the board.", true, "", 0, nil})
 		appconfig.Options = append(appconfig.Options, OptionType{"1.0.0", "StyleFile", "Style File", "file", "CSS Files (*.css)", false, appconfig.Datadir + "/basedark.css", 0, nil})
 		appconfig.Options = append(appconfig.Options, OptionType{"1.0.0", "PGNStyleFile", "PGN Style File", "file", "CSS Files (*.css)", false, appconfig.Datadir + "/pgntextstyle.css", 0, nil})
-		appconfig.Options = append(appconfig.Options, OptionType{"1.0.0", "HelpFile", "Help File", "file", "Help File (*.qch)", false, appconfig.Datadir + "/neochess_US.qch", 0, nil})
+		appconfig.Options = append(appconfig.Options, OptionType{"1.0.0", "HelpFile", "Help File", "file", "Help File (*.qch)", false, appconfig.Datadir + "/neochess_US.qhc", 0, nil})
 		appconfig.Options = append(appconfig.Options, OptionType{"1.0.0", "PossibleMove", "Possible Move Color", "color", "Possible Move Color", false, "", 0, gui.NewQColor3(8, 145, 17, 100)})
 		appconfig.Options = append(appconfig.Options, OptionType{"1.0.0", "PGNPieceCountryDisplay", "PGN Piece Display", "dropdown", "Figurine;English;Dutch", false, "", 0, nil})
 	}
 
 	helpfile := appconfig.GetStrOption("HelpFile")
+	helpfile2 := strings.Replace(helpfile, ".qhc", ".qch", -1)
 	if _, err := os.Stat(helpfile); err == nil {
 		appconfig.HelpFile = helpfile
 	} else {
-		var file = core.NewQFile2(":qml/help/neochess_US.qch")
+		var file = core.NewQFile2(":qml/help/neochess_US.qhc")
 		if file.Open(core.QIODevice__ReadOnly) {
 			qdata := file.ReadAll()
 			datastr := qdata.ConstData()
@@ -146,6 +147,17 @@ func initAppConfig(qapp *widgets.QApplication, qwin *widgets.QMainWindow) *AppCo
 				log.Fatalf("Error writing file: %v", err)
 			}
 			appconfig.HelpFile = helpfile
+		}
+	}
+	if _, err := os.Stat(helpfile2); err != nil {
+		var file = core.NewQFile2(":qml/help/neochess_US.qch")
+		if file.Open(core.QIODevice__ReadOnly) {
+			qdata := file.ReadAll()
+			datastr := qdata.ConstData()
+			err = ioutil.WriteFile(helpfile2, []byte(datastr), 0644)
+			if err != nil {
+				log.Fatalf("Error writing file: %v", err)
+			}
 		}
 	}
 

@@ -138,44 +138,7 @@ func initMenu(w *widgets.QMainWindow, a *widgets.QApplication) *Menu {
 
 	helpContentsAction := helpMenu.AddAction(T("help_contents_label"))
 	helpContentsAction.SetEnabled(true)
-	helpContentsAction.ConnectTriggered(func(checked bool) {
-		/*
-			cmd := exec.Command("/opt/Qt5.8.0/5.8/gcc_64/bin/assistant", "-collectionFile", AppSettings.HelpFile, "-enableRemoteControl")
-			err := cmd.Start()
-			if err != nil {
-				log.Error(err)
-			}
-			log.Info("Waiting for command to finish...")
-			err = cmd.Wait()
-			log.Info(fmt.Sprintf("Command finished with error: %v", err))
-		*/
-		helpengine := help.NewQHelpEngine(AppSettings.HelpFile, w)
-		helpengine.SetupData()
-		helpdialog := widgets.NewQDialog(w, core.Qt__Dialog)
-		hbox := widgets.NewQHBoxLayout()
-		tWidget := widgets.NewQTabWidget(nil)
-		tWidget.SetMaximumWidth(200)
-		tWidget.AddTab(helpengine.ContentWidget(), "Content")
-		tWidget.AddTab(helpengine.IndexWidget(), "Index")
-
-		textViewer := widgets.NewQTextBrowser(nil)
-		url := core.NewQUrl()
-		url.SetUrl("qthelp://org.neodevelop.neochess/doc/index.html", core.QUrl__TolerantMode)
-		textViewer.SetSource(url)
-		horizSplitter := widgets.NewQSplitter2(core.Qt__Horizontal, nil)
-		horizSplitter.InsertWidget(0, tWidget)
-		horizSplitter.InsertWidget(1, textViewer)
-		horizSplitter.Hide()
-		hbox.AddWidget(horizSplitter, 0, core.Qt__AlignTop)
-		helpdialog.SetLayout(hbox)
-		if helpdialog.Exec() != int(widgets.QDialog__Accepted) {
-			log.Info("Canceled option edit")
-		} else {
-			log.Info("Options editied changes")
-		}
-		// helpbrowser := widgets.NewQTextBrowser(w)
-		// helpbrowser.LoadResource()
-	})
+	helpContentsAction.ConnectTriggered(DisplayHelp)
 
 	// Help / About
 	helpMenu.AddSeparator()
@@ -195,4 +158,44 @@ func SaveExit(checked bool) {
 		log.Fatal("Error saving settings")
 	}
 	Application.Quit()
+}
+
+func DisplayHelp(checked bool) {
+	log.Infof("HelpEngine from: %s", AppSettings.HelpFile)
+	helpengine := help.NewQHelpEngine(AppSettings.HelpFile, w)
+	helpengine.SetupData()
+	helpdialog := widgets.NewQDialog(w, core.Qt__Dialog)
+	hbox := widgets.NewQHBoxLayout()
+	tWidget := widgets.NewQTabWidget(nil)
+	tWidget.SetMaximumWidth(200)
+	tWidget.AddTab(helpengine.ContentWidget(), "Content")
+	tWidget.AddTab(helpengine.IndexWidget(), "Index")
+
+	textViewer := widgets.NewQTextBrowser(nil)
+	url := core.NewQUrl3("qthelp://net.neodevelop.neochess/doc/index.html", core.QUrl__TolerantMode)
+	log.Infof("D: %s", helpengine.FileData(url).Data())
+	textViewer.ConnectLoadResource(func(ty int, name *core.QUrl) *core.QVariant {
+		if name.Scheme() == "qthelp" {
+			return core.NewQVariant15(helpengine.FileData(name))
+		}
+		return textViewer.LoadResourceDefault(ty, name)
+	})
+	textViewer.SetSource(url)
+	helpengine.ContentWidget().ConnectLinkActivated(func(link *core.QUrl) {
+		textViewer.SetSource(link)
+	})
+	helpengine.IndexWidget().ConnectLinkActivated(func(link *core.QUrl, keyword string) {
+		textViewer.SetSource(link)
+	})
+	horizSplitter := widgets.NewQSplitter2(core.Qt__Horizontal, nil)
+	horizSplitter.InsertWidget(0, tWidget)
+	horizSplitter.InsertWidget(1, textViewer)
+	// horizSplitter.Hide()
+	hbox.AddWidget(horizSplitter, 0, core.Qt__AlignTop)
+	helpdialog.SetLayout(hbox)
+	if helpdialog.Exec() != int(widgets.QDialog__Accepted) {
+		log.Info("Canceled option edit")
+	} else {
+		log.Info("Options editied changes")
+	}
 }

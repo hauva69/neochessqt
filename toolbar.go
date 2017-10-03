@@ -30,7 +30,7 @@ func initToolBar(w *widgets.QMainWindow) *ToolBar {
 	sp := widgets.NewQSizePolicy2(widgets.QSizePolicy__Expanding, widgets.QSizePolicy__Expanding, widgets.QSizePolicy__ToolButton)
 	spacer.SetSizePolicy(sp)
 	toolbar.AddWidget(spacer)
-	toolbar.addbutton("Help", "Help", ":/qml/assets/question.png", defaultbutton)
+	toolbar.addbutton("Help", "Help", ":/qml/assets/question.png", DisplayHelp)
 
 	return this
 }

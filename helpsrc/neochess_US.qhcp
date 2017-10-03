@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QHelpCollectionProject version="1.0">
+    <docFiles>
+        <generate>
+            <file>
+                <input>neochess_US.qhp</input>
+                <output>neochess_US.qch</output>
+            </file>
+        </generate>
+        <register>
+            <file>neochess_US.qch</file>
+        </register>
+    </docFiles>
+</QHelpCollectionProject>
