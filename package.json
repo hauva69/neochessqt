@@ -1,0 +1,27 @@
+{
+  "name": "neochess",
+  "version": "0.0.1",
+  "description": "Chess Database Application",
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rashwell/neochess.git"
+  },
+  "keywords": [
+    "Chess",
+    "Golang"
+  ],
+  "author": "Richard F. Ashwell III",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rashwell/neochess/issues"
+  },
+  "homepage": "https://github.com/rashwell/neochess#readme",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-task-doc": "^1.0.11"
+  }
+}

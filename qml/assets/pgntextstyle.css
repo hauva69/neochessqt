@@ -6,6 +6,8 @@ p.comment {
 } 
 
 span.move { 
+    font-family: "Chess Alpha 2";
+    font-size: 12;
     color: #aaa;    
 } 
 
