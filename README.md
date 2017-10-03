@@ -1,8 +1,8 @@
+<img src="/screenshots/EarlyProtoType.png?raw=true" alt="NeoChess Database" title="NeoChess" align="right" height="300" />
+
 # NeoChess
 
 Chess Database System written in Go using Qt
-
-![Early Prototype](/screenshots/EarlyProtoType.png?raw=true "Early Prototype")
 
 ## Key Features and Progress
 
