@@ -115,7 +115,9 @@ building it is a bit difficult currently to use MSYS2 to get to a 64bit mingw ve
 
 Download and install [Docker CE for Windows](https://store.docker.com/editions/community/docker-ce-desktop-windows)
 
-This is for a 64bit build that uses ~~shared dll versions of the Qt library~~ for now the static docker image works submitting an issue upstream to see what the issue is with the shared dll version
+This is for a 64bit build that uses ~~shared dll versions of the Qt library~~ for now the static docker image works
+
+[Submited issue #466](https://github.com/therecipe/qt/issues/466) Is docker windows_64_shared missing Qt5CLucene.dll
 
 ```powershell
 PS > docker pull therecipe/qt:windows_64_static
