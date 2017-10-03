@@ -138,6 +138,7 @@ func initAppConfig(qapp *widgets.QApplication, qwin *widgets.QMainWindow) *AppCo
 	log.Infof("Font ID: %d", fntid)
 	fontfamily := fntdb.ApplicationFontFamilies(fntid)
 	log.Infof("Font Family: %v", fontfamily)
+
 	helpfile := appconfig.GetStrOption("HelpFile")
 	helpfile2 := strings.Replace(helpfile, ".qhc", ".qch", -1)
 	if _, err := os.Stat(helpfile); err == nil {

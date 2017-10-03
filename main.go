@@ -14,7 +14,8 @@ import (
 
 var (
 	// VERSION of Application
-	VERSION = "0.0.1"
+	VERSION  = "0.0.1"
+	REVISION = "na"
 
 	// T translate function
 	T i18n.TranslateFunc

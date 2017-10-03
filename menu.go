@@ -146,7 +146,7 @@ func initMenu(w *widgets.QMainWindow, a *widgets.QApplication) *Menu {
 	helpAboutAction := helpMenu.AddAction(T("help_about_label"))
 	helpAboutAction.SetEnabled(true)
 	helpAboutAction.ConnectTriggered(func(checked bool) {
-		widgets.QMessageBox_About(w, "NeoChess Database", "Version "+VERSION)
+		widgets.QMessageBox_About(w, "NeoChess Database", "Version "+VERSION+" / Revision: "+REVISION)
 	})
 
 	return this
