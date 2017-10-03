@@ -23,7 +23,8 @@ Chess Database System written in Go using Qt
 - [ ] Review Licensing
 
 [1]: QtWebengine as far as I know still has a bug either in Qt or in the bindings to golang.
-So that it isn't fully supported yet see [Issue](https://github.com/therecipe/qt/issues/217#issuecomment-280940272)
+So that it isn't fully supported in windows yet see [Issue](https://github.com/therecipe/qt/issues/217#issuecomment-280940272) 
+And since I want NeoChess to build at least in Linux, iOS, and Windows, I'll just work with QTextEdit instead.
 
 ## How to build
 
@@ -34,7 +35,9 @@ So that it isn't fully supported yet see [Issue](https://github.com/therecipe/qt
 - [Qt](https://www.qt.io) Qt Framework for your development environment
 - [Go Qt Binding](https://github.com/therecipe/qt/) Note therecipe also provides docker images for targeting each of the environments, if you don't want to configure this yourself
 
-#### Go Libraries 
+#### Go Libraries
+
+Note at some point we might pull copies of these libraries into a vendor directory of this repository.
 
 - [Go Single Instance](https://github.com/allan-simon/go-singleinstance)
   - Used to enforce only a single instance of neochess running
