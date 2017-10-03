@@ -2,7 +2,9 @@ package main
 
 import (
 	log "github.com/sirupsen/logrus"
+	"github.com/therecipe/qt/core"
 	"github.com/therecipe/qt/gui"
+	"github.com/therecipe/qt/help"
 	"github.com/therecipe/qt/widgets"
 )
 
@@ -147,8 +149,30 @@ func initMenu(w *widgets.QMainWindow, a *widgets.QApplication) *Menu {
 			err = cmd.Wait()
 			log.Info(fmt.Sprintf("Command finished with error: %v", err))
 		*/
-		// helpengine := help.NewQHelpEngine(AppSettings.HelpFile, w)
-		// helpengine.SetupData()
+		helpengine := help.NewQHelpEngine(AppSettings.HelpFile, w)
+		helpengine.SetupData()
+		helpdialog := widgets.NewQDialog(w, core.Qt__Dialog)
+		hbox := widgets.NewQHBoxLayout()
+		tWidget := widgets.NewQTabWidget(nil)
+		tWidget.SetMaximumWidth(200)
+		tWidget.AddTab(helpengine.ContentWidget(), "Content")
+		tWidget.AddTab(helpengine.IndexWidget(), "Index")
+
+		textViewer := widgets.NewQTextBrowser(nil)
+		url := core.NewQUrl()
+		url.SetUrl("qthelp://org.neodevelop.neochess/doc/index.html", core.QUrl__TolerantMode)
+		textViewer.SetSource(url)
+		horizSplitter := widgets.NewQSplitter2(core.Qt__Horizontal, nil)
+		horizSplitter.InsertWidget(0, tWidget)
+		horizSplitter.InsertWidget(1, textViewer)
+		horizSplitter.Hide()
+		hbox.AddWidget(horizSplitter, 0, core.Qt__AlignTop)
+		helpdialog.SetLayout(hbox)
+		if helpdialog.Exec() != int(widgets.QDialog__Accepted) {
+			log.Info("Canceled option edit")
+		} else {
+			log.Info("Options editied changes")
+		}
 		// helpbrowser := widgets.NewQTextBrowser(w)
 		// helpbrowser.LoadResource()
 	})

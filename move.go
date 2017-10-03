@@ -154,9 +154,10 @@ func (m MoveType) ToRune() string {
 // ToSAN Create SAN notation from Move
 func (m MoveType) ToSAN() string {
 	san := ""
+	country := "English"
 	if !m.isCastlingMove() {
 		if m.piece().Kind() != Pawn {
-			san += m.piece().Kind().ToRune()
+			san += m.piece().Kind().ToRuneCountry(country)
 		} else {
 
 		}

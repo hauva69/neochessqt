@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/therecipe/qt/gui"
 
@@ -129,6 +130,7 @@ func initAppConfig(qapp *widgets.QApplication, qwin *widgets.QMainWindow) *AppCo
 		appconfig.Options = append(appconfig.Options, OptionType{"1.0.0", "PGNStyleFile", "PGN Style File", "file", "CSS Files (*.css)", false, appconfig.Datadir + "/pgntextstyle.css", 0, nil})
 		appconfig.Options = append(appconfig.Options, OptionType{"1.0.0", "HelpFile", "Help File", "file", "Help File (*.qch)", false, appconfig.Datadir + "/neochess_US.qch", 0, nil})
 		appconfig.Options = append(appconfig.Options, OptionType{"1.0.0", "PossibleMove", "Possible Move Color", "color", "Possible Move Color", false, "", 0, gui.NewQColor3(8, 145, 17, 100)})
+		appconfig.Options = append(appconfig.Options, OptionType{"1.0.0", "PGNPieceCountryDisplay", "PGN Piece Display", "dropdown", "Figurine;English;Dutch", false, "", 0, nil})
 	}
 
 	helpfile := appconfig.GetStrOption("HelpFile")
@@ -232,6 +234,11 @@ func (ac *AppConfig) EditConfig() {
 			if option.Boolval {
 				item.SetCheckState(core.Qt__Checked)
 			}
+			fbox.AddRow3(option.Label, item)
+		case "dropdown":
+			item := widgets.NewQComboBox(nil)
+			vals := strings.Split(option.Descr, ";")
+			item.AddItems(vals)
 			fbox.AddRow3(option.Label, item)
 		case "string":
 			item := widgets.NewQLineEdit2(option.Strval, nil)
