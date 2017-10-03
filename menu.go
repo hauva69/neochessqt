@@ -138,7 +138,7 @@ func initMenu(w *widgets.QMainWindow, a *widgets.QApplication) *Menu {
 
 	helpContentsAction := helpMenu.AddAction(T("help_contents_label"))
 	helpContentsAction.SetEnabled(true)
-	helpContentsAction.ConnectTriggered(DisplayHelp)
+	helpContentsAction.ConnectTriggered(func(checked bool) { DisplayHelp(w) })
 
 	// Help / About
 	helpMenu.AddSeparator()
@@ -160,7 +160,7 @@ func SaveExit(checked bool) {
 	Application.Quit()
 }
 
-func DisplayHelp(checked bool) {
+func DisplayHelp(w *widgets.QMainWindow) {
 	log.Infof("HelpEngine from: %s", AppSettings.HelpFile)
 	helpengine := help.NewQHelpEngine(AppSettings.HelpFile, w)
 	helpengine.SetupData()

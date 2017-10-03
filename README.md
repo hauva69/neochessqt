@@ -8,17 +8,22 @@ Chess Database System written in Go using Qt
 
 - [x] Setup Github Environment
 - [x] Commit early pilot assets
-- [ ] Refactor current code prior to committing to repository
-- [ ] Commit all of the current application code
+- [x] Refactor current code prior to committing to repository
+- [x] Commit all of the current application code
 - [x] Initial Move Gen Engine for use with Game Board View
+- [ ] Integrate and commit a Binary Game Storage
+- [ ] Enable Tree View for Recent Databases
+- [ ] Integrate and commit a PGN Importer
 - [ ] Add Support for UCI engines
 - [ ] Create test suite for Move Gen Engine
-- [ ] Create initial PGN Editor based on Qt Webengine
+- [ ] Create initial PGN Editor based on ~~QtWebengine~~ QTextEdit[1]
 - [ ] Document Binary Game Storage Engine
-- [ ] Create Import for PGN files to Binary Game Storage
 - [ ] Create Import for SCID format to Binary Game Storage
 - [ ] Create Import for Chessbase format (at least for known formats) to Binary Game Storage
 - [ ] Review Licensing
+
+[1]: QtWebengine as far as I know still has a bug either in Qt or in the bindings to golang.
+So that it isn't fully supported yet see [Issue](https://github.com/therecipe/qt/issues/217#issuecomment-280940272)
 
 ## How to build
 
