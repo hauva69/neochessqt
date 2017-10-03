@@ -1,4 +1,4 @@
-# neochess
+# NeoChess
 
 Chess Database System written in Go using Qt
 
