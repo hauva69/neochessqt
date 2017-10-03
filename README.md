@@ -4,6 +4,18 @@
 
 Chess Database System written in Go using Qt
 
+## Table of content
+
+- [Key Features and Progress](#Key-Features-and-Progress)
+- [How to build](#How-to-build)
+    - [Prerequisites](#Prerequisites)
+    - [Go Libraries](#Go-Libraries)
+    - [Linux]($Linux)
+    - [Windows](#Windows)
+    - [OS X](#OS-X)
+- [Credits](#Credits)
+- [Inspirations](#Inspirations)
+
 ## Key Features and Progress
 
 - [x] Setup Github Environment
@@ -17,7 +29,7 @@ Chess Database System written in Go using Qt
 - [ ] Add Support for UCI engines
 - [ ] Create test suite for Move Gen Engine
 - [ ] Create initial PGN Editor based on ~~QtWebengine~~ QTextEdit[1]
-- [ ] Create and Setup Installers for Releases for iOS, Windows, Linux
+- [ ] Create and Setup Installers for Releases for OS X, Windows, Linux
 - [ ] Document Binary Game Storage Engine
 - [ ] Create Import for SCID format to Binary Game Storage
 - [ ] Create Import for Chessbase format (at least for known formats) to Binary Game Storage
@@ -169,7 +181,9 @@ PS > qtdeploy -docker build windows_64_static
 - [therecipe/qt](https://github.com/therecipe/qt/) Binding Library used to develop Go GUI applications utilizing the Qt framework.
 - [Qt Styling](https://github.com/ColinDuquesnoy/QDarkStyleSheet) Base style sheet with modifications
 
-## Inspiring Chess Related Go Projects
+## Inspirations
+
+Inspiring Chess Related Go Projects
 
 - [Donna](https://github.com/michaeldv/donna)
 
