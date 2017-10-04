@@ -77,7 +77,7 @@ func initDBDock(w *widgets.QMainWindow) *DBDock {
 func (dbd *DBDock) LoadCatalogDatabase(event *gui.QMouseEvent) {
 	dbd.tree.MouseDoubleClickEventDefault(event)
 	// log.Info(fmt.Sprintf("Loadinging type: %s with key: %s ", dbd.tree.currenttype, dbd.tree.currentfile))
-	cdb, err := OpenFile(dbd.tree.currentfile, dbd.tree.currenttype)
+	cdb, err := OpenFile(d dbd.tree.currentfile, dbd.tree.currenttype)
 	if cdb.CheckIndex {
 		needsupdate, err := cdb.NeedIndex()
 		if err == nil && needsupdate {
