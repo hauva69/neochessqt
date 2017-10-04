@@ -5,17 +5,23 @@ p.comment {
     font-style: italic; 
 } 
 
+span.piece {
+    font-family: "ChessAlpha2";
+    font-size: 16;
+    color: #aaa;
+}
+
 span.move { 
-    font-family: "Chess Alpha 2";
-    font-size: 12;
+    font-size: 14;
     color: #aaa;    
 } 
 
-span.currentmove { 
-    color:#ff7729;    
+span.current { 
+    color:#ff7729 !important;    
 } 
 
 span.movenumber {  
+    font-size: 14;
     font-weight:bold; 
     color: #aaa;
 }

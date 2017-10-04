@@ -15,22 +15,22 @@ type ToolBar struct {
 func initToolBar(w *widgets.QMainWindow) *ToolBar {
 	this := NewToolBar("MainToolBar", w)
 	var toolbar = this
-	toolbar.SetIconSize(core.NewQSize2(24, 24))
+	toolbar.SetIconSize(core.NewQSize2(48, 48))
 	toolbar.SetToolButtonStyle(core.Qt__ToolButtonIconOnly) // core.Qt__ToolButtonTextUnderIcon
 
-	toolbar.addbutton(T("new_database_label"), T("new_database_label"), ":/qml/assets/address-book-blue.png", defaultbutton)
-	toolbar.addbutton(T("open_database_label"), T("open_database_label"), ":/qml/assets/blue-folder-open.png", defaultbutton)
-	toolbar.addbutton("Import DB", "Import Database", ":/qml/assets/blue-folder-import.png", defaultbutton)
-	toolbar.addbutton("Export DB", "Open Database", ":/qml/assets/blue-folder-export.png", defaultbutton)
-	toolbar.addbutton("Import Game", "Import Game", ":/qml/assets/blue-document-import.png", defaultbutton)
-	toolbar.addbutton("Export Game", "Export Game", ":/qml/assets/blue-document-export.png", defaultbutton)
-	toolbar.addbutton("Search DB", "Search Database", ":/qml/assets/magnifier.png", defaultbutton)
-	toolbar.addbutton("Options", "Options", ":/qml/assets/system-monitor.png", openoptions)
+	toolbar.addbutton(T("new_database_label"), T("new_database_label"), ":/qml/assets/toolbar/ic_create_new_folder_white_48dp_2x.png", defaultbutton)
+	toolbar.addbutton(T("open_database_label"), T("open_database_label"), ":/qml/assets/toolbar/ic_folder_white_48dp_2x.png", defaultbutton)
+	toolbar.addbutton("Import DB", "Import Database", ":/qml/assets/toolbar/ic_file_upload_white_48dp_2x.png", defaultbutton)
+	toolbar.addbutton("Export DB", "Export Database", ":/qml/assets/toolbar/ic_file_download_white_48dp_2x.png", defaultbutton)
+	//toolbar.addbutton("Import Game", "Import Game", ":/qml/assets/blue-document-import.png", defaultbutton)
+	//toolbar.addbutton("Export Game", "Export Game", ":/qml/assets/blue-document-export.png", defaultbutton)
+	toolbar.addbutton("Search DB", "Search Database", ":/qml/assets/toolbar/ic_search_white_48dp_2x.png", defaultbutton)
+	toolbar.addbutton("Options", "Options", ":/qml/assets/toolbar/ic_settings_white_48dp_2x.png", openoptions)
 	spacer := widgets.NewQWidget(nil, core.Qt__Widget)
 	sp := widgets.NewQSizePolicy2(widgets.QSizePolicy__Expanding, widgets.QSizePolicy__Expanding, widgets.QSizePolicy__ToolButton)
 	spacer.SetSizePolicy(sp)
 	toolbar.AddWidget(spacer)
-	toolbar.addbutton("Help", "Help", ":/qml/assets/question.png", func(checked bool) { DisplayHelp(w) })
+	toolbar.addbutton("Help", "Help", ":/qml/assets/toolbar/ic_help_white_48dp_2x.png", func(checked bool) { DisplayHelp(w) })
 
 	return this
 }

@@ -312,9 +312,25 @@ func (g *Game) LoadMoves(cb *BoardType) {
 			g.CurrentPgn += "<span class='movenumber'>" + strconv.Itoa(mn) + ".</span>"
 		}
 		if index == cv {
-			g.CurrentPgn += "<span class='currentmove'>" + Move.ToSAN() + "</span> "
+			mvp := Move.piece().Kind()
+			if mvp == Pawn {
+				g.CurrentPgn += "<span class='move current'>" + Move.ToSAN() + "</span>"
+			} else {
+				mv := Move.ToSAN()
+				fl := mv[1:1]
+				rst := mv[2:]
+				g.CurrentPgn += "<span class='piece current'>" + fl + "</span><span class='move current'>" + rst + "</span>"
+			}
 		} else {
-			g.CurrentPgn += "<span class='move'>" + Move.ToSAN() + "</span> "
+			mvp := Move.piece().Kind()
+			if mvp == Pawn {
+				g.CurrentPgn += "<span class='move'>" + Move.ToSAN() + "</span>"
+			} else {
+				mv := Move.ToSAN()
+				fl := mv[1:1]
+				rst := mv[2:]
+				g.CurrentPgn += "<span class='piece'>" + fl + "</span><span class='move'>" + rst + "</span>"
+			}
 		}
 	}
 }
