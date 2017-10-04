@@ -20,9 +20,9 @@ func initToolBar(w *widgets.QMainWindow) *ToolBar {
 
 	toolbar.addbutton(T("new_database_label"), T("new_database_label"), ":/qml/assets/toolbar/ic_create_new_folder_white_48dp_2x.png", defaultbutton)
 	toolbar.addbutton(T("open_database_label"), T("open_database_label"), ":/qml/assets/toolbar/ic_folder_white_48dp_2x.png", defaultbutton)
-	toolbar.addbutton("Import DB", "Import Database", ":/qml/assets/toolbar/ic_file_upload_white_48dp_2x.png", defaultbutton)
+	toolbar.addbutton("Import DB", "Import PGN Database", ":/qml/assets/toolbar/ic_file_upload_white_48dp_2x.png", func(checked bool) { loadpgndb(w) })
 	toolbar.addbutton("Export DB", "Export Database", ":/qml/assets/toolbar/ic_file_download_white_48dp_2x.png", defaultbutton)
-	//toolbar.addbutton("Import Game", "Import Game", ":/qml/assets/blue-document-import.png", defaultbutton)
+	// toolbar.addbutton("Import PGN", "Import PGN Database", ":/qml/assets/toolbar/ic_file_upload_white_48dp_2x.png", func(checked bool) { loadpgndb(w) })
 	//toolbar.addbutton("Export Game", "Export Game", ":/qml/assets/blue-document-export.png", defaultbutton)
 	toolbar.addbutton("Search DB", "Search Database", ":/qml/assets/toolbar/ic_search_white_48dp_2x.png", defaultbutton)
 	toolbar.addbutton("Options", "Options", ":/qml/assets/toolbar/ic_settings_white_48dp_2x.png", openoptions)

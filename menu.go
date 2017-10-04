@@ -1,6 +1,9 @@
 package main
 
 import (
+	"path/filepath"
+	"strings"
+
 	log "github.com/sirupsen/logrus"
 	"github.com/therecipe/qt/core"
 	"github.com/therecipe/qt/gui"
@@ -77,7 +80,7 @@ func initMenu(w *widgets.QMainWindow, a *widgets.QApplication) *Menu {
 
 	importPGNAction := fileMenu.AddAction(T("import_pgn_label"))
 	importPGNAction.SetEnabled(true)
-	importPGNAction.ConnectTriggered(func(checked bool) {})
+	importPGNAction.ConnectTriggered(func(checked bool) { loadpgndb(w) })
 
 	// File / Import SCID
 
@@ -197,5 +200,55 @@ func DisplayHelp(w *widgets.QMainWindow) {
 		log.Info("Canceled option edit")
 	} else {
 		log.Info("Options editied changes")
+	}
+}
+
+func loadpgndb(w *widgets.QMainWindow) {
+	docdir := core.QStandardPaths_StandardLocations(core.QStandardPaths__DocumentsLocation)[0]
+	filter := "PGN Files (*.pgn);;SCID Database (*.sg4);;NeoChess Database (*.ncb)"
+	fileDialog := widgets.NewQFileDialog2(w, "Open Database", docdir, filter)
+	fileDialog.SetAcceptMode(widgets.QFileDialog__AcceptOpen)
+	fileDialog.SetFileMode(widgets.QFileDialog__ExistingFile)
+	if fileDialog.Exec() != int(widgets.QDialog__Accepted) {
+		return
+	}
+	filename := fileDialog.SelectedFiles()[0]
+	log.Info(filename)
+	extension := filepath.Ext(filename)
+	dbkind := ""
+	if strings.ToUpper(extension) == ".PGN" {
+		dbkind = "PGN"
+	}
+	cdb, err := OpenFile(filename, dbkind)
+	if err != nil {
+		log.Error(err)
+	}
+	if cdb.InitIndex {
+		dialog := widgets.NewQProgressDialog2("Indexing PGN File", "Cancel", 0, 100, nil, core.Qt__Dialog)
+		dialog.SetWindowModality(core.Qt__WindowModal)
+		_, err := cdb.Index(dialog)
+		if err != nil {
+			log.Error(err)
+		}
+	} else {
+		if cdb.CheckIndex {
+			needsupdate, err := cdb.NeedIndex()
+			if err == nil && needsupdate {
+				dialog := widgets.NewQProgressDialog2("Re-indexing PGN File", "Cancel", 0, 100, nil, core.Qt__Dialog)
+				dialog.SetWindowModality(core.Qt__WindowModal)
+				_, err := cdb.Index(dialog)
+				if err != nil {
+					log.Error(err)
+				}
+			}
+		}
+	}
+	liniterror := cdb.LoadInitialGamesList()
+	if liniterror != nil {
+		log.Error(err)
+	}
+	ldbproperror := cdb.LoadDBProperties()
+	if ldbproperror != nil {
+		log.Error(err)
 	}
 }

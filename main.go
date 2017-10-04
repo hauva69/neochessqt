@@ -5,6 +5,7 @@ import (
 	"runtime"
 
 	"github.com/allan-simon/go-singleinstance"
+	"github.com/boltdb/bolt"
 	"github.com/nicksnyder/go-i18n/i18n"
 	log "github.com/sirupsen/logrus"
 
@@ -14,7 +15,9 @@ import (
 
 var (
 	// VERSION of Application
-	VERSION  = "0.0.1"
+	VERSION = "0.0.1"
+
+	// REVISION Placeholder for git stamping builds
 	REVISION = "na"
 
 	// T translate function
@@ -25,6 +28,8 @@ var (
 
 	// AppSettings main
 	AppSettings *AppConfig
+
+	catdb *bolt.DB
 )
 
 func main() {
@@ -61,9 +66,12 @@ func main() {
 	// Load or initialize settings
 	AppSettings = initAppConfig(Application, qwin)
 
-	// Desktop Size
-	// desktop := qapp.Desktop()
-	// screen := desktop.AvailableGeometry(-1)
+	var caterr error
+	catdb, caterr = bolt.Open(AppSettings.Datadir+"/catalog.db", 0644, nil)
+	if caterr != nil {
+		log.Error(caterr)
+	}
+
 	qwin.Resize(core.NewQSize2(AppSettings.GetIntOption("LastWidth"), AppSettings.GetIntOption("LastHeight")))
 
 	statusbar := initStatusBar(qwin)
