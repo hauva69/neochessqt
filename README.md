@@ -66,61 +66,8 @@ Note at some point we might pull copies of these libraries into a vendor directo
 ### Wiki Pages for Build Instructions
 
 - [For Linux Environments](https://github.com/rashwell/neochess/wiki/NeoChess-Building-on-Linux)
-
-### Windows
-
-For now on windows I use therecipe docker images to do the builds.  The main reason is that for 64bit
-building it is a bit difficult currently to use MSYS2 to get to a 64bit mingw version of Qt which will work with Go.  It is doable, just a big pain.  
-
-- Install prerequisites
-
-Download and install [Docker CE for Windows](https://store.docker.com/editions/community/docker-ce-desktop-windows)
-
-This is for a 64bit build that uses ~~shared dll versions of the Qt library~~ for now the static docker image works
-
-[Submited issue #466](https://github.com/therecipe/qt/issues/466) Is docker windows_64_shared missing Qt5CLucene.dll
-
-```powershell
-PS > docker pull therecipe/qt:windows_64_static
-```
-
-Install Binding for Qt 
-
-
-```bash
-PS > go get -u -v github.com/therecipe/qt/cmd/...
-PS > qtsetup
-```
-
-- Additional Go Libraries
-
-```powershell
-PS > go get -u github.com/allan-simon/go-singleinstance
-PS > go get -u github.com/nicksnyder/go-i18n/...
-PS > go get -u github.com/sirupsen/logrus
-PS > go get -u github.com/boltdb/bolt
-```
-
-- Clone this repository
-
-```powershell
-PS > go get github.com/rashwell/neochess
-PS > cd %GOPATH%/src/github.com/rashwell/neochess
-```
-
-- Run qtdeploy with the docker switches to build a windows 64bit version of NeoChess
-
-*Somewhere here or when you first try to build Neochess Docker is going to want to Share a folder between the Docker Image and your host machine so that it can read your Go's work GOPATH directory*
-
-```powershell
-PS > qtdeploy -docker build windows_64_static
-```
-
-### OS X
-
-- Install prerequisites
-- Clone this repository
-- Run qtdeploy in directory
+- [For Windows Environments](https://github.com/rashwell/neochess/wiki/NeoChess-Building-on-Windows)
+- [For OS X environments](https://github.com/rashwell/neochess/wiki/NeoChess-Building-on-OSX)
 
 ## Credits
 
