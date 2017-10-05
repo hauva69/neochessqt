@@ -23,9 +23,9 @@ Chess Database System written in Go using Qt
 - [x] Refactor current code prior to committing to repository
 - [x] Commit all of the current application code
 - [x] Initial Move Gen Engine for use with Game Board View
-- [ ] Integrate and commit a Binary Game Storage
-- [ ] Enable Tree View for Recent Databases
-- [ ] Integrate and commit a PGN Importer
+- [x] Integrate and commit a Binary Game Storage
+- [x] Enable Tree View for Recent Databases
+- [x] Integrate and commit a PGN Importer
 - [ ] Add Support for UCI engines
 - [ ] Create test suite for Move Gen Engine
 - [ ] Create initial PGN Editor based on ~~QtWebengine~~ QTextEdit[1]
@@ -54,6 +54,8 @@ And since I want NeoChess to build at least in Linux, iOS, and Windows, I'll jus
 
 Note at some point we might pull copies of these libraries into a vendor directory of this repository.
 
+- [BoltDB](https://github.com/boltdb/bolt) 
+  - Undecided still on persitent index storage, using this for now until everything else is ready
 - [Go Single Instance](https://github.com/allan-simon/go-singleinstance)
   - Used to enforce only a single instance of neochess running
 - [Go i18n](https://github.com/nicksnyder/go-i18n)
@@ -108,6 +110,7 @@ $ $GOPATH/bin/qtsetup
 $ go get -u github.com/allan-simon/go-singleinstance
 $ go get -u github.com/nicksnyder/go-i18n/...
 $ go get -u github.com/sirupsen/logrus
+$ go get -u github.com/boltdb/bolt
 ```
 
 - Clone this repository
@@ -149,6 +152,7 @@ PS > qtsetup
 PS > go get -u github.com/allan-simon/go-singleinstance
 PS > go get -u github.com/nicksnyder/go-i18n/...
 PS > go get -u github.com/sirupsen/logrus
+PS > go get -u github.com/boltdb/bolt
 ```
 
 - Clone this repository
@@ -186,4 +190,3 @@ PS > qtdeploy -docker build windows_64_static
 Inspiring Chess Related Go Projects
 
 - [Donna](https://github.com/michaeldv/donna)
-
