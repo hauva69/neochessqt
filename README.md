@@ -41,7 +41,7 @@ Chess Database System written in Go using Qt
 So that it isn't fully supported in windows yet see [Issue](https://github.com/therecipe/qt/issues/217#issuecomment-280940272) 
 And since I want NeoChess to build at least in Linux, iOS, and Windows, I'll just work with QTextEdit instead.
 
-## How to build
+## Building NeoChess yourself until Releases are Available
 
 ### Prerequisites
 
@@ -50,7 +50,7 @@ And since I want NeoChess to build at least in Linux, iOS, and Windows, I'll jus
 - [Qt](https://www.qt.io) Qt Framework for your development environment
 - [Go Qt Binding](https://github.com/therecipe/qt/) Note therecipe also provides docker images for targeting each of the environments, if you don't want to configure this yourself
 
-#### Go Libraries
+### Go Libraries
 
 Note at some point we might pull copies of these libraries into a vendor directory of this repository.
 
@@ -63,63 +63,9 @@ Note at some point we might pull copies of these libraries into a vendor directo
 - [Logrus](https://github.com/sirupsen/logrus)
   - Used for application logging
 
-### Linux
+### Wiki Pages for Build Instructions
 
-High level steps for now:
-
-- Install prerequisites
-  - [Qt Library](http://download.qt.io/official_releases/online_installers/qt-unified-linux-x64-online.run)
-
-```bash
-$ cd Downloads
-$ wget http://download.qt.io/official_releases/online_installers/qt-unified-linux-x64-online.run
-$ chmod +x qt-unified-linux-x64-online.run
-$ sudo ./qt-unified-linux-x64-online.run
-```
-
-*Just install all the default options.  For me this install version 5.9.1 in /opt/Qt5.9.1 directory.*
-
-- Add some additional libraries and compilers if needed
-- Debian/Ubuntu
-
-```bash
-$ sudo apt-get -y install build-essential libgl1-mesa-dev libpulse-dev 
-```
-
-- Qt Binding *Note I added environ variables around here
-- .bashrc appended
-
-```bash
-  export QT_VERSION=5.9.1 
-  export QT_DIR=/opt/Qt5.9.1
-```
-
-- restarted terminal
-- Setup Qt binding for golang library
-
-```bash
-$ go get -u -v github.com/therecipe/qt/cmd/...
-$ $GOPATH/bin/qtsetup
-```
-
-*If everything goes well you 5-10 example apps will test compile and popup towards the end of setup.*
-
-  - Additional Go libraries
-
-```bash
-$ go get -u github.com/allan-simon/go-singleinstance
-$ go get -u github.com/nicksnyder/go-i18n/...
-$ go get -u github.com/sirupsen/logrus
-$ go get -u github.com/boltdb/bolt
-```
-
-- Clone this repository
-
-```bash
-$ go get github.com/rashwell/neochess
-$ cd $GOPATH/src/github.com/rashwell/neochess
-$ $GOPATH/bin/qtdeploy
-```
+- [For Linux Environments](https://github.com/rashwell/neochess/wiki/NeoChess-Building-on-Linux)
 
 ### Windows
 
