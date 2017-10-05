@@ -2,11 +2,22 @@ var gulp = require('gulp');
 var doc = require('gulp-task-doc').patchGulp();
 var git = require('git-rev');
 var exec = require('child_process').exec;
+var fs = require('fs');
 
-var qtbin = "/opt/Qt/5.9.1/gcc_64/bin/";
+//var qtbin = "/opt/Qt/5.9.1/gcc_64/bin/";
+var qtbin = "/opt/Qt5.8.0/5.8/gcc_64/bin/";
+
+gulp.task('check', function(cb) {
+    if (!fs.existsSync(qtbin)) {
+        console.log('Qt Binary directory not found at ' + qtbin);
+        console.log('Please edit gulpfile.js and adjust');
+        process.exit(1);
+    }
+    cb();
+})
 
 // @internal
-gulp.task('default', ['help']);
+gulp.task('default', ['check','help']);
 
 /**
  * Display this help

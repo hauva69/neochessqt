@@ -35,6 +35,7 @@ type AppConfig struct {
 	Datadir      string
 	PGNStyle     string
 	HelpFile     string
+	HDMode       bool
 	Options      []OptionType
 }
 
@@ -121,6 +122,14 @@ func initAppConfig(qapp *widgets.QApplication, qwin *widgets.QMainWindow) *AppCo
 	if !appconfig.Load() {
 		desktop := qapp.Desktop()
 		screenrect := desktop.AvailableGeometry(-1)
+		dpi := qapp.Screens()[0].LogicalDotsPerInch()
+		log.Infof("DPI :%f", dpi)
+		if dpi <= 96.0 {
+			appconfig.HDMode = false
+		} else {
+			appconfig.HDMode = true
+		}
+
 		appconfig.Options = append(appconfig.Options, OptionType{"1.0.0", "LastWidth", "Last Application Width", "int", "Last width of application", false, "", int(screenrect.Width() * 80 / 100), nil})
 		appconfig.Options = append(appconfig.Options, OptionType{"1.0.0", "LastHeight", "Last Application Height", "int", "Last height of application", false, "", int(screenrect.Height() * 90 / 100), nil})
 		appconfig.Options = append(appconfig.Options, OptionType{"1.0.0", "ShowBoardLables", "Show Board Labels", "bool", "Show Algebraic labels on the edges of the board.", true, "", 0, nil})

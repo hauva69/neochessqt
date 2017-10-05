@@ -8,11 +8,11 @@ Chess Database System written in Go using Qt
 
 - [Key Features and Progress](#Key-Features-and-Progress)
 - [How to build](#how-to-build)
-    - [Prerequisites](#prerequisites)
-    - [Go Libraries](#go-libraries)
-    - [Linux](#inux)
-    - [Windows](#windows)
-    - [OS X](#os-x)
+  - [Prerequisites](#prerequisites)
+  - [Go Libraries](#go-libraries)
+  - [Linux](#inux)
+  - [Windows](#windows)
+  - [OS X](#os-x)
 - [Credits](#credits)
 - [Inspirations](#inspirations)
 
@@ -77,23 +77,23 @@ $ sudo ./qt-unified-linux-x64-online.run
 
 *Just install all the default options.  For me this install version 5.9.1 in /opt/Qt5.9.1 directory.*
 
-  - Add some additional libraries and compilers if needed
-    - Debian/Ubuntu
+- Add some additional libraries and compilers if needed
+- Debian/Ubuntu
 
 ```bash
 $ sudo apt-get -y install build-essential libgl1-mesa-dev libpulse-dev 
 ```
 
-  - Qt Binding *Note I added environ variables around here
-  - .bashrc appended
+- Qt Binding *Note I added environ variables around here
+- .bashrc appended
 
 ```bash
   export QT_VERSION=5.9.1 
   export QT_DIR=/opt/Qt5.9.1
 ```
 
-  - restarted terminal
-  - Setup Qt binding for golang library
+- restarted terminal
+- Setup Qt binding for golang library
 
 ```bash
 $ go get -u -v github.com/therecipe/qt/cmd/...

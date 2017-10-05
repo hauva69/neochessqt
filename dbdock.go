@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"strconv"
 
 	"github.com/boltdb/bolt"
@@ -14,8 +15,12 @@ import (
 // DBDock struct
 type DBDock struct {
 	widgets.QDockWidget
-	tree  *widgets.QTreeView
-	model *gui.QStandardItemModel
+	tree         *widgets.QTreeView
+	model        *gui.QStandardItemModel
+	current      string
+	currenttype  string
+	currentfile  string
+	currentcount string
 }
 
 func initDBDock(w *widgets.QMainWindow) *DBDock {
@@ -28,7 +33,8 @@ func initDBDock(w *widgets.QMainWindow) *DBDock {
 	dbdock.tree.SetModel(dbdock.model)
 	dbdock.tree.SetUniformRowHeights(true)
 	dbdock.tree.SetAlternatingRowColors(true)
-
+	dbdock.tree.ConnectMouseDoubleClickEvent(dbdock.LoadCatalogDatabase)
+	dbdock.tree.ConnectSelectionCommand(dbdock.SelectionCommand)
 	categories := []string{"NeoChess Databases", "PGN DataBases", "SCID Databases"}
 	collectionbuckets := [][]byte{[]byte("NEObucket"), []byte("PGNbucket"), []byte("SCIDbucket")}
 	for index := 0; index < 3; index++ {
@@ -73,11 +79,20 @@ func initDBDock(w *widgets.QMainWindow) *DBDock {
 	return this
 }
 
+func (dbd *DBDock) SelectionCommand(index *core.QModelIndex, event *core.QEvent) core.QItemSelectionModel__SelectionFlag {
+	dbd.current = dbd.model.Data(index, int(core.Qt__DisplayRole)).ToString()
+	dbd.currentfile = dbd.model.Data(index, int(core.Qt__UserRole)).ToString()
+	dbd.currenttype = dbd.model.Data(index, int(core.Qt__UserRole)+1).ToString()
+	dbd.currentcount = dbd.model.Data(index, int(core.Qt__UserRole)+2).ToString()
+	// Log.Info(fmt.Sprintf("Current Type: %s with Index: %s", dbt.currenttype, dbt.current))
+	return dbd.tree.SelectionCommandDefault(index, event)
+}
+
 // LoadCatalogDatabase comment
 func (dbd *DBDock) LoadCatalogDatabase(event *gui.QMouseEvent) {
 	dbd.tree.MouseDoubleClickEventDefault(event)
-	// log.Info(fmt.Sprintf("Loadinging type: %s with key: %s ", dbd.tree.currenttype, dbd.tree.currentfile))
-	cdb, err := OpenFile(d dbd.tree.currentfile, dbd.tree.currenttype)
+	log.Info(fmt.Sprintf("Loadinging type: %s with key: %s ", dbd.currenttype, dbd.currentfile))
+	cdb, err := OpenFile(dbd.currentfile, dbd.currenttype)
 	if cdb.CheckIndex {
 		needsupdate, err := cdb.NeedIndex()
 		if err == nil && needsupdate {

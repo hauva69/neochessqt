@@ -15,22 +15,28 @@ type ToolBar struct {
 func initToolBar(w *widgets.QMainWindow) *ToolBar {
 	this := NewToolBar("MainToolBar", w)
 	var toolbar = this
-	toolbar.SetIconSize(core.NewQSize2(48, 48))
-	toolbar.SetToolButtonStyle(core.Qt__ToolButtonIconOnly) // core.Qt__ToolButtonTextUnderIcon
+	hdiconstr := "_1x"
+	if AppSettings.HDMode {
+		toolbar.SetIconSize(core.NewQSize2(48, 48))
+		hdiconstr = "_2x"
+	} else {
+		toolbar.SetIconSize(core.NewQSize2(24, 24))
+	}
 
-	toolbar.addbutton(T("new_database_label"), T("new_database_label"), ":/qml/assets/toolbar/ic_create_new_folder_white_48dp_2x.png", defaultbutton)
-	toolbar.addbutton(T("open_database_label"), T("open_database_label"), ":/qml/assets/toolbar/ic_folder_white_48dp_2x.png", defaultbutton)
-	toolbar.addbutton("Import DB", "Import PGN Database", ":/qml/assets/toolbar/ic_file_upload_white_48dp_2x.png", func(checked bool) { loadpgndb(w) })
-	toolbar.addbutton("Export DB", "Export Database", ":/qml/assets/toolbar/ic_file_download_white_48dp_2x.png", defaultbutton)
-	// toolbar.addbutton("Import PGN", "Import PGN Database", ":/qml/assets/toolbar/ic_file_upload_white_48dp_2x.png", func(checked bool) { loadpgndb(w) })
+	toolbar.SetToolButtonStyle(core.Qt__ToolButtonIconOnly) // core.Qt__ToolButtonTextUnderIcon
+	toolbar.addbutton(T("new_database_label"), T("new_database_label"), ":/qml/assets/toolbar/ic_create_new_folder_white_48dp"+hdiconstr+".png", defaultbutton)
+	toolbar.addbutton(T("open_database_label"), T("open_database_label"), ":/qml/assets/toolbar/ic_folder_white_48dp"+hdiconstr+".png", defaultbutton)
+	toolbar.addbutton("Import DB", "Import PGN Database", ":/qml/assets/toolbar/ic_file_upload_white_48dp"+hdiconstr+".png", func(checked bool) { loadpgndb(w) })
+	toolbar.addbutton("Export DB", "Export Database", ":/qml/assets/toolbar/ic_file_download_white_48dp"+hdiconstr+".png", defaultbutton)
+	// toolbar.addbutton("Import PGN", "Import PGN Database", ":/qml/assets/toolbar/ic_file_upload_white_48dp" + hdiconstr+".png", func(checked bool) { loadpgndb(w) })
 	//toolbar.addbutton("Export Game", "Export Game", ":/qml/assets/blue-document-export.png", defaultbutton)
-	toolbar.addbutton("Search DB", "Search Database", ":/qml/assets/toolbar/ic_search_white_48dp_2x.png", defaultbutton)
-	toolbar.addbutton("Options", "Options", ":/qml/assets/toolbar/ic_settings_white_48dp_2x.png", openoptions)
+	toolbar.addbutton("Search DB", "Search Database", ":/qml/assets/toolbar/ic_search_white_48dp"+hdiconstr+".png", defaultbutton)
+	toolbar.addbutton("Options", "Options", ":/qml/assets/toolbar/ic_settings_white_48dp"+hdiconstr+".png", openoptions)
 	spacer := widgets.NewQWidget(nil, core.Qt__Widget)
 	sp := widgets.NewQSizePolicy2(widgets.QSizePolicy__Expanding, widgets.QSizePolicy__Expanding, widgets.QSizePolicy__ToolButton)
 	spacer.SetSizePolicy(sp)
 	toolbar.AddWidget(spacer)
-	toolbar.addbutton("Help", "Help", ":/qml/assets/toolbar/ic_help_white_48dp_2x.png", func(checked bool) { DisplayHelp(w) })
+	toolbar.addbutton("Help", "Help", ":/qml/assets/toolbar/ic_help_white_48dp"+hdiconstr+".png", func(checked bool) { DisplayHelp(w) })
 
 	return this
 }
