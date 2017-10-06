@@ -309,27 +309,28 @@ func (g *Game) LoadMoves(cb *BoardType) {
 	for index, Move := range g.Moves {
 		if Move.color() == White {
 			mn++
-			g.CurrentPgn += "<span class='movenumber'>" + strconv.Itoa(mn) + ".</span>"
+			g.CurrentPgn += "<span class='movenumber'>" + strconv.Itoa(mn) + ". </span>"
 		}
 		if index == cv {
+			// mv := Move.ToSAN()
 			mvp := Move.piece().Kind()
 			if mvp == Pawn {
-				g.CurrentPgn += "<span class='move current'>" + Move.ToSAN() + "</span>"
+				g.CurrentPgn += "<span class='move current'>" + Move.ToSAN() + " </span>"
 			} else {
-				mv := Move.ToSAN()
-				fl := mv[1:1]
-				rst := mv[2:]
-				g.CurrentPgn += "<span class='piece current'>" + fl + "</span><span class='move current'>" + rst + "</span>"
+				mv := Move.ToSANFigurine()
+				fl := mv[0:1]
+				rst := mv[1:]
+				g.CurrentPgn += "<span class='piece current'>" + fl + "</span><span class='move current'>" + rst + " </span>"
 			}
 		} else {
 			mvp := Move.piece().Kind()
 			if mvp == Pawn {
-				g.CurrentPgn += "<span class='move'>" + Move.ToSAN() + "</span>"
+				g.CurrentPgn += "<span class='move'>" + Move.ToSAN() + " </span>"
 			} else {
-				mv := Move.ToSAN()
-				fl := mv[1:1]
-				rst := mv[2:]
-				g.CurrentPgn += "<span class='piece'>" + fl + "</span><span class='move'>" + rst + "</span>"
+				mv := Move.ToSANFigurine()
+				fl := mv[0:1]
+				rst := mv[1:]
+				g.CurrentPgn += "<span class='piece'>" + fl + "</span><span class='move'>" + rst + " </span>"
 			}
 		}
 	}

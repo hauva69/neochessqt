@@ -758,7 +758,7 @@ QTabBar:focus
 }
 
 QTabBar::close-button  {
-    image: url(:qml/assets/rc/close.png);
+    image: url(:qml/assets/rc/close.png);    
     background: transparent;
 }
 
@@ -898,8 +898,11 @@ QTabBar QToolButton::right-arrow:disabled {
 QDockWidget {
     background: #31363b;
     border: 1px solid #403F3F;
-    titlebar-close-icon: url(:qml/assets/rc/close.png);
-    titlebar-normal-icon: url(:qml/assets/rc/undock.png);
+    font-size: 16px;
+   /* titlebar-close-icon: url(:qml/assets/rc/close.png); */
+   /* titlebar-normal-icon: url(:qml/assets/rc/undock.png); */
+    titlebar-close-icon: url(:qml/assets/toolbar/ic_cancel_white_24dp_2x.png); 
+    titlebar-normal-icon: url(:qml/assets/toolbar/ic_arrow_drop_down_circle_white_24dp_2x.png);
 }
 
 QDockWidget::title {
@@ -910,9 +913,13 @@ QDockWidget::close-button, QDockWidget::float-button {
     border: 1px solid transparent;
     border-radius: 2px;
     background: transparent;
+    height: 24px;
 }
 
 QDockWidget::close-button:hover, QDockWidget::float-button:hover {
+    border-color: #76797C;
+    border-style: solid;    
+    border-radius: 2px;
     background: rgba(255, 255, 255, 10);
 }
 

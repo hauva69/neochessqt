@@ -105,7 +105,7 @@ func (bs *BoardScene) AddSquares() {
 	rewindarrowitem.SetFlag(widgets.QGraphicsItem__ItemIsMovable, false)
 
 	buttonnumber++
-	playarrow := gui.NewQPixmap5(":qml/assets/toolbar/ic_chevron_left_white_48dp_2x.png", "png", core.Qt__AutoColor)
+	playarrow := gui.NewQPixmap5(":qml/assets/toolbar/ic_chevron_right_white_48dp_2x.png", "png", core.Qt__AutoColor)
 	scaledplayarrow := playarrow.Scaled2(scalex, scaley, core.Qt__KeepAspectRatio, core.Qt__SmoothTransformation)
 	playarrowitem := widgets.NewQGraphicsPixmapItem2(scaledplayarrow, nil)
 	playarrowitem.SetTransformationMode(core.Qt__SmoothTransformation)
@@ -114,7 +114,7 @@ func (bs *BoardScene) AddSquares() {
 	playarrowitem.SetFlag(widgets.QGraphicsItem__ItemIsMovable, false)
 
 	buttonnumber++
-	rightarrow := gui.NewQPixmap5(":qml/assets/toolbar/ic_chevron_right_white_48dp_2x.png", "png", core.Qt__AutoColor)
+	rightarrow := gui.NewQPixmap5(":qml/assets/toolbar/ic_chevron_left_white_48dp_2x.png", "png", core.Qt__AutoColor)
 	scaledrightarrow := rightarrow.Scaled2(scalex, scaley, core.Qt__KeepAspectRatio, core.Qt__SmoothTransformation)
 	rightarrowitem := widgets.NewQGraphicsPixmapItem2(scaledrightarrow, nil)
 	rightarrowitem.SetTransformationMode(core.Qt__SmoothTransformation)

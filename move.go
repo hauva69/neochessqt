@@ -151,6 +151,80 @@ func (m MoveType) ToRune() string {
 	return m.from().ToRune() + m.to().ToRune()
 }
 
+func (m MoveType) ToSANFigurine() string {
+	san := ""
+	//country := "English"
+	// 	"BNRQK"
+	// 	"]^_ab"
+	if !m.isCastlingMove() {
+		if m.piece().Kind() != Pawn {
+			if m.piece().Color() == White {
+				switch m.piece().Kind().ToRune() {
+				case "B":
+					san += "J"
+				case "N":
+					san += "K"
+				case "R":
+					san += "L"
+				case "Q":
+					san += "M"
+				case "K":
+					san += "N"
+				}
+			} else {
+				switch m.piece().Kind().ToRune() {
+				case "B":
+					san += "j"
+				case "N":
+					san += "k"
+				case "R":
+					san += "l"
+				case "Q":
+					san += "m"
+				case "K":
+					san += "n"
+				}
+			}
+		}
+
+		if m.DisAmbiguate == DisAmbiguateByFile {
+			san += m.from().FileToRune()
+		}
+		if m.DisAmbiguate == DisAmbiguateByRank {
+			san += m.from().RankToRune()
+		}
+		if m.DisAmbiguate == DisAmbiguateByBoth {
+			san += m.from().ToRune()
+		}
+		if m.captured().Kind() != Empty {
+			if m.piece().Kind() == Pawn {
+				if m.DisAmbiguate != DisAmbiguateByFile {
+					san += m.from().FileToRune()
+				}
+			}
+			san += "x"
+		}
+		san += m.to().ToRune()
+		if m.isPromotionMove() {
+			san += "="
+			san += m.getPromotionTo().ToRune()
+		}
+		san += m.MoveSuffix
+		return san
+	}
+	if m.to() == SquareType(WhiteKingSideKingCastleSquare) ||
+		m.to() == SquareType(BlackKingSideKingCastleSquare) {
+		san = "O-O"
+		return san
+	}
+	if m.to() == SquareType(WhiteQueenSideKingCastleSquare) ||
+		m.to() == SquareType(BlackQueenSideKingCastleSquare) {
+		san = "O-O-O"
+		return san
+	}
+	return san
+}
+
 // ToSAN Create SAN notation from Move
 func (m MoveType) ToSAN() string {
 	san := ""

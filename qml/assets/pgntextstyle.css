@@ -7,21 +7,20 @@ p.comment {
 
 span.piece {
     font-family: "ChessAlpha2";
-    font-size: 16;
+    font-size: 18pt;
     color: #aaa;
 }
 
 span.move { 
-    font-size: 14;
+    font-size: 16pt;
     color: #aaa;    
 } 
 
 span.current { 
-    color:#ff7729 !important;    
+    color:#ffb38a !important;    
 } 
 
 span.movenumber {  
-    font-size: 14;
-    font-weight:bold; 
-    color: #aaa;
+    font-size: 16pt;
+    color: rgb(154, 182, 230);
 }
