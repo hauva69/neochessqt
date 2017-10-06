@@ -4,23 +4,38 @@ var git = require('git-rev');
 var exec = require('child_process').exec;
 var fs = require('fs');
 
-//var qtbin = "/opt/Qt/5.9.1/gcc_64/bin/";
-var qtbin = "/opt/Qt5.8.0/5.8/gcc_64/bin/";
+var qtbin = "";
 
-gulp.task('check', function(cb) {
-    if (!fs.existsSync(qtbin)) {
-        console.log('Qt Binary directory not found at ' + qtbin);
-        console.log('Please edit gulpfile.js and adjust');
+/**
+ * Find Qt Binaries
+ */
+gulp.task('qtfind', function(cb) {
+    console.log("Searching for QT Binaries.")
+    var qtbinarr = [
+        "/opt/Qt/5.9.1/gcc_64/bin/",
+        "/opt/Qt5.8.0/5.8/gcc_64/bin/"
+    ];
+    qtbinfound = false;
+    for (i=0;i<qtbinarr.length;i++) {
+        qtbin = qtbinarr[i];
+        if (fs.existsSync(qtbin)) {
+            qtbinfound = true;
+            break;
+        }
+    }
+    if (!qtbinfound) {
+        console.log('Qt Binary directory not found.');
+        console.log('Please edit gulpfile.js and adjust.');
         process.exit(1);
     }
     cb();
 })
 
 // @internal
-gulp.task('default', ['check','help']);
+gulp.task('default', ['qtfind','help']);
 
 /**
- * Display this help
+ * Display this help (default)
  */
 gulp.task('help', doc.help());
 
@@ -49,7 +64,7 @@ gulp.task('buildi18n', function (cb) {
 /**
  * Fast Build NeoChessq Application
  */
-gulp.task('fastbuild', function () {
+gulp.task('buildfast', function () {
     git.short(function (rev) {
         console.log('Building Neochess Revision: ', rev);
         exec('qtdeploy -fast -ldflags="-X main.REVISION=' + rev + '"', function (err, stdout, stderr) {
@@ -60,7 +75,7 @@ gulp.task('fastbuild', function () {
 });
 
 /**
- * Build NeoChess Application
+ * Build Main Application NeoChess Application
  */
 gulp.task('build', function (cb) {
     git.short(function (rev) {
@@ -71,3 +86,9 @@ gulp.task('build', function (cb) {
           });    
     });
 });
+
+/**
+ * Compile Help, Compile Translations, Build Main Application
+ */
+gulp.task('buildall', ['qtfind','buildhelp','buildi18n','build']);
+

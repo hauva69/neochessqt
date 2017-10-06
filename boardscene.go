@@ -96,7 +96,7 @@ func (bs *BoardScene) AddSquares() {
 	posx := float64(8 * bs.view.squaresize)
 	bottomborderwidth := scaley + borderwidth
 
-	rewindarrow := gui.NewQPixmap5(":qml/assets/rewind.png", "png", core.Qt__AutoColor)
+	rewindarrow := gui.NewQPixmap5(":qml/assets/toolbar/ic_last_page_white_48dp_2x.png", "png", core.Qt__AutoColor)
 	scaledrewindarrow := rewindarrow.Scaled2(scalex, scaley, core.Qt__KeepAspectRatio, core.Qt__SmoothTransformation)
 	rewindarrowitem := widgets.NewQGraphicsPixmapItem2(scaledrewindarrow, nil)
 	rewindarrowitem.SetTransformationMode(core.Qt__SmoothTransformation)
@@ -105,7 +105,7 @@ func (bs *BoardScene) AddSquares() {
 	rewindarrowitem.SetFlag(widgets.QGraphicsItem__ItemIsMovable, false)
 
 	buttonnumber++
-	playarrow := gui.NewQPixmap5(":qml/assets/play.png", "png", core.Qt__AutoColor)
+	playarrow := gui.NewQPixmap5(":qml/assets/toolbar/ic_chevron_left_white_48dp_2x.png", "png", core.Qt__AutoColor)
 	scaledplayarrow := playarrow.Scaled2(scalex, scaley, core.Qt__KeepAspectRatio, core.Qt__SmoothTransformation)
 	playarrowitem := widgets.NewQGraphicsPixmapItem2(scaledplayarrow, nil)
 	playarrowitem.SetTransformationMode(core.Qt__SmoothTransformation)
@@ -114,7 +114,7 @@ func (bs *BoardScene) AddSquares() {
 	playarrowitem.SetFlag(widgets.QGraphicsItem__ItemIsMovable, false)
 
 	buttonnumber++
-	rightarrow := gui.NewQPixmap5(":qml/assets/rightarrow.png", "png", core.Qt__AutoColor)
+	rightarrow := gui.NewQPixmap5(":qml/assets/toolbar/ic_chevron_right_white_48dp_2x.png", "png", core.Qt__AutoColor)
 	scaledrightarrow := rightarrow.Scaled2(scalex, scaley, core.Qt__KeepAspectRatio, core.Qt__SmoothTransformation)
 	rightarrowitem := widgets.NewQGraphicsPixmapItem2(scaledrightarrow, nil)
 	rightarrowitem.SetTransformationMode(core.Qt__SmoothTransformation)
@@ -123,22 +123,13 @@ func (bs *BoardScene) AddSquares() {
 	rightarrowitem.SetFlag(widgets.QGraphicsItem__ItemIsMovable, false)
 
 	buttonnumber++
-	stop := gui.NewQPixmap5(":qml/assets/stopplay.png", "png", core.Qt__AutoColor)
+	stop := gui.NewQPixmap5(":qml/assets/toolbar/ic_first_page_white_48dp_2x.png", "png", core.Qt__AutoColor)
 	scaledstop := stop.Scaled2(scalex, scaley, core.Qt__KeepAspectRatio, core.Qt__SmoothTransformation)
 	stopitem := widgets.NewQGraphicsPixmapItem2(scaledstop, nil)
 	stopitem.SetTransformationMode(core.Qt__SmoothTransformation)
 	bs.AddItem(stopitem)
 	stopitem.SetPos2(posx-float64(buttonnumber*scalex), posy)
 	stopitem.SetFlag(widgets.QGraphicsItem__ItemIsMovable, false)
-
-	buttonnumber++
-	leftarrow := gui.NewQPixmap5(":qml/assets/leftarrow.png", "png", core.Qt__AutoColor)
-	scaledleftarrow := leftarrow.Scaled2(scalex, scaley, core.Qt__KeepAspectRatio, core.Qt__SmoothTransformation)
-	leftarrowitem := widgets.NewQGraphicsPixmapItem2(scaledleftarrow, nil)
-	leftarrowitem.SetTransformationMode(core.Qt__SmoothTransformation)
-	bs.AddItem(leftarrowitem)
-	leftarrowitem.SetPos2(posx-float64(buttonnumber*scalex), posy)
-	leftarrowitem.SetFlag(widgets.QGraphicsItem__ItemIsMovable, false)
 
 	// For Padding around Border
 	item := bs.AddRect2(float64(-1*borderwidth), float64(-1*topborderwidth), float64(bs.view.squaresize*8+rightborderwidth+borderwidth), float64(bs.view.squaresize*8+bottomborderwidth+topborderwidth*2), gpen, gtransparent)
