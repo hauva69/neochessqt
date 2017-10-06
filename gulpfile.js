@@ -1,19 +1,54 @@
-var gulp = require('gulp');
-var doc = require('gulp-task-doc').patchGulp();
-var git = require('git-rev');
-var exec = require('child_process').exec;
-var fs = require('fs');
+let gulp = require('gulp');
+let doc = require('gulp-task-doc').patchGulp();
+var gutil = require('gulp-util');
+let git = require('git-rev');
+let exec = require('child_process').exec;
+let fs = require('fs');
+let os = require('os');
 
-var qtbin = "";
+let qtbin = "";
+
+var deleteFolderRecursive = function(path) {
+    if (fs.existsSync(path)) {
+      fs.readdirSync(path).forEach(function(file, index){
+        var curPath = path + "/" + file;
+        if (fs.lstatSync(curPath).isDirectory()) { // recurse
+          deleteFolderRecursive(curPath);
+        } else { // delete file
+          fs.unlinkSync(curPath);
+        }
+      });
+      fs.rmdirSync(path);
+    }
+  };
+
+/**
+ * Clean out application data
+ */
+gulp.task('clean', function(cb) {
+    gutil.log('Cleaning Application Data')
+    appdata = "";
+    if (os.platform() === 'win32') {
+        appdata = process.env.appdata + "/NeoDevelop/NeoChess";
+    }
+    if (os.platform() === 'linux') {
+        appdata = process.env.HOME + "/.local/share/NeoDevelop/NeoChess";
+    }
+    if (os.platform() === 'darwin') {
+        appdata = process.env.HOME + "Library/Preferences/NeoDevelop/NeoChess";
+    }
+    deleteFolderRecursive(appdata);
+});
 
 /**
  * Find Qt Binaries
  */
 gulp.task('qtfind', function(cb) {
-    console.log("Searching for QT Binaries.")
-    var qtbinarr = [
+    gutil.log("Searching for QT Binaries.")
+    let qtbinarr = [
         "/opt/Qt/5.9.1/gcc_64/bin/",
-        "/opt/Qt5.8.0/5.8/gcc_64/bin/"
+        "/opt/Qt5.8.0/5.8/gcc_64/bin/",
+        "C:\\msys64\\mingw64\\bin"
     ];
     qtbinfound = false;
     for (i=0;i<qtbinarr.length;i++) {
@@ -24,8 +59,8 @@ gulp.task('qtfind', function(cb) {
         }
     }
     if (!qtbinfound) {
-        console.log('Qt Binary directory not found.');
-        console.log('Please edit gulpfile.js and adjust.');
+        gutil.log('Qt Binary directory not found.');
+        gutil.log('Please edit gulpfile.js and adjust.');
         process.exit(1);
     }
     cb();
@@ -44,8 +79,8 @@ gulp.task('help', doc.help());
  */
 gulp.task('buildhelp', function (cb) {
     exec(qtbin + 'qcollectiongenerator helpsrc/neochess_US.qhcp -o helpsrc/neochess_US.qhc', function (err, stdout, stderr) {
-        console.log(stdout);
-        console.log(stderr);
+        gutil.log(stdout);
+        gutil.log(stderr);
     });
     gulp.src('helpsrc/**/*.{qhc,qch}').pipe(gulp.dest('./qml/help'));
 });
@@ -55,8 +90,8 @@ gulp.task('buildhelp', function (cb) {
  */
 gulp.task('buildi18n', function (cb) {
     exec('goi18n merge -outdir qml/translate translatesrc/*.all.json', function (err, stdout, stderr) {
-        console.log(stdout);
-        console.log(stderr);
+        gutil.log(stdout);
+        gutil.log(stderr);
         cb(err);
     });
 });
@@ -66,10 +101,10 @@ gulp.task('buildi18n', function (cb) {
  */
 gulp.task('buildfast', function () {
     git.short(function (rev) {
-        console.log('Building Neochess Revision: ', rev);
+        gutil.log('Building Neochess Revision: ', rev);
         exec('qtdeploy -fast -ldflags="-X main.REVISION=' + rev + '"', function (err, stdout, stderr) {
-            console.log(stdout);
-            console.log(stderr);
+            gutil.log(stdout);
+            gutil.log(stderr);
           });    
     });
 });
@@ -79,10 +114,10 @@ gulp.task('buildfast', function () {
  */
 gulp.task('build', function (cb) {
     git.short(function (rev) {
-        console.log('Building Neochess Revision: ', rev);
+        gutil.log('Building Neochess Revision: ', rev);
         exec('qtdeploy -ldflags="-X main.REVISION=' + rev + '"', function (err, stdout, stderr) {
-            console.log(stdout);
-            console.log(stderr);
+            gutil.log(stdout);
+            gutil.log(stderr);
           });    
     });
 });

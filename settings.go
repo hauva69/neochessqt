@@ -142,11 +142,15 @@ func initAppConfig(qapp *widgets.QApplication, qwin *widgets.QMainWindow) *AppCo
 		appconfig.Options = append(appconfig.Options, OptionType{"1.0.0", "PGNPieceCountryDisplay", "PGN Piece Display", "dropdown", "Figurine;English;Dutch", false, "", 0, nil})
 	}
 
-	fntdb := gui.NewQFontDatabase()
-	fntid := fntdb.AddApplicationFont(":qml/assets/ChessAlpha2.ttf")
-	log.Infof("Font ID: %d", fntid)
-	fontfamily := fntdb.ApplicationFontFamilies(fntid)
-	log.Infof("Font Family: %v", fontfamily)
+	var fontfile = core.NewQFile2(":qml/assets/FIG-TB-1.TTF")
+	if fontfile.Open(core.QIODevice__ReadOnly) {
+		fontdata := fontfile.ReadAll()
+		fntdb := gui.NewQFontDatabase()
+		fntid := fntdb.AddApplicationFontFromData(fontdata)
+		log.Infof("Font ID: %d", fntid)
+		fontfamily := fntdb.ApplicationFontFamilies(fntid)
+		log.Infof("Font Family: %v", fontfamily)
+	}
 
 	helpfile := appconfig.GetStrOption("HelpFile")
 	helpfile2 := strings.Replace(helpfile, ".qhc", ".qch", -1)

@@ -1,18 +1,15 @@
-p.comment { 
+p.comment {     
     color:#336600; 
     display: table; margin:0 auto; 
     display: inline-block; 
+    font-family: "Times";
     font-style: italic; 
+    font-size: 16pt;    
 } 
 
-span.piece {
-    font-family: "ChessAlpha2";
-    font-size: 18pt;
-    color: #aaa;
-}
-
 span.move { 
-    font-size: 16pt;
+    font-family: "FigurineSymbol T1";
+    font-size: 16pt;        
     color: #aaa;    
 } 
 
@@ -21,6 +18,6 @@ span.current {
 } 
 
 span.movenumber {  
-    font-size: 16pt;
-    color: rgb(154, 182, 230);
+    font-size: 16pt;    
+    color: rgb(154, 182, 230) !important;
 }

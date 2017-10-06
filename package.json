@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/rashwell/neochess#readme",
   "devDependencies": {
+    "eslint-config-google": "^0.9.1",
     "git-rev": "^0.2.1",
     "gulp": "^3.9.1",
     "gulp-task-doc": "^1.0.11"
