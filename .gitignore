@@ -20,6 +20,9 @@ neochess
 neochess.log
 neochess.lock
 
+*.qch
+*.qhc
+
 moc*.go
 moc*.h
 moc.cpp

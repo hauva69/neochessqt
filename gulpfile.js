@@ -89,7 +89,7 @@ gulp.task('buildhelp', function (cb) {
  * Compile Neochess Translation Data
  */
 gulp.task('buildi18n', function (cb) {
-    exec('goi18n merge -outdir qml/translate translatesrc/*.all.json', function (err, stdout, stderr) {
+    exec('goi18n merge -outdir qml/translate translatesrc/en-US.all.json', function (err, stdout, stderr) {
         gutil.log(stdout);
         gutil.log(stderr);
         cb(err);
