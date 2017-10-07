@@ -20,6 +20,12 @@ neochess
 neochess.log
 neochess.lock
 
+helpsrc/*.qch
+helpsrc/*.qhc
+qml/help/*.qch
+qml/help/*.qhc
+qml/translate/*.json
+
 moc*.go
 moc*.h
 moc.cpp
