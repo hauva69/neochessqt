@@ -7,6 +7,7 @@ let fs = require('fs');
 let os = require('os');
 
 let qtbin = "";
+let qtqcollectiongenerator = "";
 
 var deleteFolderRecursive = function(path) {
     if (fs.existsSync(path)) {
@@ -37,7 +38,7 @@ gulp.task('clean', function(cb) {
     if (os.platform() === 'darwin') {
         appdata = process.env.HOME + "Library/Preferences/NeoDevelop/NeoChess";
     }
-    deleteFolderRecursive(appdata);
+    deleteFolderRecursive(appdata);    
 });
 
 /**
@@ -63,6 +64,16 @@ gulp.task('qtfind', function(cb) {
         gutil.log('Please edit gulpfile.js and adjust.');
         process.exit(1);
     }
+    if (os.platform() === 'win32') {
+        qtqcollectiongenerator = qtbin + '/qcollectiongenerator.exe';    
+    }
+    if (os.platform() === 'linux') {
+        qtqcollectiongenerator = qtbin + '/qcollectiongenerator';    
+    }
+    if (os.platform() === 'darwin') {
+        qtqcollectiongenerator = qtbin + '/qcollectiongenerator';    
+    }
+    
     cb();
 })
 
@@ -74,37 +85,44 @@ gulp.task('default', ['qtfind','help']);
  */
 gulp.task('help', doc.help());
 
-/**
- * Compile NeoChess Help Documentation
- */
-gulp.task('buildhelp', function (cb) {
-    exec(qtbin + 'qcollectiongenerator helpsrc/neochess_US.qhcp -o helpsrc/neochess_US.qhc', function (err, stdout, stderr) {
-        gutil.log(stdout);
-        gutil.log(stderr);
+// @internal
+gulp.task('copyhelp', function(done) {
+    var stream = gulp.src('helpsrc/**/*.{qhc,qch}').pipe(gulp.dest('./qml/help'));
+    stream.on('end', function() {
+        done();
     });
-    gulp.src('helpsrc/**/*.{qhc,qch}').pipe(gulp.dest('./qml/help'));
+});
+
+// @internal
+gulp.task('compilehelp', function (done) {
+    exec(qtqcollectiongenerator + ' helpsrc/neochess_US.qhcp -o helpsrc/neochess_US.qhc', function (err, stdout, stderr) {
+        gutil.log(stdout);
+        gutil.log(stderr);        
+        done(err);
+    });
 });
 
 /**
  * Compile Neochess Translation Data
  */
-gulp.task('buildi18n', function (cb) {
+gulp.task('buildi18n', function (done) {
     exec('goi18n merge -outdir qml/translate translatesrc/en-US.all.json', function (err, stdout, stderr) {
         gutil.log(stdout);
         gutil.log(stderr);
-        cb(err);
+        done(err);
     });
 });
 
 /**
  * Fast Build NeoChessq Application
  */
-gulp.task('buildfast', function () {
+gulp.task('buildfast', function (done) {
     git.short(function (rev) {
         gutil.log('Building Neochess Revision: ', rev);
         exec('qtdeploy -fast -ldflags="-X main.REVISION=' + rev + '"', function (err, stdout, stderr) {
             gutil.log(stdout);
             gutil.log(stderr);
+            done(err);
           });    
     });
 });
@@ -112,18 +130,24 @@ gulp.task('buildfast', function () {
 /**
  * Build Main Application NeoChess Application
  */
-gulp.task('build', function (cb) {
+gulp.task('build', function (done) {
     git.short(function (rev) {
         gutil.log('Building Neochess Revision: ', rev);
         exec('qtdeploy -ldflags="-X main.REVISION=' + rev + '"', function (err, stdout, stderr) {
             gutil.log(stdout);
             gutil.log(stderr);
+            done(err);
           });    
     });
 });
 
 /**
+ * Build / Compile Help files
+ */
+gulp.task('buildhelp', ['qtfind', 'compilehelp', 'copyhelp']);
+
+/**
  * Compile Help, Compile Translations, Build Main Application
  */
-gulp.task('buildall', ['qtfind','buildhelp','buildi18n','build']);
+gulp.task('buildall', ['qtfind','compilehelp','copyhelp','buildi18n','build']);
 
