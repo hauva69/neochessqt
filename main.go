@@ -26,6 +26,9 @@ var (
 	// Application main
 	Application *widgets.QApplication
 
+	// MainWindow of Application
+	MainWindow *widgets.QMainWindow
+
 	// AppSettings main
 	AppSettings *AppConfig
 
@@ -55,16 +58,16 @@ func main() {
 	core.QCoreApplication_SetApplicationName("NeoChess")
 	core.QCoreApplication_SetApplicationVersion(VERSION)
 	Application = widgets.NewQApplication(len(os.Args), os.Args)
-	qwin := widgets.NewQMainWindow(nil, 0)
+	MainWindow := widgets.NewQMainWindow(nil, 0)
 	if runtime.GOOS == "darwin" {
-		qwin.SetUnifiedTitleAndToolBarOnMac(true)
+		MainWindow.SetUnifiedTitleAndToolBarOnMac(true)
 	}
-	qwin.SetWindowTitle(core.QCoreApplication_ApplicationName())
+	MainWindow.SetWindowTitle(core.QCoreApplication_ApplicationName())
 
 	log.Info("Starting Application")
 
 	// Load or initialize settings
-	AppSettings = initAppConfig(Application, qwin)
+	AppSettings = initAppConfig(Application, MainWindow)
 
 	var caterr error
 	catdb, caterr = bolt.Open(AppSettings.Datadir+"/catalog.db", 0644, nil)
@@ -72,48 +75,48 @@ func main() {
 		log.Error(caterr)
 	}
 
-	qwin.Resize(core.NewQSize2(AppSettings.GetIntOption("LastWidth"), AppSettings.GetIntOption("LastHeight")))
+	MainWindow.Resize(core.NewQSize2(AppSettings.GetIntOption("LastWidth"), AppSettings.GetIntOption("LastHeight")))
 
-	statusbar := initStatusBar(qwin)
-	qwin.SetStatusBar(statusbar)
+	statusbar := initStatusBar(MainWindow)
+	MainWindow.SetStatusBar(statusbar)
 	statusbar.AddItem("Screen W:%d x H:%d", AppSettings.GetIntOption("LastWidth"), AppSettings.GetIntOption("LastHeight"))
 
-	menu := initMenu(qwin, Application)
-	qwin.SetMenuBar(menu)
+	menu := initMenu(MainWindow, Application)
+	MainWindow.SetMenuBar(menu)
 
-	toolbar := initToolBar(qwin)
-	qwin.AddToolBar2(toolbar)
+	toolbar := initToolBar(MainWindow)
+	MainWindow.AddToolBar2(toolbar)
 
-	dbdock := initDBDock(qwin)
-	qwin.AddDockWidget(core.Qt__LeftDockWidgetArea, dbdock)
+	dbdock := initDBDock(MainWindow)
+	MainWindow.AddDockWidget(core.Qt__LeftDockWidgetArea, dbdock)
 
-	pgndock := initPGNDock(qwin)
-	qwin.AddDockWidget(core.Qt__RightDockWidgetArea, pgndock)
+	pgndock := initPGNDock(MainWindow)
+	MainWindow.AddDockWidget(core.Qt__RightDockWidgetArea, pgndock)
 
-	gamelistdock := initGameListDock(qwin)
-	qwin.AddDockWidget(core.Qt__BottomDockWidgetArea, gamelistdock)
+	gamelistdock := initGameListDock(MainWindow)
+	MainWindow.AddDockWidget(core.Qt__BottomDockWidgetArea, gamelistdock)
 
 	cg := NewGame()
 	cb := NewBoard()
 	cb.InitFromFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
 	cg.LoadMoves(cb)
 
-	gamedetaildock := initGameDetailDock(cg, qwin)
-	qwin.AddDockWidget(core.Qt__RightDockWidgetArea, gamedetaildock)
-	qwin.TabifyDockWidget(pgndock, gamedetaildock)
-	qwin.SetTabPosition(core.Qt__RightDockWidgetArea, widgets.QTabWidget__North)
+	gamedetaildock := initGameDetailDock(cg, MainWindow)
+	MainWindow.AddDockWidget(core.Qt__RightDockWidgetArea, gamedetaildock)
+	MainWindow.TabifyDockWidget(pgndock, gamedetaildock)
+	MainWindow.SetTabPosition(core.Qt__RightDockWidgetArea, widgets.QTabWidget__North)
 
-	pgntitlewidget := widgets.NewQWidget(qwin, core.Qt__Widget)
-	gamedetailtitlewidget := widgets.NewQWidget(qwin, core.Qt__Widget)
+	pgntitlewidget := widgets.NewQWidget(MainWindow, core.Qt__Widget)
+	gamedetailtitlewidget := widgets.NewQWidget(MainWindow, core.Qt__Widget)
 	gamedetaildock.SetTitleBarWidget(gamedetailtitlewidget)
 	pgndock.SetTitleBarWidget(pgntitlewidget)
 
 	pgndock.Raise()
 
-	boardview := initBoardView(cg, cb, pgndock.editor, qwin)
-	qwin.SetCentralWidget(boardview)
+	boardview := initBoardView(cg, cb, pgndock.editor, MainWindow)
+	MainWindow.SetCentralWidget(boardview)
 
-	qwin.Show()
+	MainWindow.Show()
 
 	widgets.QApplication_Exec()
 

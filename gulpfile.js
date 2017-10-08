@@ -49,7 +49,8 @@ gulp.task('qtfind', function(cb) {
     let qtbinarr = [
         "/opt/Qt/5.9.1/gcc_64/bin/",
         "/opt/Qt5.8.0/5.8/gcc_64/bin/",
-        "C:\\msys64\\mingw64\\bin"
+        "C:\\msys64\\mingw64\\bin",
+        "C:\\Qt\\5.9.1\\mingw53_32\\bin"
     ];
     qtbinfound = false;
     for (i=0;i<qtbinarr.length;i++) {
@@ -87,7 +88,7 @@ gulp.task('help', doc.help());
 
 // @internal
 gulp.task('copyhelp', function(done) {
-    var stream = gulp.src('helpsrc/**/*.{qhc,qch}').pipe(gulp.dest('./qml/help'));
+    var stream = gulp.src('helpsrc/**/*.{qhc,qch}').pipe(gulp.dest('qml/help/'));
     stream.on('end', function() {
         done();
     });
@@ -95,10 +96,12 @@ gulp.task('copyhelp', function(done) {
 
 // @internal
 gulp.task('compilehelp', function (done) {
-    exec(qtqcollectiongenerator + ' helpsrc/neochess_US.qhcp -o helpsrc/neochess_US.qhc', function (err, stdout, stderr) {
+    var stream = exec(qtqcollectiongenerator + ' helpsrc/neochess_US.qhcp -o helpsrc/neochess_US.qhc', function (err, stdout, stderr) {
         gutil.log(stdout);
-        gutil.log(stderr);        
-        done(err);
+        gutil.log(stderr);                
+    });
+    stream.on('end', function() {
+        done();
     });
 });
 
@@ -106,10 +109,12 @@ gulp.task('compilehelp', function (done) {
  * Compile Neochess Translation Data
  */
 gulp.task('buildi18n', function (done) {
-    exec('goi18n merge -outdir qml/translate translatesrc/en-US.all.json', function (err, stdout, stderr) {
+    var stream = exec('goi18n merge -outdir qml/translate translatesrc/en-US.all.json', function (err, stdout, stderr) {
         gutil.log(stdout);
-        gutil.log(stderr);
-        done(err);
+        gutil.log(stderr);        
+    });
+    stream.on('end', function() {
+        done();
     });
 });
 
