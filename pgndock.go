@@ -35,8 +35,8 @@ func (pgndock *PGNDock) SetPGN(game *Game) {
 		"white": game.White,
 		"black": game.Black,
 	}
-	t := template.Must(template.New("App").Parse(`<h3 style="text-align:center;">White: <strong>{{.white}}</strong>  vs  Black: <strong>{{.black}}</strong></h3>
-		<h4 style="text-align:center;">Site: <strong>{{.site}}</strong></h4><hr/>`))
+	t := template.Must(template.New("App").Parse(`<h3 style="text-align:center;">White: {{.white}} vs  Black: {{.black}}</h3>
+		<h4 style="text-align:center;">Site: {{.site}}</h4><hr/>`))
 	var tpl bytes.Buffer
 	if err := t.Execute(&tpl, gamedata); err != nil {
 	}
