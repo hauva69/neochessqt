@@ -21,11 +21,13 @@ type DBDock struct {
 	currenttype  string
 	currentfile  string
 	currentcount string
+	currentview  *ChessDBView
 }
 
-func initDBDock(w *widgets.QMainWindow) *DBDock {
+func initDBDock(w *widgets.QMainWindow, cdbview *ChessDBView) *DBDock {
 	var this = NewDBDock("Databases", w, core.Qt__Widget)
 	var dbdock = this
+	dbdock.currentview = cdbview
 	dbdock.SetAllowedAreas(core.Qt__LeftDockWidgetArea | core.Qt__RightDockWidgetArea)
 	dbdock.tree = widgets.NewQTreeView(this)
 	dbdock.model = gui.NewQStandardItemModel(nil)
@@ -105,11 +107,12 @@ func (dbd *DBDock) LoadCatalogDatabase(event *gui.QMouseEvent) {
 			}
 		}
 	}
-	liniterror := cdb.LoadInitialGamesList()
+	dbd.currentview.cdb = cdb
+	liniterror := dbd.currentview.LoadInitialGamesList()
 	if liniterror != nil {
 		log.Error(err)
 	}
-	ldbproperror := cdb.LoadDBProperties()
+	ldbproperror := dbd.currentview.LoadDBProperties()
 	if ldbproperror != nil {
 		log.Error(err)
 	}

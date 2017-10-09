@@ -7,23 +7,28 @@ import (
 
 type GameDetailDock struct {
 	widgets.QDockWidget
-	game *Game
+	tagitem map[string]*widgets.QLineEdit
 }
 
-func initGameDetailDock(g *Game, w *widgets.QMainWindow) *GameDetailDock {
+func initGameDetailDock(w *widgets.QMainWindow) *GameDetailDock {
 	this := NewGameDetailDock("Game Detail", w, core.Qt__Widget)
-	var gamedetaildock = this
-	gamedetaildock.game = g
+	this.tagitem = make(map[string]*widgets.QLineEdit)
 	layout := widgets.NewQFormLayout(nil)
 	for k := range supportedtags {
-		tagval := g.gettag(k)
-		item := widgets.NewQLineEdit2(tagval, nil)
-		layout.AddRow3(k, item)
+		this.tagitem[k] = widgets.NewQLineEdit2("", nil)
+		layout.AddRow3(k, this.tagitem[k])
 	}
 	widget := widgets.NewQWidget(nil, core.Qt__Widget)
 	widget.SetLayout(layout)
 	scroll := widgets.NewQScrollArea(nil)
 	scroll.SetWidget(widget)
-	gamedetaildock.SetWidget(scroll)
+	this.SetWidget(scroll)
 	return this
+}
+
+func (gd *GameDetailDock) SetGameTags(g *Game) {
+	for k := range supportedtags {
+		tagval := g.gettag(k)
+		gd.tagitem[k].SetText(tagval)
+	}
 }

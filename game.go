@@ -316,9 +316,6 @@ func (g *Game) LoadMoves(cb *BoardType) {
 		} else {
 			g.CurrentPgn += "<span class='move'>" + Move.ToSAN() + " </span>"
 		}
-		if index == 3 && Move.color() == Black {
-			g.CurrentPgn += "<p class='comment'> { This is a comment } </p>"
-		}
 	}
 }
 

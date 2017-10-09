@@ -20,8 +20,11 @@ func initPGNDock(w *widgets.QMainWindow) *PGNDock {
 	pgndock.editor.SetFontFamily("FigurineSymbol T1")
 	pgndock.editor.SetCurrentFont(figurinefont)
 	pgndock.editor.SetCurrentFontDefault(figurinefont)
-	pgndock.editor.SetHtml("<span class='movenumber'>1. </span>")
 	pgndock.editor.SetFixedWidth(w.Width() / 5)
 	pgndock.SetWidget(pgndock.editor)
 	return this
+}
+
+func (pgndock *PGNDock) SetPGN(game *Game) {
+	pgndock.editor.SetHtml(game.CurrentPgn)
 }

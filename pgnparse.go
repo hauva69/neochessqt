@@ -85,7 +85,7 @@ func scanmoves(data []byte, atEOF bool) (advance int, token []byte, err error) {
 }
 
 // ParseGameString into Game
-func ParseGameString(gbytes []byte, gameid int, debug bool) *Game {
+func ParseGameString(gbytes []byte, gameid int, debug bool) (*Game, *BoardType) {
 	gs := string(gbytes)
 	g := NewGame()
 	if debug {
@@ -143,7 +143,7 @@ func ParseGameString(gbytes []byte, gameid int, debug bool) *Game {
 			}
 		}
 	}
-	return g
+	return g, cb
 }
 
 // ParseLine directs line based on status of game parsing

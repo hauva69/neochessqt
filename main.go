@@ -81,40 +81,16 @@ func main() {
 	MainWindow.SetStatusBar(statusbar)
 	statusbar.AddItem("Screen W:%d x H:%d", AppSettings.GetIntOption("LastWidth"), AppSettings.GetIntOption("LastHeight"))
 
-	menu := initMenu(MainWindow, Application)
-	MainWindow.SetMenuBar(menu)
+	chessdbview := initCDBView(MainWindow)
 
-	toolbar := initToolBar(MainWindow)
+	toolbar := initToolBar(MainWindow, chessdbview)
 	MainWindow.AddToolBar2(toolbar)
 
-	dbdock := initDBDock(MainWindow)
+	dbdock := initDBDock(MainWindow, chessdbview)
 	MainWindow.AddDockWidget(core.Qt__LeftDockWidgetArea, dbdock)
 
-	pgndock := initPGNDock(MainWindow)
-	MainWindow.AddDockWidget(core.Qt__RightDockWidgetArea, pgndock)
-
-	gamelistdock := initGameListDock(MainWindow)
-	MainWindow.AddDockWidget(core.Qt__BottomDockWidgetArea, gamelistdock)
-
-	cg := NewGame()
-	cb := NewBoard()
-	cb.InitFromFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
-	cg.LoadMoves(cb)
-
-	gamedetaildock := initGameDetailDock(cg, MainWindow)
-	MainWindow.AddDockWidget(core.Qt__RightDockWidgetArea, gamedetaildock)
-	MainWindow.TabifyDockWidget(pgndock, gamedetaildock)
-	MainWindow.SetTabPosition(core.Qt__RightDockWidgetArea, widgets.QTabWidget__North)
-
-	pgntitlewidget := widgets.NewQWidget(MainWindow, core.Qt__Widget)
-	gamedetailtitlewidget := widgets.NewQWidget(MainWindow, core.Qt__Widget)
-	gamedetaildock.SetTitleBarWidget(gamedetailtitlewidget)
-	pgndock.SetTitleBarWidget(pgntitlewidget)
-
-	pgndock.Raise()
-
-	boardview := initBoardView(cg, cb, pgndock.editor, MainWindow)
-	MainWindow.SetCentralWidget(boardview)
+	menu := initMenu(MainWindow, Application, chessdbview)
+	MainWindow.SetMenuBar(menu)
 
 	MainWindow.Show()
 

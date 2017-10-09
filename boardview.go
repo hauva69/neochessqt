@@ -10,11 +10,11 @@ import (
 // BoardView struct
 type BoardView struct {
 	widgets.QGraphicsView
+	cdbv        *ChessDBView
 	squaresize  int
 	game        *Game
 	board       *BoardType
 	scene       *BoardScene
-	editor      *widgets.QTextEdit
 	thighlights []*widgets.QGraphicsPathItem
 	hhighlight  *widgets.QGraphicsPathItem
 	labels      []*widgets.QGraphicsTextItem
@@ -28,13 +28,13 @@ var (
 	}
 )
 
-func initBoardView(g *Game, b *BoardType, e *widgets.QTextEdit, w *widgets.QMainWindow) *BoardView {
-	var this = NewBoardView(w)
+func initBoardView(cdbv *ChessDBView) *BoardView {
+	var this = NewBoardView(cdbv.mainw)
 	var boardview = this
-	boardview.game = g
-	boardview.board = b
-	boardview.editor = e
-	size := w.FrameSize().Width()
+	boardview.cdbv = cdbv
+	boardview.game = cdbv.currentgame
+	boardview.board = cdbv.currentboard
+	size := cdbv.mainw.FrameSize().Width()
 	boardview.squaresize = (size / 2) / 8
 
 	boardview.scene = initBoardScene(boardview)
@@ -42,6 +42,15 @@ func initBoardView(g *Game, b *BoardType, e *widgets.QTextEdit, w *widgets.QMain
 	boardview.UpdateBoardLabels()
 	boardview.ConnectResizeEvent(boardview.ResizeBoardView)
 	return this
+}
+
+// SetGame of boardview
+func (bv *BoardView) SetGame() {
+	bv.game = bv.cdbv.currentgame
+	bv.board = bv.cdbv.currentboard
+	bv.scene.RemovePieces()
+	bv.scene.AddPieces()
+	bv.UpdateBoardLabels()
 }
 
 // ResizeBoardView event

@@ -24,6 +24,14 @@ func initBoardScene(bv *BoardView) *BoardScene {
 	return this
 }
 
+// RemovePieces from scene
+func (bs *BoardScene) RemovePieces() {
+	for k, v := range bs.pieceitems {
+		bs.RemoveItem(v.qpix)
+		delete(bs.pieceitems, k)
+	}
+}
+
 func (bs *BoardScene) AddPieces() {
 	for rank := 7; rank >= 0; rank-- {
 		for file := 7; file >= 0; file-- {

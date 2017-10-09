@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"strconv"
 	"strings"
 	"time"
 
@@ -36,16 +35,6 @@ type ChessDataBase struct {
 // NewCDB Create instance
 func NewCDB() *ChessDataBase {
 	return &ChessDataBase{}
-}
-
-// LoadDBProperties dockwindow
-func (cdb *ChessDataBase) LoadDBProperties() error {
-	// dbtree.SetNameProp(cdb.Displayname)
-	// dbtree.SetFileProp(cdb.Fullpath)
-	// dbtree.SetCountProp(strconv.Itoa(cdb.Count))
-	// dbtree.SetNotesProp(cdb.Notes)
-	// dbtree.SetDateModifiedProp(cdb.Filemod)
-	return nil
 }
 
 // OpenFile of Chess Database
@@ -100,35 +89,6 @@ func OpenFile(filename string, kind string) (*ChessDataBase, error) {
 		cdb.CheckIndex = true
 	}
 	return cdb, err
-}
-
-// LoadInitialGamesList of ChessDatabase
-func (cdb *ChessDataBase) LoadInitialGamesList() error {
-	log.Info("Loading initial games list")
-	glist := make([][]string, 10)
-	for i := 0; i < 10; i++ {
-		glist[i] = make([]string, 10)
-	}
-	for gameindex := 1; gameindex < 10; gameindex++ {
-		gamebytes, err := cdb.GetGame(gameindex)
-		if err != nil {
-			log.Error(err)
-		}
-		game := ParseGameString(gamebytes, 1, true)
-		glist[gameindex][0] = strconv.Itoa(gameindex)
-		glist[gameindex][1] = game.GameHeader.Event
-		glist[gameindex][2] = game.GameHeader.Site
-		glist[gameindex][3] = game.GameHeader.Date
-		glist[gameindex][4] = game.GameHeader.Round
-		glist[gameindex][5] = game.GameHeader.White
-		glist[gameindex][6] = game.GameHeader.Black
-		glist[gameindex][7] = game.GameHeader.Result
-		glist[gameindex][8] = game.GameHeader.ECO
-		glist[gameindex][9] = game.GameHeader.Opening
-	}
-	//gamelistwidget.SetRows(glist)
-	// gamelistwidget.currentdb = cdb
-	return nil
 }
 
 // Save instance of ChessDatabase
@@ -270,6 +230,5 @@ func (cdb *ChessDataBase) Index(progress *widgets.QProgressDialog) (int, error) 
 	cdb.InitIndex = false
 	cdb.CheckIndex = false
 	cdb.Save()
-	cdb.LoadInitialGamesList()
 	return count, nil
 }
