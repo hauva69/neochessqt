@@ -300,22 +300,27 @@ func (g *Game) LoadMoves(cb *BoardType) {
 		g.FromToMoves[pindex] = pMove.from().ToRune() + pMove.to().ToRune()
 		g.SanMoves[pindex] = pMove.ToSAN()
 	}
-	countMoves := len(g.Moves)
-	cv := countMoves - 1
 	mn := 0
-	g.CurrentPgn = "<style>" + AppSettings.PGNStyle + "</style>"
-	// g.CurrentPgn = "<style></style>"
-
-	for index, Move := range g.Moves {
+	g.CurrentPgn = ""
+	linelength := 0
+	for _, Move := range g.Moves {
 		if Move.color() == White {
 			mn++
-			g.CurrentPgn += "<span class='movenumber'>" + strconv.Itoa(mn) + ". </span>"
+			movestr := strconv.Itoa(mn) + ". "
+			if (linelength + len(movestr)) > 80 {
+				g.CurrentPgn += "\n"
+				linelength = 0
+			}
+			g.CurrentPgn += movestr
+			linelength += len(movestr)
 		}
-		if index == cv {
-			g.CurrentPgn += "<span class='move current'>" + Move.ToSAN() + " </span>"
-		} else {
-			g.CurrentPgn += "<span class='move'>" + Move.ToSAN() + " </span>"
+		movestr := Move.ToSAN() + " "
+		if (linelength + len(movestr)) > 80 {
+			g.CurrentPgn += "\n"
+			linelength = 0
 		}
+		g.CurrentPgn += movestr
+		linelength += len(movestr)
 	}
 }
 

@@ -1,6 +1,10 @@
 package main
 
 import (
+	"bytes"
+	"strconv"
+	"text/template"
+
 	"github.com/therecipe/qt/core"
 	"github.com/therecipe/qt/gui"
 	"github.com/therecipe/qt/widgets"
@@ -26,5 +30,30 @@ func initPGNDock(w *widgets.QMainWindow) *PGNDock {
 }
 
 func (pgndock *PGNDock) SetPGN(game *Game) {
-	pgndock.editor.SetHtml(game.CurrentPgn)
+	var gamedata = map[string]string{
+		"site":  game.Site,
+		"white": game.White,
+		"black": game.Black,
+	}
+	t := template.Must(template.New("App").Parse(`<h3 style="text-align:center;">White: <strong>{{.white}}</strong>  vs  Black: <strong>{{.black}}</strong></h3>
+		<h4 style="text-align:center;">Site: <strong>{{.site}}</strong></h4><hr/>`))
+	var tpl bytes.Buffer
+	if err := t.Execute(&tpl, gamedata); err != nil {
+	}
+	content := "<style>" + AppSettings.PGNStyle + "</style>"
+	content += tpl.String()
+	mn := 0
+	cv := len(game.Moves) - 1
+	for index, Move := range game.Moves {
+		if Move.color() == White {
+			mn++
+			content += "<span class='movenumber'>" + strconv.Itoa(mn) + ". </span>"
+		}
+		if index == cv {
+			content += "<span class='move current'>" + Move.ToSAN() + " </span>"
+		} else {
+			content += "<span class='move'>" + Move.ToSAN() + " </span>"
+		}
+	}
+	pgndock.editor.SetHtml(content)
 }
