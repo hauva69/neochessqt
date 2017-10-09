@@ -57,7 +57,7 @@ func (bs *BoardScene) RemovePieceItemOnSquare(sq SquareType) {
 func (bs *BoardScene) AddSquares() {
 	// Default Borderwitdh for no Labels
 	borderwidth := 10
-	topborderwidth := 10
+	topborderwidth := 20
 
 	// Board Labels Adjust border
 	if AppSettings.IsOption("ShowBoardLables") {
