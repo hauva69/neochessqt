@@ -1,0 +1,1 @@
+# Binary build of translation files
