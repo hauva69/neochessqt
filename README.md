@@ -49,6 +49,7 @@ And since I want NeoChess to build at least in Linux, iOS, and Windows, I'll jus
 - [Go](https://golang.org) Currently developing and testing with version 1.9
 - [Qt](https://www.qt.io) Qt Framework for your development environment
 - [Go Qt Binding](https://github.com/therecipe/qt/) Note therecipe also provides docker images for targeting each of the environments, if you don't want to configure this yourself
+- [Node](https://nodejs.org) While strictly not required for building NeoChess does have translation files and help files that need to be compiled for the application to build, these are binary so I won't check them into git, but I use node and gulp as a build system so that all of the required pieces can be built.
 
 ### Go Libraries
 
