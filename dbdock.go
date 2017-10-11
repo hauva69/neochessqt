@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"strconv"
 
 	"github.com/boltdb/bolt"
@@ -93,27 +92,17 @@ func (dbd *DBDock) SelectionCommand(index *core.QModelIndex, event *core.QEvent)
 // LoadCatalogDatabase comment
 func (dbd *DBDock) LoadCatalogDatabase(event *gui.QMouseEvent) {
 	dbd.tree.MouseDoubleClickEventDefault(event)
-	log.Info(fmt.Sprintf("Loadinging type: %s with key: %s ", dbd.currenttype, dbd.currentfile))
-	cdb, err := OpenFile(dbd.currentfile, dbd.currenttype)
-	if cdb.CheckIndex {
-		needsupdate, err := cdb.NeedIndex()
-		if err == nil && needsupdate {
-			log.Info("Re-indexing database")
-			dialog := widgets.NewQProgressDialog2("Re-indexing PGN File", "Cancel", 0, 100, nil, core.Qt__Dialog)
-			dialog.SetWindowModality(core.Qt__WindowModal)
-			_, err := cdb.Index(dialog)
-			if err != nil {
-				log.Error(err)
-			}
+	dbd.currentview.setDatabase(dbd.currentfile, dbd.currenttype)
+	/*
+		liniterror := dbd.currentview.LoadInitialGamesList()
+		if liniterror != nil {
+			log.Error(err)
 		}
-	}
-	dbd.currentview.cdb = cdb
-	liniterror := dbd.currentview.LoadInitialGamesList()
-	if liniterror != nil {
-		log.Error(err)
-	}
-	ldbproperror := dbd.currentview.LoadDBProperties()
-	if ldbproperror != nil {
-		log.Error(err)
-	}
+	*/
+	/*
+		ldbproperror := dbd.currentview.LoadDBProperties()
+		if ldbproperror != nil {
+			log.Error(err)
+		}
+	*/
 }

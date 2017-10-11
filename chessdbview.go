@@ -1,13 +1,13 @@
 package main
 
 import (
+	"fmt"
 	"path/filepath"
 	"strconv"
 	"strings"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/therecipe/qt/core"
-	"github.com/therecipe/qt/gui"
 	"github.com/therecipe/qt/widgets"
 )
 
@@ -15,6 +15,7 @@ import (
 type ChessDBView struct {
 	mainw          *widgets.QMainWindow
 	cdb            *ChessDataBase
+	model          *GameListModel
 	pgndock        *PGNDock
 	gamelistdock   *GameListDock
 	gamedetaildock *GameDetailDock
@@ -33,6 +34,7 @@ func initCDBView(w *widgets.QMainWindow) *ChessDBView {
 	w.AddDockWidget(core.Qt__RightDockWidgetArea, view.pgndock)
 
 	view.gamelistdock = initGameListDock(w, view)
+	view.gamelistdock.tableview.ConnectDoubleClicked(view.gameselected)
 	w.AddDockWidget(core.Qt__BottomDockWidgetArea, view.gamelistdock)
 
 	view.gamedetaildock = initGameDetailDock(w)
@@ -59,34 +61,43 @@ func (cdbv *ChessDBView) AddGame() {
 	cdbv.mainw.SetCentralWidget(cdbv.boardview)
 	cdbv.gamedetaildock.SetGameTags(cdbv.currentgame)
 	cdbv.pgndock.SetPGN(cdbv.currentgame)
-	var gamerow []string
-	gamerow = make([]string, 10)
-	gamerow[0] = "-1"
-	gamerow[1] = cdbv.currentgame.GameHeader.Event
-	gamerow[2] = cdbv.currentgame.GameHeader.Site
-	gamerow[3] = cdbv.currentgame.GameHeader.Date
-	gamerow[4] = cdbv.currentgame.GameHeader.Round
-	gamerow[5] = cdbv.currentgame.GameHeader.White
-	gamerow[6] = cdbv.currentgame.GameHeader.Black
-	gamerow[7] = cdbv.currentgame.GameHeader.Result
-	gamerow[8] = cdbv.currentgame.GameHeader.ECO
-	gamerow[9] = cdbv.currentgame.GameHeader.Opening
-	cdbv.gamelistdock.AddRow(gamerow)
+	/*
+		var gamerow []string
+		gamerow = make([]string, 10)
+		gamerow[0] = "-1"
+		gamerow[1] = cdbv.currentgame.GameHeader.Event
+		gamerow[2] = cdbv.currentgame.GameHeader.Site
+		gamerow[3] = cdbv.currentgame.GameHeader.Date
+		gamerow[4] = cdbv.currentgame.GameHeader.Round
+		gamerow[5] = cdbv.currentgame.GameHeader.White
+		gamerow[6] = cdbv.currentgame.GameHeader.Black
+		gamerow[7] = cdbv.currentgame.GameHeader.Result
+		gamerow[8] = cdbv.currentgame.GameHeader.ECO
+		gamerow[9] = cdbv.currentgame.GameHeader.Opening
+		cdbv.gamelistdock.AddRow(gamerow)
+	*/
 }
 
 // LoadSelectedGame from gamelist
-func (cdbv *ChessDBView) LoadSelectedGame(event *gui.QMouseEvent) {
-	item, err := cdbv.gamelistdock.SelectedGame()
-	if err != nil {
+func (cdbv *ChessDBView) gameselected(index *core.QModelIndex) {
+	log.Infof("Game Row Selected: %d", index.Row())
+	qvgameid := cdbv.model.data(index, int(core.Qt__UserRole))
+	gameid, _ := strconv.Atoi(qvgameid.ToString())
+	log.Infof("Loading game id: %d", gameid)
+	cdbv.LoadGame(gameid)
+	/*	item, err := cdbv.gamelistdock.SelectedGame()
+		if err != nil {
+			cdbv.gamelistdock.table.MouseDoubleClickEventDefault(event)
+		}
+		log.Infof("Loading game with id: %d", item)
+		cdbv.LoadGame(item)
 		cdbv.gamelistdock.table.MouseDoubleClickEventDefault(event)
-	}
-	log.Infof("Loading game with id: %d", item)
-	cdbv.LoadGame(item)
-	cdbv.gamelistdock.table.MouseDoubleClickEventDefault(event)
+	*/
 }
 
 // LoadGame into view
 func (cdbv *ChessDBView) LoadGame(index int) {
+	log.Infof("Loading game %d", index)
 	pgn, err := cdbv.cdb.GetGame(index)
 	if err != nil {
 		return
@@ -139,10 +150,13 @@ func (cdbv *ChessDBView) loadpgndb(w *widgets.QMainWindow) {
 			}
 		}
 	}
-	liniterror := cdbv.LoadInitialGamesList()
-	if liniterror != nil {
-		log.Error(liniterror)
-	}
+	/*
+		liniterror := cdbv.LoadInitialGamesList()
+		if liniterror != nil {
+			log.Error(liniterror)
+		}
+	*/
+
 	ldbproperror := cdbv.LoadDBProperties()
 	if ldbproperror != nil {
 		log.Error(ldbproperror)
@@ -163,30 +177,22 @@ func (cdbv *ChessDBView) UpdatePGN() {
 	cdbv.pgndock.SetPGN(cdbv.currentgame)
 }
 
-// LoadInitialGamesList on ChessDatabase Open
-func (cdbv *ChessDBView) LoadInitialGamesList() error {
-	log.Info("Loading initial games list")
-	glist := make([][]string, 10)
-	for i := 0; i < 10; i++ {
-		glist[i] = make([]string, 10)
-	}
-	for gameindex := 1; gameindex < 10; gameindex++ {
-		gamebytes, err := cdbv.cdb.GetGame(gameindex)
-		if err != nil {
-			log.Error(err)
+func (cdbv *ChessDBView) setDatabase(dbpath string, kind string) {
+	log.Info(fmt.Sprintf("Opening Database with type: %s with key: %s ", dbpath, kind))
+	cdbv.cdb, _ = OpenFile(dbpath, kind)
+	if cdbv.cdb.CheckIndex {
+		needsupdate, err := cdbv.cdb.NeedIndex()
+		if err == nil && needsupdate {
+			log.Info("Re-indexing database")
+			dialog := widgets.NewQProgressDialog2("Re-indexing PGN File", "Cancel", 0, 100, nil, core.Qt__Dialog)
+			dialog.SetWindowModality(core.Qt__WindowModal)
+			_, err := cdbv.cdb.Index(dialog)
+			if err != nil {
+				log.Error(err)
+			}
 		}
-		game, _ := ParseGameString(gamebytes, 1, true)
-		glist[gameindex][0] = strconv.Itoa(gameindex)
-		glist[gameindex][1] = game.GameHeader.Event
-		glist[gameindex][2] = game.GameHeader.Site
-		glist[gameindex][3] = game.GameHeader.Date
-		glist[gameindex][4] = game.GameHeader.Round
-		glist[gameindex][5] = game.GameHeader.White
-		glist[gameindex][6] = game.GameHeader.Black
-		glist[gameindex][7] = game.GameHeader.Result
-		glist[gameindex][8] = game.GameHeader.ECO
-		glist[gameindex][9] = game.GameHeader.Opening
 	}
-	cdbv.gamelistdock.SetRows(glist)
-	return nil
+	cdbv.model = NewGameListModel(nil)
+	cdbv.model.cdb = cdbv.cdb
+	cdbv.gamelistdock.tableview.SetModel(cdbv.model)
 }
