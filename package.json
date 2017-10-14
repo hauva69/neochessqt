@@ -24,6 +24,11 @@
     "eslint-config-google": "^0.9.1",
     "git-rev": "^0.2.1",
     "gulp": "^3.9.1",
-    "gulp-task-doc": "^1.0.11"
+    "gulp-flatten": "^0.3.1",
+    "gulp-task-doc": "^1.0.11",
+    "gulp-unzip": "^0.2.0"
+  },
+  "dependencies": {
+    "gulp-download": "0.0.1"
   }
 }

@@ -1,6 +1,8 @@
 let gulp = require('gulp');
 let doc = require('gulp-task-doc').patchGulp();
-var gutil = require('gulp-util');
+let gutil = require('gulp-util');
+let download = require('gulp-download');
+let unzip = require('gulp-unzip');
 let git = require('git-rev');
 let exec = require('child_process').exec;
 let fs = require('fs');
@@ -9,24 +11,24 @@ let os = require('os');
 let qtbin = "";
 let qtqcollectiongenerator = "";
 
-var deleteFolderRecursive = function(path) {
+var deleteFolderRecursive = function (path) {
     if (fs.existsSync(path)) {
-      fs.readdirSync(path).forEach(function(file, index){
-        var curPath = path + "/" + file;
-        if (fs.lstatSync(curPath).isDirectory()) { // recurse
-          deleteFolderRecursive(curPath);
-        } else { // delete file
-          fs.unlinkSync(curPath);
-        }
-      });
-      fs.rmdirSync(path);
+        fs.readdirSync(path).forEach(function (file, index) {
+            var curPath = path + "/" + file;
+            if (fs.lstatSync(curPath).isDirectory()) { // recurse
+                deleteFolderRecursive(curPath);
+            } else { // delete file
+                fs.unlinkSync(curPath);
+            }
+        });
+        fs.rmdirSync(path);
     }
-  };
+};
 
 /**
  * Clean out application data
  */
-gulp.task('clean', function(cb) {
+gulp.task('clean', function (cb) {
     gutil.log('Cleaning Application Data')
     appdata = "";
     if (os.platform() === 'win32') {
@@ -38,13 +40,13 @@ gulp.task('clean', function(cb) {
     if (os.platform() === 'darwin') {
         appdata = process.env.HOME + "Library/Preferences/NeoDevelop/NeoChess";
     }
-    deleteFolderRecursive(appdata);    
+    deleteFolderRecursive(appdata);
 });
 
 /**
  * Find Qt Binaries
  */
-gulp.task('qtfind', function(cb) {
+gulp.task('qtfind', function (cb) {
     gutil.log("Searching for QT Binaries.")
     let qtbinarr = [
         "/opt/Qt/5.9.1/gcc_64/bin/",
@@ -53,7 +55,7 @@ gulp.task('qtfind', function(cb) {
         "C:\\Qt\\5.9.1\\mingw53_32\\bin"
     ];
     qtbinfound = false;
-    for (i=0;i<qtbinarr.length;i++) {
+    for (i = 0; i < qtbinarr.length; i++) {
         qtbin = qtbinarr[i];
         if (fs.existsSync(qtbin)) {
             qtbinfound = true;
@@ -66,20 +68,20 @@ gulp.task('qtfind', function(cb) {
         process.exit(1);
     }
     if (os.platform() === 'win32') {
-        qtqcollectiongenerator = qtbin + '/qcollectiongenerator.exe';    
+        qtqcollectiongenerator = qtbin + '/qcollectiongenerator.exe';
     }
     if (os.platform() === 'linux') {
-        qtqcollectiongenerator = qtbin + '/qcollectiongenerator';    
+        qtqcollectiongenerator = qtbin + '/qcollectiongenerator';
     }
     if (os.platform() === 'darwin') {
-        qtqcollectiongenerator = qtbin + '/qcollectiongenerator';    
+        qtqcollectiongenerator = qtbin + '/qcollectiongenerator';
     }
-    
+
     cb();
 })
 
 // @internal
-gulp.task('default', ['qtfind','help']);
+gulp.task('default', ['qtfind', 'help']);
 
 /**
  * Display this help (default)
@@ -87,20 +89,44 @@ gulp.task('default', ['qtfind','help']);
 gulp.task('help', doc.help());
 
 // @internal
-gulp.task('copyhelp', function(done) {
+gulp.task('copyhelp', function (done) {
     var stream = gulp.src('helpsrc/**/*.{qhc,qch}').pipe(gulp.dest('qml/help/'));
-    stream.on('end', function() {
+    stream.on('end', function () {
         done();
     });
+});
+
+/**
+ * Install stockfish engine
+ */
+gulp.task('getengines', function (cb) {
+    gutil.log('Grabbing Stockfis for ' + os.platform());
+    var minimatch = require('minimatch');
+    var flatten = require('gulp-flatten');
+    stockfishurl = "";
+    if (os.platform() === 'linux') {
+        stockfishurl = "https://stockfish.s3.amazonaws.com/stockfish-8-linux.zip";
+        download(stockfishurl).pipe(unzip({
+            filter: function (entry) {
+                if (minimatch(entry.path, "stockfish_8_x64", {matchBase: true})) {
+                    return minimatch(entry.path, "stockfish_8_x64", {matchBase: true})
+                }
+                if (minimatch(entry.path, "Readme.md", {matchBase: true})) {
+                    return minimatch(entry.path, "Readme.md", {matchBase: true})
+                }                
+                return minimatch(entry.path, "Copying.txt", {matchBase: true})                                
+            }
+        })).pipe(flatten()).pipe(gulp.dest("linux/"));
+    }
 });
 
 // @internal
 gulp.task('compilehelp', function (done) {
     var stream = exec(qtqcollectiongenerator + ' helpsrc/neochess_US.qhcp -o helpsrc/neochess_US.qhc', function (err, stdout, stderr) {
         gutil.log(stdout);
-        gutil.log(stderr);                
+        gutil.log(stderr);
     });
-    stream.on('end', function() {
+    stream.on('end', function () {
         done();
     });
 });
@@ -111,9 +137,9 @@ gulp.task('compilehelp', function (done) {
 gulp.task('buildi18n', function (done) {
     var stream = exec('goi18n merge -outdir qml/translate translatesrc/en-US.all.json', function (err, stdout, stderr) {
         gutil.log(stdout);
-        gutil.log(stderr);        
+        gutil.log(stderr);
     });
-    stream.on('end', function() {
+    stream.on('end', function () {
         done();
     });
 });
@@ -128,7 +154,7 @@ gulp.task('buildfast', function (done) {
             gutil.log(stdout);
             gutil.log(stderr);
             done(err);
-          });    
+        });
     });
 });
 
@@ -142,7 +168,7 @@ gulp.task('build', function (done) {
             gutil.log(stdout);
             gutil.log(stderr);
             done(err);
-          });    
+        });
     });
 });
 
@@ -154,5 +180,5 @@ gulp.task('buildhelp', ['qtfind', 'compilehelp', 'copyhelp']);
 /**
  * Compile Help, Compile Translations, Build Main Application
  */
-gulp.task('buildall', ['qtfind','compilehelp','copyhelp','buildi18n','build']);
+gulp.task('buildall', ['qtfind', 'compilehelp', 'copyhelp', 'buildi18n', 'build']);
 
