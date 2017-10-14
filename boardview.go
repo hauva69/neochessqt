@@ -104,7 +104,7 @@ func (bv *BoardView) UpdateBoardLabels() {
 		}
 	}
 	bv.labels = nil
-	if AppSettings.IsOption("ShowSquareLables") {
+	if config.IsOption("ShowSquareLables") {
 		log.Info("Adding board square labels")
 		font := gui.NewQFont2("Arial", 11, 2, false)
 		font.SetPixelSize(11)
@@ -123,7 +123,7 @@ func (bv *BoardView) UpdateBoardLabels() {
 			}
 		}
 	}
-	if AppSettings.IsOption("ShowBoardLables") {
+	if config.IsOption("ShowBoardLables") {
 		log.Info("Adding board labels")
 		font := gui.NewQFont2("Arial", 11, 2, false)
 		fm := gui.NewQFontMetrics(font)

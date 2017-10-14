@@ -40,7 +40,7 @@ func (pgndock *PGNDock) SetPGN(game *Game) {
 	var tpl bytes.Buffer
 	if err := t.Execute(&tpl, gamedata); err != nil {
 	}
-	content := "<style>" + AppSettings.PGNStyle + "</style>"
+	content := "<style>" + config.PGNStyle + "</style>"
 	content += tpl.String()
 	mn := 0
 	cv := len(game.Moves) - 1

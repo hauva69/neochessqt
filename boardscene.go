@@ -60,7 +60,7 @@ func (bs *BoardScene) AddSquares() {
 	topborderwidth := 20
 
 	// Board Labels Adjust border
-	if AppSettings.IsOption("ShowBoardLables") {
+	if config.IsOption("ShowBoardLables") {
 		font := gui.NewQFont2("Arial", 11, 2, false)
 		fm := gui.NewQFontMetrics(font)
 		borderwidth = fm.Height() * 2
@@ -68,7 +68,7 @@ func (bs *BoardScene) AddSquares() {
 
 	rightborderwidth := borderwidth
 	// Side to Move Marker
-	if AppSettings.IsOption("ShowSideToMoveMarker") {
+	if config.IsOption("ShowSideToMoveMarker") {
 		indicatorwidth := bs.view.squaresize / 4
 		indicatorspace := bs.view.squaresize / 8
 		rightborderwidth = indicatorwidth + indicatorspace

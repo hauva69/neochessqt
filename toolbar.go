@@ -18,7 +18,7 @@ func initToolBar(w *widgets.QMainWindow, cdbv *ChessDBView) *ToolBar {
 	var toolbar = this
 	toolbar.cdbv = cdbv
 	hdiconstr := "_1x"
-	if AppSettings.HDMode {
+	if config.HDMode {
 		toolbar.SetIconSize(core.NewQSize2(48, 48))
 		hdiconstr = "_2x"
 	} else {
@@ -55,5 +55,5 @@ func defaultbutton(checked bool) {
 
 func openoptions(checked bool) {
 	log.Info("Options Button Clicked")
-	AppSettings.EditConfig()
+	config.EditConfig()
 }

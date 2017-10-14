@@ -97,7 +97,7 @@ func initMenu(w *widgets.QMainWindow, a *widgets.QApplication, cdbv *ChessDBView
 	quitAction := fileMenu.AddAction(T("quit_label"))
 	quitAction.SetEnabled(true)
 	quitAction.SetShortcut(gui.NewQKeySequence2("Ctrl+Q", gui.QKeySequence__NativeText))
-	quitAction.ConnectTriggered(SaveExit)
+	quitAction.ConnectTriggered(func(checked bool) { SaveExit(a) })
 
 	// Play
 	playMenu := menu.AddMenu2(T("play_label"))
@@ -151,16 +151,16 @@ func initMenu(w *widgets.QMainWindow, a *widgets.QApplication, cdbv *ChessDBView
 }
 
 // SaveExit application
-func SaveExit(checked bool) {
-	if err := AppSettings.Save(); err != nil {
+func SaveExit(a *widgets.QApplication) {
+	if err := config.Save(); err != nil {
 		log.Fatal("Error saving settings")
 	}
-	Application.Quit()
+	a.Quit()
 }
 
 func DisplayHelp(w *widgets.QMainWindow) {
-	log.Infof("HelpEngine from: %s", AppSettings.HelpFile)
-	helpengine := help.NewQHelpEngine(AppSettings.HelpFile, w)
+	log.Infof("HelpEngine from: %s", config.HelpFile)
+	helpengine := help.NewQHelpEngine(config.HelpFile, w)
 	helpengine.SetupData()
 	helpdialog := widgets.NewQDialog(w, core.Qt__Dialog)
 	hbox := widgets.NewQHBoxLayout()

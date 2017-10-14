@@ -25,16 +25,9 @@ var (
 	// T translate function
 	T i18n.TranslateFunc
 
-	// Application main
-	Application *widgets.QApplication
-
-	// MainWindow of Application
-	MainWindow *widgets.QMainWindow
-
-	// AppSettings main
-	AppSettings *AppConfig
-
 	catdb *bolt.DB
+
+	config *AppConfig
 )
 
 var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to file")
@@ -72,42 +65,42 @@ func main() {
 	core.QCoreApplication_SetOrganizationName("NeoDevelop")
 	core.QCoreApplication_SetApplicationName("NeoChess")
 	core.QCoreApplication_SetApplicationVersion(VERSION)
-	Application = widgets.NewQApplication(len(os.Args), os.Args)
-	MainWindow := widgets.NewQMainWindow(nil, 0)
+	app := widgets.NewQApplication(len(os.Args), os.Args)
+	mainw := widgets.NewQMainWindow(nil, 0)
 	if runtime.GOOS == "darwin" {
-		MainWindow.SetUnifiedTitleAndToolBarOnMac(true)
+		mainw.SetUnifiedTitleAndToolBarOnMac(true)
 	}
-	MainWindow.SetWindowTitle(core.QCoreApplication_ApplicationName())
+	mainw.SetWindowTitle(core.QCoreApplication_ApplicationName())
 
 	log.Info("Starting Application")
 
 	// Load or initialize settings
-	AppSettings = initAppConfig(Application, MainWindow)
+	config = initAppConfig(app, mainw)
 
 	var caterr error
-	catdb, caterr = bolt.Open(AppSettings.Datadir+"/catalog.db", 0644, nil)
+	catdb, caterr = bolt.Open(config.Datadir+"/catalog.db", 0644, nil)
 	if caterr != nil {
 		log.Error(caterr)
 	}
 
-	MainWindow.Resize(core.NewQSize2(AppSettings.GetIntOption("LastWidth"), AppSettings.GetIntOption("LastHeight")))
+	mainw.Resize(core.NewQSize2(config.GetIntOption("LastWidth"), config.GetIntOption("LastHeight")))
 
-	statusbar := initStatusBar(MainWindow)
-	MainWindow.SetStatusBar(statusbar)
-	statusbar.AddItem("Screen W:%d x H:%d", AppSettings.GetIntOption("LastWidth"), AppSettings.GetIntOption("LastHeight"))
+	statusbar := initStatusBar(mainw)
+	mainw.SetStatusBar(statusbar)
+	statusbar.AddItem("Screen W:%d x H:%d", config.GetIntOption("LastWidth"), config.GetIntOption("LastHeight"))
 
-	chessdbview := initCDBView(MainWindow)
+	chessdbview := initCDBView(mainw)
 
-	toolbar := initToolBar(MainWindow, chessdbview)
-	MainWindow.AddToolBar2(toolbar)
+	toolbar := initToolBar(mainw, chessdbview)
+	mainw.AddToolBar2(toolbar)
 
-	dbdock := initDBDock(MainWindow, chessdbview)
-	MainWindow.AddDockWidget(core.Qt__LeftDockWidgetArea, dbdock)
+	dbdock := initDBDock(mainw, chessdbview)
+	mainw.AddDockWidget(core.Qt__LeftDockWidgetArea, dbdock)
 
-	menu := initMenu(MainWindow, Application, chessdbview)
-	MainWindow.SetMenuBar(menu)
+	menu := initMenu(mainw, app, chessdbview)
+	mainw.SetMenuBar(menu)
 
-	MainWindow.Show()
+	mainw.Show()
 	if *memprofile != "" {
 		f, err := os.Create(*memprofile)
 		if err != nil {
