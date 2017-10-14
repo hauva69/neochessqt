@@ -1,8 +1,10 @@
 package main
 
 import (
+	"flag"
 	"os"
 	"runtime"
+	"runtime/pprof"
 
 	"github.com/allan-simon/go-singleinstance"
 	"github.com/boltdb/bolt"
@@ -35,7 +37,20 @@ var (
 	catdb *bolt.DB
 )
 
+var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to file")
+var memprofile = flag.String("memprofile", "", "write memory profile to this file")
+
 func main() {
+	flag.Parse()
+	if *cpuprofile != "" {
+		f, err := os.Create(*cpuprofile)
+		if err != nil {
+			log.Fatal(err)
+		}
+		pprof.StartCPUProfile(f)
+		defer pprof.StopCPUProfile()
+	}
+
 	// For now only one instance running at a time
 	_, err := singleinstance.CreateLockFile("neochess.lock")
 	if err != nil {
@@ -93,7 +108,15 @@ func main() {
 	MainWindow.SetMenuBar(menu)
 
 	MainWindow.Show()
-
+	if *memprofile != "" {
+		f, err := os.Create(*memprofile)
+		if err != nil {
+			log.Fatal(err)
+		}
+		pprof.WriteHeapProfile(f)
+		f.Close()
+		return
+	}
 	widgets.QApplication_Exec()
 
 }

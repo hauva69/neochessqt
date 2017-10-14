@@ -19,6 +19,7 @@ node_modules/
 neochess
 neochess.log
 neochess.lock
+neochess.prof
 
 helpsrc/*.qch
 helpsrc/*.qhc
