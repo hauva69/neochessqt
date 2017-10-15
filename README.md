@@ -27,9 +27,13 @@ Chess Database System written in Go using Qt
 - [x] Enable Tree View for Recent Databases
 - [x] Integrate and commit a PGN Importer
 - [x] Add Model support for game list grid
-- [ ] Add Support for UCI engines
-- [ ] Create test suite for Move Gen Engine
-- [ ] Create initial PGN Editor based on ~~QtWebengine~~ ~~QTextEdit[1]~~ QtWebKit[2]
+- [x] Add support to specfify UCI engines for analysis output
+- [ ] Add Support for UCI engines and analysis dialog
+- [ ] Create test suite for built in Move Gen Engine
+- [ ] Add perft tests for built in move generation engine
+- [ ] Fix built in move generation engine (I remember at least 1 or 2 errors from a distant past test)
+- [x] Create initial PGN Editor based on ~~QtWebengine~~ QTextEdit[1] 
+- [ ] Replace PGN Editor with QtWebKit[2] for additional functionality
 - [ ] Create and Setup Installers for Releases for OS X, Windows, Linux
 - [ ] Document Binary Game Storage Engine
 - [ ] Create Import for SCID format to Binary Game Storage
