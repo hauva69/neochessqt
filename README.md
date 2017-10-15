@@ -67,6 +67,7 @@ Note at some point we might pull copies of these libraries into a vendor directo
 
 ### Wiki Pages for Build Instructions
 
+- [Pre Building for All Platforms](https://github.com/rashwell/neochess/wiki/NeoChess-Pre-Building-All)
 - [For Linux Environments](https://github.com/rashwell/neochess/wiki/NeoChess-Building-on-Linux)
 - [For Windows Environments](https://github.com/rashwell/neochess/wiki/NeoChess-Building-on-Windows)
 - [For OS X environments](https://github.com/rashwell/neochess/wiki/NeoChess-Building-on-OSX)
