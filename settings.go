@@ -286,7 +286,7 @@ func (ac *AppConfig) EditConfig() {
 		maintabwidget.AddTab(tabs[ac.Tabs[i]], ac.Tabs[i])
 	}
 
-	for _, option := range ac.Options {
+	for index, option := range ac.Options {
 		switch option.Kind {
 		case "bool":
 			item := widgets.NewQCheckBox(nil)
@@ -296,9 +296,9 @@ func (ac *AppConfig) EditConfig() {
 			forms[option.Group].AddRow3(option.Label, item)
 			item.ConnectStateChanged(func(state int) {
 				if state == int(core.Qt__Unchecked) {
-					option.Boolval = false
+					ac.Options[index].Boolval = false
 				} else {
-					option.Boolval = true
+					ac.Options[index].Boolval = true
 				}
 			})
 		case "dropdown":
@@ -308,14 +308,14 @@ func (ac *AppConfig) EditConfig() {
 			item.SetCurrentText(option.Strval)
 			forms[option.Group].AddRow3(option.Label, item)
 			item.ConnectCurrentIndexChanged2(func(val string) {
-				option.Strval = val
+				ac.Options[index].Strval = val
 			})
 		case "string":
 			item := widgets.NewQLineEdit2(option.Strval, nil)
 			item.Home(true)
 			forms[option.Group].AddRow3(option.Label, item)
 			item.ConnectTextChanged(func(val string) {
-				option.Strval = val
+				ac.Options[index].Strval = val
 			})
 		case "file":
 			layout := widgets.NewQHBoxLayout()
@@ -332,15 +332,15 @@ func (ac *AppConfig) EditConfig() {
 				filename := fileDialog.SelectedFiles()[0]
 				log.Infof("Picked: %s", filename)
 				item.SetText(filename)
-				option.Strval = filename
+				ac.Options[index].Strval = filename
 			})
-			layout.AddWidget(item, 0, core.Qt__AlignLeft)
-			layout.AddWidget(button, 0, core.Qt__AlignRight)
+			layout.AddWidget(item, 0, core.Qt__AlignTop)
+			layout.AddWidget(button, 0, core.Qt__AlignTop)
 			widget := widgets.NewQWidget(nil, core.Qt__Widget)
 			widget.SetLayout(layout)
 			forms[option.Group].AddRow3(option.Label, widget)
 			item.ConnectTextChanged(func(val string) {
-				option.Strval = val
+				ac.Options[index].Strval = val
 			})
 		case "color":
 			button := widgets.NewQPushButton2(option.Colorval.Name(), nil)
@@ -353,7 +353,7 @@ func (ac *AppConfig) EditConfig() {
 					log.Infof("Picked Color: %s", color.Name())
 					button.SetStyleSheet("QPushButton {background-color: " + color.Name() + ";}")
 					button.SetText(color.Name())
-					option.Colorval = color
+					ac.Options[index].Colorval = color
 				}
 			})
 			forms[option.Group].AddRow3(option.Label, button)
@@ -365,7 +365,7 @@ func (ac *AppConfig) EditConfig() {
 			forms[option.Group].AddRow3(option.Label, item)
 			item.ConnectTextChanged(func(val string) {
 				if i, err := strconv.Atoi(val); err == nil {
-					option.Intval = i
+					ac.Options[index].Intval = i
 				}
 			})
 		}
