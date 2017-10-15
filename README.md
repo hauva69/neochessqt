@@ -29,7 +29,7 @@ Chess Database System written in Go using Qt
 - [x] Add Model support for game list grid
 - [ ] Add Support for UCI engines
 - [ ] Create test suite for Move Gen Engine
-- [ ] Create initial PGN Editor based on ~~QtWebengine~~ QTextEdit[1]
+- [ ] Create initial PGN Editor based on ~~QtWebengine~~ ~~QTextEdit[1]~~ QtWebKit[2]
 - [ ] Create and Setup Installers for Releases for OS X, Windows, Linux
 - [ ] Document Binary Game Storage Engine
 - [ ] Create Import for SCID format to Binary Game Storage
@@ -41,6 +41,9 @@ Chess Database System written in Go using Qt
 [1]: QtWebengine as far as I know still has a bug either in Qt or in the bindings to golang.
 So that it isn't fully supported in windows yet see [Issue](https://github.com/therecipe/qt/issues/217#issuecomment-280940272) 
 And since I want NeoChess to build at least in Linux, iOS, and Windows, I'll just work with QTextEdit instead.
+
+[2]: QTextEdit is going to have very limited support for styling the PGN Content, current move, etc.  Going to temporarily
+experiment with QtWebKit instead, though this will make building NeoChess a bit mor complicated.
 
 ## Building NeoChess yourself until Releases are Available
 
