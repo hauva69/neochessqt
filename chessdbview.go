@@ -13,15 +13,16 @@ import (
 
 // ChessDBView A view of an Open Chess Database
 type ChessDBView struct {
-	mainw          *widgets.QMainWindow
-	cdb            *ChessDataBase
-	model          *GameListModel
-	pgndock        *PGNDock
-	gamelistdock   *GameListDock
-	gamedetaildock *GameDetailDock
-	boardview      *BoardView
-	currentgame    *Game
-	currentboard   *BoardType
+	mainw            *widgets.QMainWindow
+	cdb              *ChessDataBase
+	model            *GameListModel
+	pgndock          *PGNDock
+	gamelistdock     *GameListDock
+	gamedetaildock   *GameDetailDock
+	gameanalysisdock *GameAnalysisDock
+	boardview        *BoardView
+	currentgame      *Game
+	currentboard     *BoardType
 }
 
 // initCDBView Create instance
@@ -41,6 +42,10 @@ func initCDBView(w *widgets.QMainWindow) *ChessDBView {
 	w.AddDockWidget(core.Qt__RightDockWidgetArea, view.gamedetaildock)
 	w.TabifyDockWidget(view.pgndock, view.gamedetaildock)
 	w.SetTabPosition(core.Qt__RightDockWidgetArea, widgets.QTabWidget__North)
+
+	view.gameanalysisdock = initGameAnalysisDock(w)
+	w.AddDockWidget(core.Qt__RightDockWidgetArea, view.gameanalysisdock)
+	view.gameanalysisdock.Hide()
 
 	pgntitlewidget := widgets.NewQWidget(w, core.Qt__Widget)
 	gamedetailtitlewidget := widgets.NewQWidget(w, core.Qt__Widget)

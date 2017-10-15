@@ -33,6 +33,15 @@ func initToolBar(w *widgets.QMainWindow, cdbv *ChessDBView) *ToolBar {
 	// toolbar.addbutton("Import PGN", "Import PGN Database", ":/qml/assets/toolbar/ic_file_upload_white_48dp" + hdiconstr+".png", func(checked bool) { loadpgndb(w) })
 	//toolbar.addbutton("Export Game", "Export Game", ":/qml/assets/blue-document-export.png", defaultbutton)
 	toolbar.addbutton("Search DB", "Search Database", ":/qml/assets/toolbar/ic_search_white_48dp"+hdiconstr+".png", defaultbutton)
+
+	ba := cdbv.gameanalysisdock.ToggleViewAction()
+	ba.SetIcon(gui.NewQIcon5(":/qml/assets/toolbar/ic_memory_white_48dp" + hdiconstr + ".png"))
+	ba.SetIconText("Analysis")
+	ba.SetStatusTip("Analysis")
+
+	toolbar.InsertAction(nil, ba)
+
+	// toolbar.addbuttonwithaction("Analysis", "Analysis", ":/qml/assets/toolbar/ic_memory_white_48dp"+hdiconstr+".png", cdbv.gameanalysisdock.ToggleViewAction())
 	toolbar.addbutton("Options", "Options", ":/qml/assets/toolbar/ic_settings_white_48dp"+hdiconstr+".png", openoptions)
 	spacer := widgets.NewQWidget(nil, core.Qt__Widget)
 	sp := widgets.NewQSizePolicy2(widgets.QSizePolicy__Expanding, widgets.QSizePolicy__Expanding, widgets.QSizePolicy__ToolButton)
@@ -56,4 +65,8 @@ func defaultbutton(checked bool) {
 func openoptions(checked bool) {
 	log.Info("Options Button Clicked")
 	config.EditConfig()
+}
+
+func (tb *ToolBar) showanalysis() {
+	tb.cdbv.gameanalysisdock.ToggleViewAction()
 }
