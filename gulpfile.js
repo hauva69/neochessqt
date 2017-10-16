@@ -118,6 +118,20 @@ gulp.task('getengines', function (cb) {
             }
         })).pipe(flatten()).pipe(gulp.dest("linux/"));
     }
+    if (os.platform() === 'win32') {
+        stockfishurl = "https://stockfish.s3.amazonaws.com/stockfish-8-win.zip";
+        download(stockfishurl).pipe(unzip({
+            filter: function (entry) {
+                if (minimatch(entry.path, "stockfish_8_x64.exe", {matchBase: true})) {
+                    return minimatch(entry.path, "stockfish_8_x64.exe", {matchBase: true})
+                }
+                if (minimatch(entry.path, "Readme.md", {matchBase: true})) {
+                    return minimatch(entry.path, "Readme.md", {matchBase: true})
+                }                
+                return minimatch(entry.path, "Copying.txt", {matchBase: true})                                
+            }
+        })).pipe(flatten()).pipe(gulp.dest("windows/"));
+    }
 });
 
 // @internal
