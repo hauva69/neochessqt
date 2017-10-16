@@ -1,7 +1,7 @@
 package main
 
 import (
-	"encoding/gob"
+	"encoding/json"
 	"io/ioutil"
 	"os"
 	"strconv"
@@ -16,18 +16,18 @@ import (
 
 // OptionType comment
 type OptionType struct {
-	Version  string
-	Group    string
-	Key      string
-	Label    string
-	Kind     string
-	Descr    string
-	Boolval  bool
-	Dirval   string
-	Strval   string
-	Intval   int
-	Colorval *gui.QColor
-	Modified bool
+	Version  string      `json:"version"`
+	Group    string      `json:"group"`
+	Key      string      `json:"key"`
+	Label    string      `json:"label"`
+	Kind     string      `json:"kind"`
+	Descr    string      `json:"descr"`
+	Boolval  bool        `json:"boolval"`
+	Dirval   string      `json:"dirval"`
+	Strval   string      `json:"strval"`
+	Intval   int         `json:"intval"`
+	Colorval *gui.QColor `json:"colorval"`
+	Modified bool        `json:"modified"`
 }
 
 // AppConfig comment
@@ -41,7 +41,7 @@ type AppConfig struct {
 	HelpFile     string
 	HDMode       bool
 	Tabs         []string
-	Options      []OptionType
+	Options      []OptionType `json:"options"`
 }
 
 // IsOption true or false
@@ -121,7 +121,7 @@ func initAppConfig(qapp *widgets.QApplication, qwin *widgets.QMainWindow) *AppCo
 	appconfig.Window = qwin
 	appconfig.Datadir = core.QStandardPaths_StandardLocations(core.QStandardPaths__AppDataLocation)[0]
 	appconfig.Programdir = core.QCoreApplication_ApplicationDirPath()
-	appconfig.SettingsFile = appconfig.Datadir + "/settings.gob"
+	appconfig.SettingsFile = appconfig.Datadir + "/settings.json"
 	appconfig.Tabs = []string{"General", "Board", "PGN", "Engines"}
 	if err := os.MkdirAll(appconfig.Datadir, os.ModePerm); err != nil {
 		log.Fatal("Error creating application data directory")
@@ -148,8 +148,8 @@ func initAppConfig(qapp *widgets.QApplication, qwin *widgets.QMainWindow) *AppCo
 		appconfig.Options = append(appconfig.Options, OptionType{"1.0.0", "Board", "PossibleMove", "Possible Move Color", "color", "Possible Move Color", false, "", "", 0, gui.NewQColor3(8, 145, 17, 100), false})
 		appconfig.Options = append(appconfig.Options, OptionType{"1.0.0", "PGN", "PGNStyleFile", "PGN Style File", "file", "CSS Files (*.css)", false, appconfig.Datadir, appconfig.Datadir + "/pgntextstyle.css", 0, nil, false})
 		appconfig.Options = append(appconfig.Options, OptionType{"1.0.0", "PGN", "PGNPieceCountryDisplay", "PGN Piece Display", "dropdown", "Figurine;English;Dutch", false, "", "", 0, nil, false})
-		appconfig.Options = append(appconfig.Options, OptionType{"1.0.0", "Engines", "Engine #1", "Engine #1", "file", "", false, appconfig.Programdir, "", 0, nil, false})
-		appconfig.Options = append(appconfig.Options, OptionType{"1.0.0", "Engines", "Engine #2", "Engine #2", "file", "", false, appconfig.Programdir, "", 0, nil, false})
+		appconfig.Options = append(appconfig.Options, OptionType{"1.0.0", "Engines", "Engine1", "Engine #1", "file", "", false, appconfig.Programdir, "", 0, nil, false})
+		appconfig.Options = append(appconfig.Options, OptionType{"1.0.0", "Engines", "Engine2", "Engine #2", "file", "", false, appconfig.Programdir, "", 0, nil, false})
 	}
 
 	var fontfile = core.NewQFile2(":qml/assets/FIG-TB-1.TTF")
@@ -234,19 +234,18 @@ func initAppConfig(qapp *widgets.QApplication, qwin *widgets.QMainWindow) *AppCo
 
 // Load Config settings
 func (ac *AppConfig) Load() bool {
-	log.Info("Loading Config")
+	log.Infof("Loading Config from: %s", ac.SettingsFile)
 	if _, err := os.Stat(ac.SettingsFile); err != nil {
+		log.Info("Settings file not found")
 		return false
 	}
-	gobdata, err := os.Open(ac.SettingsFile)
-	defer gobdata.Close()
+	log.Info("Decoding Settings")
+	optionsdata, _ := ioutil.ReadFile(ac.SettingsFile)
+	err := json.Unmarshal(optionsdata, &ac.Options)
 	if err != nil {
 		return false
 	}
-	decoder := gob.NewDecoder(gobdata)
-	if err := decoder.Decode(ac.Options); err != nil {
-		return false
-	}
+	log.Info("Reading Settings")
 	return true
 }
 
@@ -255,12 +254,8 @@ func (ac *AppConfig) Save() error {
 	log.Info("Saving Config")
 	ac.SetIntOption("LastWidth", int(ac.Window.Width()))
 	ac.SetIntOption("LastHeight", int(ac.Window.Height()))
-	file, err := os.Create(ac.SettingsFile)
-	if err == nil {
-		encoder := gob.NewEncoder(file)
-		encoder.Encode(ac.Options)
-	}
-	file.Close()
+	optionsJSON, _ := json.MarshalIndent(ac.Options, "", "\t")
+	err := ioutil.WriteFile(ac.SettingsFile, optionsJSON, 0644)
 	return err
 }
 
