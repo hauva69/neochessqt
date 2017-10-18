@@ -76,7 +76,6 @@ func main() {
 
 	// Load or initialize settings
 	config = initAppConfig(app, mainw)
-	config.Save()
 
 	var caterr error
 	catdb, caterr = bolt.Open(config.Datadir+"/catalog.db", 0644, nil)
@@ -112,5 +111,6 @@ func main() {
 		return
 	}
 	widgets.QApplication_Exec()
+	config.Save()
 
 }
