@@ -28,7 +28,10 @@ Chess Database System written in Go using Qt
 - [x] Integrate and commit a PGN Importer
 - [x] Add Model support for game list grid
 - [x] Add support to specfify UCI engines for analysis output
-- [ ] Add Support for UCI engines and analysis dialog
+- [x] Add Support for UCI engines and analysis dialog
+- [ ] Convert UCI output to readable moves
+- [ ] Add Support to play against UCI Engine
+- [ ] Add Support to play two engines against each other
 - [ ] Create test suite for built in Move Gen Engine
 - [ ] Add perft tests for built in move generation engine
 - [ ] Fix built in move generation engine (I remember at least 1 or 2 errors from a distant past test)

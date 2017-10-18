@@ -53,6 +53,7 @@ func initCDBView(w *widgets.QMainWindow) *ChessDBView {
 	view.pgndock.SetTitleBarWidget(pgntitlewidget)
 	view.pgndock.Raise()
 	view.AddGame()
+
 	return view
 }
 

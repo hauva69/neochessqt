@@ -99,38 +99,64 @@ gulp.task('copyhelp', function (done) {
 /**
  * Install stockfish engine
  */
-gulp.task('getengines', function (cb) {
+gulp.task('getengines', function (done) {
     gutil.log('Grabbing Stockfis for ' + os.platform());
     var minimatch = require('minimatch');
     var flatten = require('gulp-flatten');
     stockfishurl = "";
     if (os.platform() === 'linux') {
+        var chmod = require('gulp-chmod');
         stockfishurl = "https://stockfish.s3.amazonaws.com/stockfish-8-linux.zip";
-        download(stockfishurl).pipe(unzip({
+        var stream = download(stockfishurl).pipe(unzip({
             filter: function (entry) {
-                if (minimatch(entry.path, "stockfish_8_x64", {matchBase: true})) {
-                    return minimatch(entry.path, "stockfish_8_x64", {matchBase: true})
+                if (minimatch(entry.path, "Readme.md", { matchBase: true })) {
+                    return minimatch(entry.path, "Readme.md", { matchBase: true })
                 }
-                if (minimatch(entry.path, "Readme.md", {matchBase: true})) {
-                    return minimatch(entry.path, "Readme.md", {matchBase: true})
-                }                
-                return minimatch(entry.path, "Copying.txt", {matchBase: true})                                
+                return minimatch(entry.path, "Copying.txt", { matchBase: true })
             }
         })).pipe(flatten()).pipe(gulp.dest("linux/"));
+        stream.on('end', function () {
+            chstream = download(stockfishurl).pipe(unzip({
+                filter: function (entry) {
+                    if (minimatch(entry.path, "stockfish_8_x64", { matchBase: true })) {
+                        return minimatch(entry.path, "stockfish_8_x64", { matchBase: true })
+                    }
+                }
+            })).pipe(flatten()).pipe(chmod({
+                owner: {
+                    read: true,
+                    write: true,
+                    execute: true
+                },
+                group: {
+                    execute: true
+                },
+                others: {
+                    execute: true
+                }
+            }))
+                .pipe(gulp.dest("linux/"));
+            chstream.on('end', function () {
+                done()
+            })
+        })
     }
     if (os.platform() === 'win32') {
         stockfishurl = "https://stockfish.s3.amazonaws.com/stockfish-8-win.zip";
-        download(stockfishurl).pipe(unzip({
+        var stream = download(stockfishurl).pipe(unzip({
             filter: function (entry) {
-                if (minimatch(entry.path, "stockfish_8_x64.exe", {matchBase: true})) {
-                    return minimatch(entry.path, "stockfish_8_x64.exe", {matchBase: true})
+                if (minimatch(entry.path, "stockfish_8_x64.exe", { matchBase: true })) {
+                    return minimatch(entry.path, "stockfish_8_x64.exe", { matchBase: true })
                 }
-                if (minimatch(entry.path, "Readme.md", {matchBase: true})) {
-                    return minimatch(entry.path, "Readme.md", {matchBase: true})
-                }                
-                return minimatch(entry.path, "Copying.txt", {matchBase: true})                                
+                if (minimatch(entry.path, "Readme.md", { matchBase: true })) {
+                    return minimatch(entry.path, "Readme.md", { matchBase: true })
+                }
+                return minimatch(entry.path, "Copying.txt", { matchBase: true })
             }
         })).pipe(flatten()).pipe(gulp.dest("windows/"));
+        stream.on('end', function () {
+            done()
+        })
     }
 });
 
