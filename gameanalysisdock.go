@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"io"
 	"os/exec"
+	"runtime"
 	"strconv"
 	"strings"
+	"syscall"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/therecipe/qt/core"
@@ -40,6 +42,9 @@ func initGameAnalysisDock(w *widgets.QMainWindow) *GameAnalysisDock {
 
 func (ga *GameAnalysisDock) enginerun(engine string) (<-chan string, io.WriteCloser) {
 	cmd := exec.Command(engine)
+	if runtime.GOOS == "windows" {
+		cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+	}
 	cmdReader, _ := cmd.StdoutPipe()
 	cmdWriter, _ := cmd.StdinPipe()
 
