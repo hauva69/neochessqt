@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os/exec"
+	"strconv"
 	"strings"
 
 	log "github.com/sirupsen/logrus"
@@ -69,11 +70,9 @@ func (ga *GameAnalysisDock) enginerun(engine string) (<-chan string, io.WriteClo
 }
 
 // ToggleEngine comment
-func (ga *GameAnalysisDock) ToggleEngine(engine int, g *Game, b *BoardType) {
+func (ga *GameAnalysisDock) ToggleEngine(engine int, fen string) {
 	if !ga.running {
 		log.Info("Attempting to Start Chess Engine")
-		ga.analysisgame = g
-		ga.analysisboard = b
 		enginekey := fmt.Sprintf("Engine%d", engine)
 		if config.GetStrOption(enginekey) == "" {
 			ga.analysis.SetText("Engine not configured")
@@ -94,12 +93,35 @@ func (ga *GameAnalysisDock) ToggleEngine(engine int, g *Game, b *BoardType) {
 			go func() {
 				for line := range stream {
 					ga.analysis.Clear()
-					ga.analysis.Append(line)
+					enginemoves := strings.Split(line, " ")
+					board := NewBoard()
+					board.InitFromFen(fen)
+					boardmoves := board.GenerateLegalMoves()
+					pvline := ""
+					if board.Turn == Black {
+						pvline = "... "
+					}
+					mn := board.FullMoves
+					for _, enginemove := range enginemoves {
+						for _, move := range boardmoves {
+							if move.ToRune() == enginemove {
+								if board.Turn == White {
+									pvline += "<span class='movenumber'>" + strconv.Itoa(mn) + ". </span>"
+									mn++
+								}
+								pvline += "<span class='move'>" + move.ToSAN() + "</span> "
+								board.MakeMove(move, true)
+								break
+							}
+						}
+						boardmoves = board.GenerateLegalMoves()
+					}
+					ga.analysis.SetHtml("<style>" + config.PGNStyle + "</style>" + pvline)
 				}
 			}()
 			ga.EngineCommand("uci")
 			ga.EngineCommand("ucinewgame")
-			ga.EngineCommand("position fen " + ga.analysisboard.ToFen())
+			ga.EngineCommand("position fen " + fen)
 			ga.EngineCommand("go infinite")
 		}
 	} else {
