@@ -147,7 +147,7 @@ func initAppConfig(qapp *widgets.QApplication, qwin *widgets.QMainWindow) *AppCo
 	appconfig.Datadir = core.QStandardPaths_StandardLocations(core.QStandardPaths__AppDataLocation)[0]
 	appconfig.Programdir = core.QCoreApplication_ApplicationDirPath()
 	appconfig.SettingsFile = appconfig.Datadir + "/settings.json"
-	appconfig.Tabs = []string{"General", "Board", "PGN", "Engines"}
+	appconfig.Tabs = []string{"Profile", "General", "Board", "PGN", "Engines"}
 	if err := os.MkdirAll(appconfig.Datadir, os.ModePerm); err != nil {
 		log.Fatal("Error creating application data directory")
 	}
@@ -164,6 +164,13 @@ func initAppConfig(qapp *widgets.QApplication, qwin *widgets.QMainWindow) *AppCo
 		}
 
 		appconfig.OptionSet.Version = "1.0.0"
+		appconfig.OptionSet.Options = append(appconfig.OptionSet.Options, OptionType{"Profile", "PlayerName", "Player Name", "string", "", false, "", "", 0, "", false})
+		appconfig.OptionSet.Options = append(appconfig.OptionSet.Options, OptionType{"Profile", "Country", "Country", "dropdown", "United States of America", false, "", "", 0, "", false})
+		appconfig.OptionSet.Options = append(appconfig.OptionSet.Options, OptionType{"Profile", "Title", "Title", "dropdown", "None;GM;WGM;FM;M", false, "", "", 0, "", false})
+		appconfig.OptionSet.Options = append(appconfig.OptionSet.Options, OptionType{"Profile", "FIDEID", "FIDE ID", "string", "", false, "", "", 0, "", false})
+		appconfig.OptionSet.Options = append(appconfig.OptionSet.Options, OptionType{"Profile", "ELO", "ELO Rating", "string", "", false, "", "", 0, "", false})
+		appconfig.OptionSet.Options = append(appconfig.OptionSet.Options, OptionType{"Profile", "USCF", "USCF Rating", "string", "", false, "", "", 0, "", false})
+		appconfig.OptionSet.Options = append(appconfig.OptionSet.Options, OptionType{"Profile", "OTHER", "Other Rating", "string", "", false, "", "", 0, "", false})
 		appconfig.OptionSet.Options = append(appconfig.OptionSet.Options, OptionType{"General", "LastWidth", "Last Application Width", "int", "Last width of application", false, "", "", int(screenrect.Width() * 80 / 100), "", false})
 		appconfig.OptionSet.Options = append(appconfig.OptionSet.Options, OptionType{"General", "LastHeight", "Last Application Height", "int", "Last height of application", false, "", "", int(screenrect.Height() * 90 / 100), "", false})
 		appconfig.OptionSet.Options = append(appconfig.OptionSet.Options, OptionType{"General", "HelpFile", "Help File", "file", "Help File (*.qch)", false, appconfig.Datadir, appconfig.Datadir + "/neochess_US.qhc", 0, "", false})
@@ -288,6 +295,7 @@ func (ac *AppConfig) Save() error {
 // EditConfig Dialog
 func (ac *AppConfig) EditConfig() {
 	configdialog := widgets.NewQDialog(ac.Window, core.Qt__Dialog)
+	configdialog.SetMinimumSize2(600, 400)
 	vbox := widgets.NewQVBoxLayout()
 	configdialog.SetLayout(vbox)
 
