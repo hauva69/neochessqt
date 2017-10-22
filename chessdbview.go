@@ -16,6 +16,7 @@ type ChessDBView struct {
 	mainw            *widgets.QMainWindow
 	cdb              *ChessDataBase
 	model            *GameListModel
+	dbdock           *DBDock
 	pgndock          *PGNDock
 	gamelistdock     *GameListDock
 	gamedetaildock   *GameDetailDock
@@ -33,6 +34,9 @@ func initCDBView(w *widgets.QMainWindow) *ChessDBView {
 
 	view.pgndock = initPGNDock(w)
 	w.AddDockWidget(core.Qt__RightDockWidgetArea, view.pgndock)
+
+	view.dbdock = initDBDock(w, view)
+	w.AddDockWidget(core.Qt__LeftDockWidgetArea, view.dbdock)
 
 	view.gamelistdock = initGameListDock(w, view)
 	view.gamelistdock.tableview.ConnectDoubleClicked(view.gameselected)
@@ -172,6 +176,7 @@ func (cdbv *ChessDBView) loadpgndb(w *widgets.QMainWindow) {
 
 // LoadDBProperties dockwindow
 func (cdbv *ChessDBView) LoadDBProperties() error {
+	cdbv.dbdock.InsertPGNDB(cdbv.cdb.Displayname, cdbv.cdb.Fullpath, cdbv.cdb.Count)
 	// dbtree.SetNameProp(cdb.Displayname)
 	// dbtree.SetFileProp(cdb.Fullpath)
 	// dbtree.SetCountProp(strconv.Itoa(cdb.Count))
@@ -180,6 +185,7 @@ func (cdbv *ChessDBView) LoadDBProperties() error {
 	return nil
 }
 
+// UpdatePGN display
 func (cdbv *ChessDBView) UpdatePGN() {
 	cdbv.pgndock.SetPGN(cdbv.currentgame)
 }

@@ -21,6 +21,7 @@ type DBDock struct {
 	currentfile  string
 	currentcount string
 	currentview  *ChessDBView
+	pgncat       *gui.QStandardItem
 }
 
 func initDBDock(w *widgets.QMainWindow, cdbview *ChessDBView) *DBDock {
@@ -44,6 +45,7 @@ func initDBDock(w *widgets.QMainWindow, cdbview *ChessDBView) *DBDock {
 		catnode := gui.NewQStandardItem2(cat)
 		switch {
 		case cat == "PGN DataBases":
+			dbdock.pgncat = catnode
 			catdb.View(func(tx *bolt.Tx) error {
 				b := tx.Bucket(bucket)
 				if b != nil {
@@ -78,6 +80,20 @@ func initDBDock(w *widgets.QMainWindow, cdbview *ChessDBView) *DBDock {
 	dbdock.tree.ExpandAll()
 
 	return this
+}
+
+func (dbd *DBDock) InsertPGNDB(displayname string, fp string, count int) {
+	child := gui.NewQStandardItem()
+	child.SetEditable(false)
+	displaystr := core.NewQVariant17(displayname)
+	child.SetData(displaystr, int(core.Qt__DisplayRole))
+	keystr := core.NewQVariant17(fp)
+	child.SetData(keystr, int(core.Qt__UserRole))
+	typestr := core.NewQVariant17("PGN")
+	child.SetData(typestr, int(core.Qt__UserRole)+1)
+	countstr := core.NewQVariant17(strconv.Itoa(count))
+	child.SetData(countstr, int(core.Qt__UserRole)+2)
+	dbd.pgncat.AppendRow2(child)
 }
 
 func (dbd *DBDock) SelectionCommand(index *core.QModelIndex, event *core.QEvent) core.QItemSelectionModel__SelectionFlag {

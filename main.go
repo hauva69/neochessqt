@@ -94,9 +94,6 @@ func main() {
 	toolbar := initToolBar(mainw, chessdbview)
 	mainw.AddToolBar2(toolbar)
 
-	dbdock := initDBDock(mainw, chessdbview)
-	mainw.AddDockWidget(core.Qt__LeftDockWidgetArea, dbdock)
-
 	menu := initMenu(mainw, app, chessdbview)
 	mainw.SetMenuBar(menu)
 
