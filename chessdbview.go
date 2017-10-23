@@ -17,6 +17,7 @@ type ChessDBView struct {
 	cdb              *ChessDataBase
 	model            *GameListModel
 	dbdock           *DBDock
+	dbdetaildock     *DBDetailDock
 	pgndock          *PGNDock
 	gamelistdock     *GameListDock
 	gamedetaildock   *GameDetailDock
@@ -37,6 +38,9 @@ func initCDBView(w *widgets.QMainWindow) *ChessDBView {
 
 	view.dbdock = initDBDock(w, view)
 	w.AddDockWidget(core.Qt__LeftDockWidgetArea, view.dbdock)
+
+	view.dbdetaildock = initDBDetailDock(w)
+	w.AddDockWidget(core.Qt__LeftDockWidgetArea, view.dbdetaildock)
 
 	view.gamelistdock = initGameListDock(w, view)
 	view.gamelistdock.tableview.ConnectDoubleClicked(view.gameselected)
@@ -208,4 +212,9 @@ func (cdbv *ChessDBView) setDatabase(dbpath string, kind string) {
 	cdbv.model = NewGameListModel(nil)
 	cdbv.model.cdb = cdbv.cdb
 	cdbv.gamelistdock.tableview.SetModel(cdbv.model)
+	cdbv.dbdetaildock.SetProperty("name", cdbv.cdb.Displayname)
+	cdbv.dbdetaildock.SetProperty("location", cdbv.cdb.Fullpath)
+	cdbv.dbdetaildock.SetProperty("count", strconv.Itoa(cdbv.cdb.Count))
+	cdbv.dbdetaildock.SetProperty("modified", cdbv.cdb.Filemod.Format("01/02/2006 03:04:05pm"))
+
 }
