@@ -3,73 +3,59 @@ package main
 import (
 	// "bytes"
 	"encoding/binary"
-	"strconv"
 )
 
 // GameHeader Structure
 type GameHeader struct {
-	Event        string `json:"Event"`
-	Site         string `json:"Site"`
-	Date         string `json:"Date"`
-	Round        string `json:"Round"`
-	White        string `json:"White"`
-	Black        string `json:"Black"`
-	Result       string `json:"Result"`
-	WhiteTitle   string `json:"WhiteTitle"`
-	BlackTitle   string `json:"BlackTitle"`
-	WhiteElo     string `json:"WhiteElo"`
-	BlackElo     string `json:"BlackElo"`
-	WhiteUSCF    string `json:"WhiteUSCF"`
-	BlackUSCF    string `json:"BlackUSCF"`
-	WhiteNA      string `json:"WhiteNA"`
-	BlackNA      string `json:"BlackNA"`
-	WhiteType    string `json:"WhiteType"`
-	BlackType    string `json:"BlackType"`
-	WhiteFideID  string `json:"WhiteFideId"`
-	BlackFideID  string `json:"BlackFideId"`
-	EventType    string `json:"EventType"`
-	EventDate    string `json:"EventDate"`
-	EventSponsor string `json:"EventSponsor"`
-	Section      string `json:"Section"`
-	Stage        string `json:"Stage"`
-	Board        string `json:"Board"`
-	Opening      string `json:"Opending"`
-	Variation    string `json:"Variation"`
-	SubVariation string `json:"SubVariation"`
-	ECO          string `json:"ECO"`
-	NIC          string `json:"NIC"`
-	Time         string `json:"Time"`
-	UTCTime      string `json:"UTCTime"`
-	TimeControl  string `json:"TimeControl"`
-	SetUp        string `json:"SetUp"`
-	FEN          string `json:"FEN"`
-	Termination  string `json:"Termination"`
-	Annotator    string `json:"Annotator"`
-	Mode         string `json:"Mode"`
-	PlyCount     string `json:"PlyCount"`
-}
-
-// GameCursor Structure
-type GameCursor struct {
-	CurrentPly     int        `json:"CurrentPly"`
-	PotentialMoves []MoveType `json:"-"`
-	FromToMoves    []string   `json:"fromtomoves"`
-	SanMoves       []string   `json:"sanmoves"`
-	SideToMove     string     `json:"turn"`
-	Ischeckmate    bool       `json:"ischeckmate"`
-	Ischeck        bool       `json:"ischeck"`
-	Isdraw         bool       `json:"isdraw"`
-	CurrentPgn     string     `json:"Currentpgn"`
-	CurrentFen     string     `json:"Currentfen"`
+	Event        string
+	Site         string
+	Date         string
+	Round        string
+	White        string
+	Black        string
+	Result       string
+	WhiteTitle   string
+	BlackTitle   string
+	WhiteElo     string
+	BlackElo     string
+	WhiteUSCF    string
+	BlackUSCF    string
+	WhiteNA      string
+	BlackNA      string
+	WhiteType    string
+	BlackType    string
+	WhiteFideID  string
+	BlackFideID  string
+	EventType    string
+	EventDate    string
+	EventSponsor string
+	Section      string
+	Stage        string
+	Board        string
+	Opening      string
+	Variation    string
+	SubVariation string
+	ECO          string
+	NIC          string
+	Time         string
+	UTCTime      string
+	TimeControl  string
+	SetUp        string
+	FEN          string
+	Termination  string
+	Annotator    string
+	Mode         string
+	PlyCount     string
 }
 
 // Game Structure
 type Game struct {
-	ID               uint32 `json:"ID"`
-	GameHeader       `json:"Header"`
-	OriginalMoveText string     `json:"OriginalMoveText"`
-	Moves            []MoveType `json:"Moves"`
-	GameCursor       `json:"GameCursor"`
+	ID uint32
+	GameHeader
+	OriginalMoveText    string
+	Moves               []MoveType
+	PositionTree        []PositionNode
+	CurrentPositionNode int
 }
 
 // Game Constants
@@ -284,29 +270,43 @@ func NewGame() *Game {
 
 // LoadMoves from board into ActiveGame
 func (g *Game) LoadMoves(cb *BoardType) {
-	g.CurrentFen = cb.ToFen()
-	g.SideToMove = "w"
-	if cb.Turn == Black {
-		g.SideToMove = "b"
-	}
-	g.Ischeck = cb.IsCheck(cb.Turn)
-	g.Ischeckmate = cb.Checkmate // Needs to be recalced
-	g.CurrentPgn = ""
-	g.PotentialMoves = cb.GenerateLegalMoves()
-	countpMoves := len(g.PotentialMoves)
-	g.FromToMoves = make([]string, countpMoves)
-	g.SanMoves = make([]string, countpMoves)
-	for pindex, pMove := range g.PotentialMoves {
-		g.FromToMoves[pindex] = pMove.from().ToRune() + pMove.to().ToRune()
-		g.SanMoves[pindex] = pMove.ToSAN()
-	}
-	mn := 0
-	g.CurrentPgn = ""
-	linelength := 0
-	for _, Move := range g.Moves {
-		if Move.color() == White {
-			mn++
-			movestr := strconv.Itoa(mn) + ". "
+	node := PositionNode{}
+	node.nodetype = MoveNode
+	node.potential = cb.GenerateLegalMoves()
+	g.PositionTree = append(g.PositionTree, node)
+	g.CurrentPositionNode = len(g.PositionTree) - 1
+	/*
+		g.CurrentFen = cb.ToFen()
+		g.SideToMove = "w"
+		if cb.Turn == Black {
+			g.SideToMove = "b"
+		}
+		g.Ischeck = cb.IsCheck(cb.Turn)
+		g.Ischeckmate = cb.Checkmate // Needs to be recalced
+		g.CurrentPgn = ""
+		g.PotentialMoves = cb.GenerateLegalMoves()
+		countpMoves := len(g.PotentialMoves)
+		g.FromToMoves = make([]string, countpMoves)
+		g.SanMoves = make([]string, countpMoves)
+		for pindex, pMove := range g.PotentialMoves {
+			g.FromToMoves[pindex] = pMove.from().ToRune() + pMove.to().ToRune()
+			g.SanMoves[pindex] = pMove.ToSAN()
+		}
+		mn := 0
+		g.CurrentPgn = ""
+		linelength := 0
+		for _, Move := range g.Moves {
+			if Move.color() == White {
+				mn++
+				movestr := strconv.Itoa(mn) + ". "
+				if (linelength + len(movestr)) > 80 {
+					g.CurrentPgn += "\n"
+					linelength = 0
+				}
+				g.CurrentPgn += movestr
+				linelength += len(movestr)
+			}
+			movestr := Move.ToSAN() + " "
 			if (linelength + len(movestr)) > 80 {
 				g.CurrentPgn += "\n"
 				linelength = 0
@@ -314,14 +314,7 @@ func (g *Game) LoadMoves(cb *BoardType) {
 			g.CurrentPgn += movestr
 			linelength += len(movestr)
 		}
-		movestr := Move.ToSAN() + " "
-		if (linelength + len(movestr)) > 80 {
-			g.CurrentPgn += "\n"
-			linelength = 0
-		}
-		g.CurrentPgn += movestr
-		linelength += len(movestr)
-	}
+	*/
 }
 
 func (g *Game) settag(tagname string, tagvalue string) {
@@ -492,9 +485,15 @@ func (g *Game) gettag(tagname string) string {
 	}
 }
 
+func (g *Game) MoveChoice(index int) MoveType {
+	node := g.PositionTree[g.CurrentPositionNode]
+	return node.potential[index]
+}
+
 func (g *Game) IsMoveInFromMoves(mvstr string) (bool, int) {
-	for index, b := range g.FromToMoves {
-		if b == mvstr {
+	node := g.PositionTree[g.CurrentPositionNode]
+	for index, b := range node.potential {
+		if b.ToRune() == mvstr {
 			return true, index
 		}
 	}
@@ -503,7 +502,8 @@ func (g *Game) IsMoveInFromMoves(mvstr string) (bool, int) {
 
 func (g *Game) GetTargetSquares(from SquareType) []SquareType {
 	targetSquares := []SquareType{}
-	for _, pMove := range g.PotentialMoves {
+	node := g.PositionTree[g.CurrentPositionNode]
+	for _, pMove := range node.potential {
 		if pMove.from() == from {
 			targetSquares = append(targetSquares, pMove.to())
 		}

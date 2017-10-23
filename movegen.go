@@ -276,6 +276,10 @@ func (b *BoardType) MakeMove(m MoveType, andSwitch bool) {
 	}
 
 	b.Check = m.causesCheck()
+	b.HalfMoves++
+	if m.piece().Color() == White {
+		b.FullMoves++
+	}
 
 	b.MoveHistory = append(b.MoveHistory, m)
 	if andSwitch {

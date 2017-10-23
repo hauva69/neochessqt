@@ -55,7 +55,7 @@ func (pi *PieceItem) MouseRelease(event *widgets.QGraphicsSceneMouseEvent) {
 	legal, mindex := pi.scene.view.game.IsMoveInFromMoves(move)
 	if legal {
 		log.Info("Making Move: " + move)
-		gamemove := pi.scene.view.game.PotentialMoves[mindex]
+		gamemove := pi.scene.view.game.MoveChoice(mindex)
 		pi.scene.view.board.MakeMove(gamemove, true)
 		pi.scene.view.game.Moves = append(pi.scene.view.game.Moves, gamemove)
 		pi.scene.view.game.LoadMoves(pi.scene.view.board)

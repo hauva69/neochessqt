@@ -118,9 +118,26 @@ func (cdbv *ChessDBView) LoadGame(index int) {
 		return
 	}
 	cdbv.currentgame, cdbv.currentboard = ParseGameString([]byte(pgn), index, false)
-	cdbv.currentgame.LoadMoves(cdbv.currentboard)
+	// cdbv.currentgame.LoadMoves(cdbv.currentboard)
 	cdbv.boardview.SetGame()
 	cdbv.gamedetaildock.SetGameTags(cdbv.currentgame)
+	cdbv.pgndock.SetPGN(cdbv.currentgame)
+}
+
+// SetPosition of View
+func (cdbv *ChessDBView) SetPosition(movepos int) {
+	log.Infof("Setting Cursor to Positon: %d", movepos)
+	cdbv.currentboard.Reset()
+	if cdbv.currentgame.FEN != "" {
+		cdbv.currentboard.InitFromFen(cdbv.currentgame.FEN)
+	} else {
+		cdbv.currentboard.InitFromFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
+	}
+	// g.LoadMoves(cb)
+	for mn := 0; mn < movepos; mn++ {
+		cdbv.currentboard.MakeMove(cdbv.currentgame.Moves[mn], true)
+	}
+	cdbv.boardview.SetGame()
 	cdbv.pgndock.SetPGN(cdbv.currentgame)
 }
 

@@ -1,6 +1,7 @@
 package main
 
 import (
+	log "github.com/sirupsen/logrus"
 	"github.com/therecipe/qt/core"
 	"github.com/therecipe/qt/gui"
 	"github.com/therecipe/qt/widgets"
@@ -111,6 +112,10 @@ func (bs *BoardScene) AddSquares() {
 	bs.AddItem(rewindarrowitem)
 	rewindarrowitem.SetPos2(posx-float64(buttonnumber*scalex), posy)
 	rewindarrowitem.SetFlag(widgets.QGraphicsItem__ItemIsMovable, false)
+	rewindarrowitem.ConnectMousePressEvent(func(ev *widgets.QGraphicsSceneMouseEvent) {
+		log.Info("Back one Move Pressed")
+		bs.view.cdbv.SetPosition(bs.view.cdbv.currentboard.HalfMoves - 1)
+	})
 
 	buttonnumber++
 	playarrow := gui.NewQPixmap5(":qml/assets/toolbar/ic_chevron_right_white_48dp_2x.png", "png", core.Qt__AutoColor)

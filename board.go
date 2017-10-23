@@ -45,7 +45,6 @@ type BoardType struct {
 	Squares              [64]PieceType
 	HalfMoves            int
 	FullMoves            int
-	PossibleMoves        []MoveType
 	MoveHistory          []MoveType
 }
 
@@ -77,7 +76,6 @@ func (b *BoardType) Reset() {
 	b.BlackCastlingHistory = []uint(nil)
 	b.HalfMoves = 0
 	b.FullMoves = 0
-	b.PossibleMoves = []MoveType(nil)
 	b.MoveHistory = []MoveType(nil)
 }
 
@@ -120,10 +118,6 @@ func (b *BoardType) switchTurn() {
 		return
 	}
 	b.Turn = White
-}
-
-func (b *BoardType) hasMoves() bool {
-	return len(b.PossibleMoves) > 0
 }
 
 // For Debugging and repl

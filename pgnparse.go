@@ -115,6 +115,7 @@ func ParseGameString(gbytes []byte, gameid int, debug bool) (*Game, *BoardType) 
 	movescanner.Split(scanmoves)
 	cb := NewBoard()
 	cb.InitFromFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
+	g.LoadMoves(cb)
 	g.Moves = []MoveType(nil)
 	for movescanner.Scan() {
 		token := movescanner.Text()
@@ -132,6 +133,7 @@ func ParseGameString(gbytes []byte, gameid int, debug bool) (*Game, *BoardType) 
 					}
 					g.Moves = append(g.Moves, move)
 					cb.MakeMove(move, true)
+					g.LoadMoves(cb)
 					moveFound = true
 					break
 				}
