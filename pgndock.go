@@ -2,9 +2,9 @@ package main
 
 import (
 	"bytes"
-	"strconv"
 	"text/template"
 
+	"github.com/rashwell/neochesslib"
 	"github.com/therecipe/qt/core"
 	"github.com/therecipe/qt/gui"
 	"github.com/therecipe/qt/widgets"
@@ -29,7 +29,7 @@ func initPGNDock(w *widgets.QMainWindow) *PGNDock {
 	return this
 }
 
-func (pgndock *PGNDock) SetPGN(game *Game) {
+func (pgndock *PGNDock) SetPGN(game *neochesslib.Game) {
 	var gamedata = map[string]string{
 		"site":  game.Site,
 		"white": game.White,
@@ -42,18 +42,6 @@ func (pgndock *PGNDock) SetPGN(game *Game) {
 	}
 	content := "<style>" + config.PGNStyle + "</style>"
 	content += tpl.String()
-	mn := 0
-	cv := len(game.Moves) - 1
-	for index, Move := range game.Moves {
-		if Move.color() == White {
-			mn++
-			content += "<span class='movenumber'>" + strconv.Itoa(mn) + ". </span>"
-		}
-		if index == cv {
-			content += "<span class='move current'>" + Move.ToSAN() + " </span>"
-		} else {
-			content += "<span class='move'>" + Move.ToSAN() + " </span>"
-		}
-	}
+	content += game.GetPGNMarkup()
 	pgndock.editor.SetHtml(content)
 }

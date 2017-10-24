@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/rashwell/neochesslib"
 	log "github.com/sirupsen/logrus"
 	"github.com/therecipe/qt/core"
 	"github.com/therecipe/qt/gui"
@@ -11,14 +12,14 @@ import (
 type BoardScene struct {
 	widgets.QGraphicsScene
 	view       *BoardView
-	pieceitems map[SquareType]*PieceItem
+	pieceitems map[neochesslib.SquareType]*PieceItem
 	dragging   bool
 }
 
 func initBoardScene(bv *BoardView) *BoardScene {
 	this := NewBoardScene(bv)
 	this.view = bv
-	this.pieceitems = make(map[SquareType]*PieceItem, 64)
+	this.pieceitems = make(map[neochesslib.SquareType]*PieceItem, 64)
 	this.dragging = false
 	this.AddSquares()
 	this.AddPieces()
@@ -33,12 +34,13 @@ func (bs *BoardScene) RemovePieces() {
 	}
 }
 
+// AddPieces to Board Scene
 func (bs *BoardScene) AddPieces() {
 	for rank := 7; rank >= 0; rank-- {
 		for file := 7; file >= 0; file-- {
-			var square = CoordsToSquare(rank, file)
+			var square = neochesslib.CoordsToSquare(rank, file)
 			var squareIdx = uint(rank*8 + file)
-			piece := bs.view.board.Squares[squareIdx]
+			piece := bs.view.game.PieceOnSquare(squareIdx)
 			pi := initPieceItem(bs, piece, square)
 			bs.AddItem(pi.qpix)
 			bs.pieceitems[square] = pi
@@ -46,7 +48,8 @@ func (bs *BoardScene) AddPieces() {
 	}
 }
 
-func (bs *BoardScene) RemovePieceItemOnSquare(sq SquareType) {
+// RemovePieceItemOnSquare from scene
+func (bs *BoardScene) RemovePieceItemOnSquare(sq neochesslib.SquareType) {
 	if bs.pieceitems[sq] != nil {
 		pitem := bs.pieceitems[sq]
 		bs.RemoveItem(pitem.qpix)
@@ -114,7 +117,7 @@ func (bs *BoardScene) AddSquares() {
 	rewindarrowitem.SetFlag(widgets.QGraphicsItem__ItemIsMovable, false)
 	rewindarrowitem.ConnectMousePressEvent(func(ev *widgets.QGraphicsSceneMouseEvent) {
 		log.Info("Back one Move Pressed")
-		bs.view.cdbv.SetPosition(bs.view.cdbv.currentboard.HalfMoves - 1)
+		// bs.view.cdbv.SetPosition(bs.view.cdbv.currentboard.HalfMoves - 1)
 	})
 
 	buttonnumber++
@@ -149,12 +152,12 @@ func (bs *BoardScene) AddSquares() {
 	item.SetFlag(widgets.QGraphicsItem__ItemIsSelectable, false)
 }
 
-func (bs *BoardScene) SquareFromPos(pos *core.QPointF) SquareType {
+func (bs *BoardScene) SquareFromPos(pos *core.QPointF) neochesslib.SquareType {
 	posX := pos.X()
 	posY := pos.Y()
 	sqRank := int(posY) / bs.view.squaresize
 	sqFile := int(posX) / bs.view.squaresize
-	return CoordsToSquare(sqRank, sqFile)
+	return neochesslib.CoordsToSquare(sqRank, sqFile)
 }
 
 //func (bs *BoardScene) AddPiece(pieceitem *PieceItem) {

@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/rashwell/neochesslib"
 	log "github.com/sirupsen/logrus"
 	"github.com/therecipe/qt/core"
 	"github.com/therecipe/qt/widgets"
@@ -23,8 +24,7 @@ type ChessDBView struct {
 	gamedetaildock   *GameDetailDock
 	gameanalysisdock *GameAnalysisDock
 	boardview        *BoardView
-	currentgame      *Game
-	currentboard     *BoardType
+	currentgame      *neochesslib.Game
 }
 
 // initCDBView Create instance
@@ -46,12 +46,12 @@ func initCDBView(w *widgets.QMainWindow) *ChessDBView {
 	view.gamelistdock.tableview.ConnectDoubleClicked(view.gameselected)
 	w.AddDockWidget(core.Qt__BottomDockWidgetArea, view.gamelistdock)
 
-	view.gamedetaildock = initGameDetailDock(w)
+	view.gamedetaildock = initGameDetailDock(w, view)
 	w.AddDockWidget(core.Qt__RightDockWidgetArea, view.gamedetaildock)
 	w.TabifyDockWidget(view.pgndock, view.gamedetaildock)
 	w.SetTabPosition(core.Qt__RightDockWidgetArea, widgets.QTabWidget__North)
 
-	view.gameanalysisdock = initGameAnalysisDock(w)
+	view.gameanalysisdock = initGameAnalysisDock(w, view)
 	w.AddDockWidget(core.Qt__RightDockWidgetArea, view.gameanalysisdock)
 	view.gameanalysisdock.Hide()
 
@@ -68,10 +68,7 @@ func initCDBView(w *widgets.QMainWindow) *ChessDBView {
 
 // AddGame add initial game to view
 func (cdbv *ChessDBView) AddGame() {
-	cdbv.currentgame = NewGame()
-	cdbv.currentboard = NewBoard()
-	cdbv.currentboard.InitFromFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
-	cdbv.currentgame.LoadMoves(cdbv.currentboard)
+	cdbv.currentgame = neochesslib.NewGame()
 	cdbv.boardview = initBoardView(cdbv)
 	cdbv.mainw.SetCentralWidget(cdbv.boardview)
 	cdbv.gamedetaildock.SetGameTags(cdbv.currentgame)
@@ -80,15 +77,15 @@ func (cdbv *ChessDBView) AddGame() {
 		var gamerow []string
 		gamerow = make([]string, 10)
 		gamerow[0] = "-1"
-		gamerow[1] = cdbv.currentgame.GameHeader.Event
-		gamerow[2] = cdbv.currentgame.GameHeader.Site
-		gamerow[3] = cdbv.currentgame.GameHeader.Date
-		gamerow[4] = cdbv.currentgame.GameHeader.Round
-		gamerow[5] = cdbv.currentgame.GameHeader.White
-		gamerow[6] = cdbv.currentgame.GameHeader.Black
-		gamerow[7] = cdbv.currentgame.GameHeader.Result
-		gamerow[8] = cdbv.currentgame.GameHeader.ECO
-		gamerow[9] = cdbv.currentgame.GameHeader.Opening
+		gamerow[1] = cdbv.currentgame.Event
+		gamerow[2] = cdbv.currentgame.Site
+		gamerow[3] = cdbv.currentgame.Date
+		gamerow[4] = cdbv.currentgame.Round
+		gamerow[5] = cdbv.currentgame.White
+		gamerow[6] = cdbv.currentgame.Black
+		gamerow[7] = cdbv.currentgame.Result
+		gamerow[8] = cdbv.currentgame.ECO
+		gamerow[9] = cdbv.currentgame.Opening
 		cdbv.gamelistdock.AddRow(gamerow)
 	*/
 }
@@ -117,7 +114,7 @@ func (cdbv *ChessDBView) LoadGame(index int) {
 	if err != nil {
 		return
 	}
-	cdbv.currentgame, cdbv.currentboard = ParseGameString([]byte(pgn), index, false)
+	cdbv.currentgame = ParseGameString([]byte(pgn), index, false)
 	// cdbv.currentgame.LoadMoves(cdbv.currentboard)
 	cdbv.boardview.SetGame()
 	cdbv.gamedetaildock.SetGameTags(cdbv.currentgame)
@@ -126,19 +123,20 @@ func (cdbv *ChessDBView) LoadGame(index int) {
 
 // SetPosition of View
 func (cdbv *ChessDBView) SetPosition(movepos int) {
-	log.Infof("Setting Cursor to Positon: %d", movepos)
-	cdbv.currentboard.Reset()
-	if cdbv.currentgame.FEN != "" {
-		cdbv.currentboard.InitFromFen(cdbv.currentgame.FEN)
-	} else {
-		cdbv.currentboard.InitFromFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
-	}
-	// g.LoadMoves(cb)
-	for mn := 0; mn < movepos; mn++ {
-		cdbv.currentboard.MakeMove(cdbv.currentgame.Moves[mn], true)
-	}
-	cdbv.boardview.SetGame()
-	cdbv.pgndock.SetPGN(cdbv.currentgame)
+	/*
+		cdbv.currentboard.Reset()
+		if cdbv.currentgame.FEN != "" {
+			cdbv.currentboard.InitFromFen(cdbv.currentgame.FEN)
+		} else {
+			cdbv.currentboard.InitFromFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
+		}
+		// g.LoadMoves(cb)
+		for mn := 0; mn < movepos; mn++ {
+			cdbv.currentboard.MakeMove(cdbv.currentgame.Moves[mn], true)
+		}
+		cdbv.boardview.SetGame()
+		cdbv.pgndock.SetPGN(cdbv.currentgame)
+	*/
 }
 
 func (cdbv *ChessDBView) loadpgndb(w *widgets.QMainWindow) {

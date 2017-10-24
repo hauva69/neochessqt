@@ -6,6 +6,8 @@ import (
 	"regexp"
 	"strings"
 	"unicode/utf8"
+
+	"github.com/rashwell/neochesslib"
 )
 
 var (
@@ -85,9 +87,9 @@ func scanmoves(data []byte, atEOF bool) (advance int, token []byte, err error) {
 }
 
 // ParseGameString into Game
-func ParseGameString(gbytes []byte, gameid int, debug bool) (*Game, *BoardType) {
+func ParseGameString(gbytes []byte, gameid int, debug bool) *neochesslib.Game {
 	gs := string(gbytes)
-	g := NewGame()
+	g := neochesslib.NewGame()
 	if debug {
 		//	fmt.Printf("Text size: %d\n", len(gs))
 		//	fmt.Printf("Game String:\n%s\n", gs)
@@ -111,12 +113,8 @@ func ParseGameString(gbytes []byte, gameid int, debug bool) (*Game, *BoardType) 
 		//	fmt.Printf("Game Scanned\n")
 		//	fmt.Printf("Parsing Moves\n")
 	}
-	movescanner := bufio.NewScanner(strings.NewReader(g.OriginalMoveText))
+	movescanner := bufio.NewScanner(strings.NewReader(g.Importtext))
 	movescanner.Split(scanmoves)
-	cb := NewBoard()
-	cb.InitFromFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
-	g.LoadMoves(cb)
-	g.Moves = []MoveType(nil)
 	for movescanner.Scan() {
 		token := movescanner.Text()
 		if debug {
@@ -124,32 +122,16 @@ func ParseGameString(gbytes []byte, gameid int, debug bool) (*Game, *BoardType) 
 		}
 		r, _ := utf8.DecodeRuneInString(token)
 		if !isDigit(r) {
-			movelist := cb.GenerateLegalMoves()
-			moveFound := false
-			for _, move := range movelist {
-				if move.ToSAN() == token {
-					if debug {
-						// fmt.Printf("Matched Move.\n")
-					}
-					g.Moves = append(g.Moves, move)
-					cb.MakeMove(move, true)
-					g.LoadMoves(cb)
-					moveFound = true
-					break
-				}
-			}
-			if !moveFound {
-				if debug {
-					//	fmt.Printf("No Move found for token: %s\n", token)
-				}
+			if move, exists := g.IsTokenInMoves(token); exists {
+				g.AppendMove(move)
 			}
 		}
 	}
-	return g, cb
+	return g
 }
 
 // ParseLine directs line based on status of game parsing
-func ParseLine(line string, g *Game) (*Game, error) {
+func ParseLine(line string, g *neochesslib.Game) (*neochesslib.Game, error) {
 	trimline := strings.Trim(line, " ")
 	if trimline == "" {
 		return g, nil
@@ -164,23 +146,23 @@ func ParseLine(line string, g *Game) (*Game, error) {
 		}
 		return g, nil
 	}
-	g.OriginalMoveText += " " + line
+	g.Importtext += " " + line
 	return g, nil
 }
 
 // ParseTag parses a chess tag into game
-func ParseTag(line string, g *Game) (*Game, error) {
+func ParseTag(line string, g *neochesslib.Game) (*neochesslib.Game, error) {
 	results := tagregex.FindStringSubmatch(line)
 	if len(results) == 3 {
 		tagname := results[1]
 		tagvalue := results[2]
-		if !(supportedtags[tagname] > 0) {
+		if !neochesslib.IsTagSupported(tagname) {
 			return g, nil
 		}
 		if !(len(tagvalue) > 0) {
 			return g, nil
 		}
-		g.settag(tagname, tagvalue)
+		g.SetTag(tagname, tagvalue)
 		return g, nil
 	}
 	return g, nil

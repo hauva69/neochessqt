@@ -1,6 +1,9 @@
 package main
 
 import (
+	"strings"
+
+	"github.com/rashwell/neochesslib"
 	log "github.com/sirupsen/logrus"
 	"github.com/therecipe/qt/core"
 	"github.com/therecipe/qt/gui"
@@ -11,21 +14,22 @@ import (
 type PieceItem struct {
 	qpix            *widgets.QGraphicsPixmapItem
 	scene           *BoardScene
-	piece           PieceType
-	square          SquareType
+	piece           neochesslib.PieceType
+	square          neochesslib.SquareType
 	nowmoving       bool
 	targethighlight *widgets.QGraphicsPathItem
 }
 
-func initPieceItem(bs *BoardScene, p PieceType, s SquareType) *PieceItem {
+func initPieceItem(bs *BoardScene, p neochesslib.PieceType, s neochesslib.SquareType) *PieceItem {
 	squaresize := bs.view.squaresize
-	qpix := gui.NewQPixmap5(p.FileName(), "png", core.Qt__AutoColor)
+	filename := ":qml/assets/" + strings.ToLower(p.Color().String()) + strings.ToLower(p.Kind().String()) + ".png"
+	qpix := gui.NewQPixmap5(filename, "png", core.Qt__AutoColor)
 	scaledqpix := qpix.Scaled2(squaresize, squaresize, core.Qt__KeepAspectRatio, core.Qt__SmoothTransformation)
 	pi := new(PieceItem)
 	pi.scene = bs
 	pi.qpix = widgets.NewQGraphicsPixmapItem2(scaledqpix, nil)
 	pi.qpix.SetTransformationMode(core.Qt__SmoothTransformation)
-	pi.qpix.SetPos2(float64(s.file()*squaresize), float64(s.rank()*squaresize))
+	pi.qpix.SetPos2(float64(s.File()*squaresize), float64(s.Rank()*squaresize))
 	pi.qpix.SetFlag(widgets.QGraphicsItem__ItemIsMovable, true)
 	pi.qpix.ConnectMouseReleaseEvent(pi.MouseRelease)
 	pi.qpix.ConnectMouseMoveEvent(pi.MouseMove)
@@ -52,25 +56,22 @@ func (pi *PieceItem) MouseRelease(event *widgets.QGraphicsSceneMouseEvent) {
 	fromSq := pi.square
 	piecescale := pi.scene.view.squaresize
 	move := fromSq.ToRune() + toSq.ToRune()
-	legal, mindex := pi.scene.view.game.IsMoveInFromMoves(move)
+	legal, mindex := pi.scene.view.game.IsMoveInPotentialMoves(move)
 	if legal {
 		log.Info("Making Move: " + move)
-		gamemove := pi.scene.view.game.MoveChoice(mindex)
-		pi.scene.view.board.MakeMove(gamemove, true)
-		pi.scene.view.game.Moves = append(pi.scene.view.game.Moves, gamemove)
-		pi.scene.view.game.LoadMoves(pi.scene.view.board)
-		if gamemove.captures() {
+		pi.scene.view.game.AppendMove(move)
+		if pi.scene.view.game.WasCapture() {
 			pi.scene.RemovePieceItemOnSquare(toSq)
 		}
 		delete(pi.scene.pieceitems, fromSq)
 		pi.square = toSq
-		pi.qpix.SetPos2(float64(toSq.file()*piecescale), float64(toSq.rank()*piecescale))
+		pi.qpix.SetPos2(float64(toSq.File()*piecescale), float64(toSq.Rank()*piecescale))
 		pi.scene.pieceitems[toSq] = pi
 		pi.scene.view.cdbv.UpdatePGN()
 		//		pi.bv.UpdateSideToMoveIndicator()
 	} else {
 		log.Info("Illegal Move returning piece.")
-		pi.qpix.SetPos2(float64(fromSq.file()*piecescale), float64(fromSq.rank()*piecescale))
+		pi.qpix.SetPos2(float64(fromSq.File()*piecescale), float64(fromSq.Rank()*piecescale))
 	}
 	pi.qpix.SetZValue(0.0)
 	cursor := gui.NewQCursor2(core.Qt__OpenHandCursor)
@@ -84,7 +85,7 @@ func (pi *PieceItem) MousePress(event *widgets.QGraphicsSceneMouseEvent) {
 		pi.scene.dragging = true
 		log.Info("Mouse Pressed")
 		pi.qpix.SetZValue(1.0)
-		pi.scene.view.HighlightMovesFrom(pi.square)
+		pi.scene.view.HighlightMovesFrom(pi.square.ToRune())
 		midpiece := float64(pi.scene.view.squaresize / 2)
 		pi.qpix.SetPos2(event.ScenePos().X()-midpiece, event.ScenePos().Y()-midpiece)
 		cursor := gui.NewQCursor2(core.Qt__ClosedHandCursor)
@@ -129,11 +130,11 @@ func (pi *PieceItem) MouseMove(event *widgets.QGraphicsSceneMouseEvent) {
 	}
 	sqRank := int(newY+midpiece) / pi.scene.view.squaresize
 	sqFile := int(newX+midpiece) / pi.scene.view.squaresize
-	toSq := CoordsToSquare(sqRank, sqFile)
+	toSq := neochesslib.CoordsToSquare(sqRank, sqFile)
 	if fromSq != toSq {
 		gpen := gui.NewQPen2(core.Qt__SolidLine)
 		targetcolor := gui.NewQColor3(209, 12, 12, 100)
-		if pi.scene.view.game.IsTarget(fromSq, toSq) {
+		if pi.scene.view.game.IsTarget(fromSq.ToRune(), toSq.ToRune()) {
 			targetcolor = gui.NewQColor3(8, 145, 17, 200)
 		}
 		highlightborderwidth := squaresize / 10
@@ -143,7 +144,7 @@ func (pi *PieceItem) MouseMove(event *widgets.QGraphicsSceneMouseEvent) {
 		gpen.SetColor(targetcolor)
 		gtransparent := gui.NewQBrush4(core.Qt__transparent, core.Qt__NoBrush)
 		path := gui.NewQPainterPath()
-		path.AddRoundedRect2(float64(toSq.file()*squaresize)+offset, float64(toSq.rank()*squaresize)+offset, highlightwidth, highlightwidth, float64(highlightborderwidth), float64(highlightborderwidth), core.Qt__AbsoluteSize)
+		path.AddRoundedRect2(float64(toSq.File()*squaresize)+offset, float64(toSq.Rank()*squaresize)+offset, highlightwidth, highlightwidth, float64(highlightborderwidth), float64(highlightborderwidth), core.Qt__AbsoluteSize)
 		if pi.targethighlight != nil {
 			pi.scene.RemoveItem(pi.targethighlight)
 		}

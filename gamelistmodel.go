@@ -3,6 +3,7 @@ package main
 import (
 	"strconv"
 
+	"github.com/rashwell/neochesslib"
 	log "github.com/sirupsen/logrus"
 	"github.com/therecipe/qt/core"
 )
@@ -12,7 +13,7 @@ type GameListModel struct {
 	cdb       *ChessDataBase
 	glHeaders []string
 	gamecount int
-	buffgames map[int]*Game
+	buffgames map[int]*neochesslib.Game
 
 	_ func()    `constructor:"init"`
 	_ func(int) `slot:"numberPopulated"`
@@ -20,7 +21,7 @@ type GameListModel struct {
 
 func (gm *GameListModel) init() {
 	gm.glHeaders = []string{"Game #", "Event", "Site", "Date", "Round #", "White", "Black", "Result", "ECO", "Opening"}
-	gm.buffgames = make(map[int]*Game)
+	gm.buffgames = make(map[int]*neochesslib.Game)
 	gm.ConnectHeaderData(gm.headerdata)
 	gm.ConnectNumberPopulated(gm.populated)
 	gm.ConnectRowCount(func(p *core.QModelIndex) int {
@@ -75,7 +76,7 @@ func (gm *GameListModel) data(index *core.QModelIndex, role int) *core.QVariant 
 				log.Fatal(err)
 			}
 			log.Infof("Game size: %d", len(pgn))
-			gm.buffgames[index.Row()+1], _ = ParseGameString([]byte(pgn), index.Row()+1, false)
+			gm.buffgames[index.Row()+1] = ParseGameString([]byte(pgn), index.Row()+1, false)
 		}
 		game := gm.buffgames[index.Row()+1]
 		return core.NewQVariant17(strconv.FormatUint(uint64(game.ID), 10))
@@ -89,30 +90,30 @@ func (gm *GameListModel) data(index *core.QModelIndex, role int) *core.QVariant 
 				log.Fatal(err)
 			}
 			log.Infof("Game size: %d", len(pgn))
-			gm.buffgames[index.Row()+1], _ = ParseGameString([]byte(pgn), index.Row()+1, false)
+			gm.buffgames[index.Row()+1] = ParseGameString([]byte(pgn), index.Row()+1, false)
 		}
 		game := gm.buffgames[index.Row()+1]
 		switch index.Column() {
 		case 0:
 			return core.NewQVariant17(strconv.FormatUint(uint64(game.ID), 10))
 		case 1:
-			return core.NewQVariant17(game.GameHeader.Event)
+			return core.NewQVariant17(game.Event)
 		case 2:
-			return core.NewQVariant17(game.GameHeader.Site)
+			return core.NewQVariant17(game.Site)
 		case 3:
-			return core.NewQVariant17(game.GameHeader.Date)
+			return core.NewQVariant17(game.Date)
 		case 4:
-			return core.NewQVariant17(game.GameHeader.Round)
+			return core.NewQVariant17(game.Round)
 		case 5:
-			return core.NewQVariant17(game.GameHeader.White)
+			return core.NewQVariant17(game.White)
 		case 6:
-			return core.NewQVariant17(game.GameHeader.Black)
+			return core.NewQVariant17(game.Black)
 		case 7:
-			return core.NewQVariant17(game.GameHeader.Result)
+			return core.NewQVariant17(game.Result)
 		case 8:
-			return core.NewQVariant17(game.GameHeader.ECO)
+			return core.NewQVariant17(game.ECO)
 		case 9:
-			return core.NewQVariant17(game.GameHeader.Opening)
+			return core.NewQVariant17(game.Opening)
 		}
 	}
 	return core.NewQVariant()

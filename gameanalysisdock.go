@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/rashwell/neochesslib"
 	log "github.com/sirupsen/logrus"
 	"github.com/therecipe/qt/core"
 	"github.com/therecipe/qt/widgets"
@@ -15,17 +16,17 @@ import (
 // GameAnalysisDock comment
 type GameAnalysisDock struct {
 	widgets.QDockWidget
-	analysis      *widgets.QTextEdit
-	enginecomm    io.WriteCloser
-	analysisgame  *Game
-	analysisboard *BoardType
-	running       bool
-	visible       bool
+	analysis     *widgets.QTextEdit
+	enginecomm   io.WriteCloser
+	analysisgame *neochesslib.Game
+	running      bool
+	visible      bool
 }
 
-func initGameAnalysisDock(w *widgets.QMainWindow) *GameAnalysisDock {
+func initGameAnalysisDock(w *widgets.QMainWindow, cdbv *ChessDBView) *GameAnalysisDock {
 	this := NewGameAnalysisDock("Game Analysis", w, core.Qt__Widget)
 	this.analysis = widgets.NewQTextEdit(nil)
+	this.analysisgame = cdbv.currentgame
 	this.analysis.SetReadOnly(true)
 	this.running = false
 	this.visible = false
@@ -93,27 +94,25 @@ func (ga *GameAnalysisDock) ToggleEngine(engine int, fen string) {
 				for line := range stream {
 					ga.analysis.Clear()
 					enginemoves := strings.Split(line, " ")
-					board := NewBoard()
-					board.InitFromFen(fen)
-					boardmoves := board.GenerateLegalMoves()
+					ga.analysisgame.AnalysisFromFen(fen)
+					boardmoves := ga.analysisgame.AnalysisMoves()
 					pvline := ""
-					if board.Turn == Black {
+					if ga.analysisgame.CurrentTurn() == neochesslib.Black {
 						pvline = "... "
 					}
-					mn := board.FullMoves
+					mn := ga.analysisgame.AnalaysisMoveCount()
 					for _, enginemove := range enginemoves {
-						for _, move := range boardmoves {
-							if move.ToRune() == enginemove {
-								if board.Turn == White {
+						for _, move := range ga.analysisgame.AnalysisMoves() {
+							if move == enginemove {
+								if ga.analysisgame.CurrentTurn() == neochesslib.White {
 									pvline += "<span class='movenumber'>" + strconv.Itoa(mn) + ". </span>"
 									mn++
 								}
-								pvline += "<span class='move'>" + move.ToSAN() + "</span> "
-								board.MakeMove(move, true)
+								pvline += "<span class='move'>" + ga.analysisgame.AnalysisMoveToSan(move) + "</span> "
+								ga.analysisgame.MakeAnalysisMove(move)
 								break
 							}
 						}
-						boardmoves = board.GenerateLegalMoves()
 					}
 					ga.analysis.SetHtml("<style>" + config.PGNStyle + "</style>" + pvline)
 				}

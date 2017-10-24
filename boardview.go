@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/rashwell/neochesslib"
 	log "github.com/sirupsen/logrus"
 	"github.com/therecipe/qt/core"
 	"github.com/therecipe/qt/gui"
@@ -12,8 +13,7 @@ type BoardView struct {
 	widgets.QGraphicsView
 	cdbv        *ChessDBView
 	squaresize  int
-	game        *Game
-	board       *BoardType
+	game        *neochesslib.Game
 	scene       *BoardScene
 	thighlights []*widgets.QGraphicsPathItem
 	hhighlight  *widgets.QGraphicsPathItem
@@ -33,7 +33,6 @@ func initBoardView(cdbv *ChessDBView) *BoardView {
 	var boardview = this
 	boardview.cdbv = cdbv
 	boardview.game = cdbv.currentgame
-	boardview.board = cdbv.currentboard
 	size := cdbv.mainw.FrameSize().Width()
 	boardview.squaresize = (size / 2) / 8
 
@@ -47,7 +46,6 @@ func initBoardView(cdbv *ChessDBView) *BoardView {
 // SetGame of boardview
 func (bv *BoardView) SetGame() {
 	bv.game = bv.cdbv.currentgame
-	bv.board = bv.cdbv.currentboard
 	bv.scene.RemovePieces()
 	bv.scene.AddPieces()
 	bv.UpdateBoardLabels()
@@ -63,7 +61,7 @@ func (bv *BoardView) ResizeBoardView(event *gui.QResizeEvent) {
 	bv.FitInView(bounding, core.Qt__KeepAspectRatio)
 }
 
-func (bv *BoardView) HighLightSquare(sq SquareType, highlighttype string) {
+func (bv *BoardView) HighLightSquare(sq neochesslib.SquareType, highlighttype string) {
 	gpen := gui.NewQPen2(core.Qt__SolidLine)
 	targetcolor := highlights[highlighttype]
 	highlightborderwidth := bv.squaresize / 10
@@ -73,7 +71,7 @@ func (bv *BoardView) HighLightSquare(sq SquareType, highlighttype string) {
 	gpen.SetColor(targetcolor)
 	gtransparent := gui.NewQBrush4(core.Qt__transparent, core.Qt__NoBrush)
 	path := gui.NewQPainterPath()
-	path.AddRoundedRect2(float64(sq.file()*bv.squaresize)+offset, float64(sq.rank()*bv.squaresize)+offset, highlightwidth, highlightwidth, float64(highlightborderwidth), float64(highlightborderwidth), core.Qt__AbsoluteSize)
+	path.AddRoundedRect2(float64(sq.File()*bv.squaresize)+offset, float64(sq.Rank()*bv.squaresize)+offset, highlightwidth, highlightwidth, float64(highlightborderwidth), float64(highlightborderwidth), core.Qt__AbsoluteSize)
 	pothighlight := bv.scene.AddPath(path, gpen, gtransparent)
 	pothighlight.SetFlag(widgets.QGraphicsItem__ItemIsSelectable, false)
 	bv.thighlights = append(bv.thighlights, pothighlight)
@@ -88,7 +86,7 @@ func (bv *BoardView) RemoveHighlightMoves() {
 	bv.thighlights = nil
 }
 
-func (bv *BoardView) HighlightMovesFrom(from SquareType) {
+func (bv *BoardView) HighlightMovesFrom(from string) {
 	for _, sq := range bv.game.GetTargetSquares(from) {
 		bv.HighLightSquare(sq, "possible")
 	}
@@ -113,10 +111,10 @@ func (bv *BoardView) UpdateBoardLabels() {
 		for rank := 7; rank >= 0; rank-- {
 			for file := 7; file >= 0; file-- {
 				index := uint(rank*8 + file)
-				sq := SquareType(index)
+				sq := neochesslib.SquareType(index)
 				label := bv.scene.AddText(sq.ToRune(), font)
-				rank := sq.rank()
-				file := sq.file()
+				rank := sq.Rank()
+				file := sq.File()
 				label.SetDefaultTextColor(twhite)
 				label.SetPos2(float64(file*bv.squaresize+bv.squaresize-26), float64(rank*bv.squaresize+bv.squaresize-24))
 				bv.labels = append(bv.labels, label)

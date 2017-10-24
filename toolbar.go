@@ -61,5 +61,5 @@ func openoptions(checked bool) {
 
 func (tb *ToolBar) showanalysis() {
 	log.Info("Analysis Button Clicked")
-	tb.cdbv.gameanalysisdock.ToggleEngine(1, tb.cdbv.currentboard.ToFen())
+	tb.cdbv.gameanalysisdock.ToggleEngine(1, tb.cdbv.currentgame.CurrentFen())
 }
