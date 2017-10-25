@@ -29,10 +29,12 @@ Chess Database System written in Go using Qt
 - [x] Add Model support for game list grid
 - [x] Add support to specfify UCI engines for analysis output
 - [x] Add Support for UCI engines and analysis dialog
-- [ ] Convert UCI output to readable moves
+- [x] Convert UCI output to readable moves
+- [x] Add game navigation through moves
 - [ ] Add Support to play against UCI Engine
 - [ ] Add Support to play two engines against each other
-- [ ] Create test suite for built in Move Gen Engine
+- [x] Seperate Move Gen Engine to seperate library for testing and organization
+- [x] Create test suite for built in Move Gen Engine
 - [ ] Add perft tests for built in move generation engine
 - [ ] Fix built in move generation engine (I remember at least 1 or 2 errors from a distant past test)
 - [x] Create initial PGN Editor based on ~~QtWebengine~~ QTextEdit[1] 
@@ -66,6 +68,8 @@ experiment with QtWebKit instead, though this will make building NeoChess a bit 
 
 Note at some point we might pull copies of these libraries into a vendor directory of this repository.
 
+- [NeoChessLib](https://github.com/rashwell/neochesslib)
+  - Support Library for NeoChess
 - [BoltDB](https://github.com/boltdb/bolt) 
   - Undecided still on persitent index storage, using this for now until everything else is ready
 - [Go Single Instance](https://github.com/allan-simon/go-singleinstance)
