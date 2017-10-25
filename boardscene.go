@@ -26,6 +26,12 @@ func initBoardScene(bv *BoardView) *BoardScene {
 	return this
 }
 
+// UpdatePieces on board after a navigation
+func (bs *BoardScene) UpdatePieces() {
+	bs.RemovePieces()
+	bs.AddPieces()
+}
+
 // RemovePieces from scene
 func (bs *BoardScene) RemovePieces() {
 	for k, v := range bs.pieceitems {
@@ -119,6 +125,7 @@ func (bs *BoardScene) AddSquares() {
 		log.Info("Move to last move in game")
 		bs.view.cdbv.currentgame.ToLastMove()
 		bs.view.cdbv.UpdatePGN()
+		bs.UpdatePieces()
 	})
 	lastmoveproxy := bs.AddWidget(lastmovebutton, core.Qt__Widget)
 	lastmoveproxy.SetPos2(posx-float64(buttonnumber*scalex), posy)
@@ -136,6 +143,7 @@ func (bs *BoardScene) AddSquares() {
 		log.Info("Move to next move in game")
 		bs.view.cdbv.currentgame.ToNextMove()
 		bs.view.cdbv.UpdatePGN()
+		bs.UpdatePieces()
 	})
 	nextmoveproxy := bs.AddWidget(nextmovebutton, core.Qt__Widget)
 	nextmoveproxy.SetPos2(posx-float64(buttonnumber*scalex), posy)
@@ -153,6 +161,7 @@ func (bs *BoardScene) AddSquares() {
 		log.Info("Move to previous move in game")
 		bs.view.cdbv.currentgame.ToPreviousMove()
 		bs.view.cdbv.UpdatePGN()
+		bs.UpdatePieces()
 	})
 	previousmoveproxy := bs.AddWidget(previousmovebutton, core.Qt__Widget)
 	previousmoveproxy.SetPos2(posx-float64(buttonnumber*scalex), posy)
@@ -170,6 +179,7 @@ func (bs *BoardScene) AddSquares() {
 		log.Info("Move to first move in game")
 		bs.view.cdbv.currentgame.ToFirstMove()
 		bs.view.cdbv.UpdatePGN()
+		bs.UpdatePieces()
 	})
 	firstmoveproxy := bs.AddWidget(firstmovebutton, core.Qt__Widget)
 	firstmoveproxy.SetPos2(posx-float64(buttonnumber*scalex), posy)
