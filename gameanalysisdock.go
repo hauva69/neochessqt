@@ -16,17 +16,17 @@ import (
 // GameAnalysisDock comment
 type GameAnalysisDock struct {
 	widgets.QDockWidget
-	analysis     *widgets.QTextEdit
-	enginecomm   io.WriteCloser
-	analysisgame *neochesslib.Game
-	running      bool
-	visible      bool
+	analysis   *widgets.QTextEdit
+	enginecomm io.WriteCloser
+	cdbv       *ChessDBView
+	running    bool
+	visible    bool
 }
 
 func initGameAnalysisDock(w *widgets.QMainWindow, cdbv *ChessDBView) *GameAnalysisDock {
 	this := NewGameAnalysisDock("Game Analysis", w, core.Qt__Widget)
 	this.analysis = widgets.NewQTextEdit(nil)
-	this.analysisgame = cdbv.currentgame
+	this.cdbv = cdbv
 	this.analysis.SetReadOnly(true)
 	this.running = false
 	this.visible = false
@@ -94,22 +94,22 @@ func (ga *GameAnalysisDock) ToggleEngine(engine int, fen string) {
 				for line := range stream {
 					ga.analysis.Clear()
 					enginemoves := strings.Split(line, " ")
-					ga.analysisgame.AnalysisFromFen(fen)
-					boardmoves := ga.analysisgame.AnalysisMoves()
+					log.Infof("Loading analysis board with: %s", fen)
+					ga.cdbv.currentgame.AnalysisFromFen(fen)
 					pvline := ""
-					if ga.analysisgame.CurrentTurn() == neochesslib.Black {
+					if ga.cdbv.currentgame.CurrentTurn() == neochesslib.Black {
 						pvline = "... "
 					}
-					mn := ga.analysisgame.AnalaysisMoveCount()
+					mn := ga.cdbv.currentgame.AnalaysisMoveCount()
 					for _, enginemove := range enginemoves {
-						for _, move := range ga.analysisgame.AnalysisMoves() {
+						for _, move := range ga.cdbv.currentgame.AnalysisMoves() {
 							if move == enginemove {
-								if ga.analysisgame.CurrentTurn() == neochesslib.White {
+								if ga.cdbv.currentgame.CurrentTurn() == neochesslib.White {
 									pvline += "<span class='movenumber'>" + strconv.Itoa(mn) + ". </span>"
 									mn++
 								}
-								pvline += "<span class='move'>" + ga.analysisgame.AnalysisMoveToSan(move) + "</span> "
-								ga.analysisgame.MakeAnalysisMove(move)
+								pvline += "<span class='move'>" + ga.cdbv.currentgame.AnalysisMoveToSan(move) + "</span> "
+								ga.cdbv.currentgame.MakeAnalysisMove(move)
 								break
 							}
 						}

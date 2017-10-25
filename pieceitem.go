@@ -56,17 +56,20 @@ func (pi *PieceItem) MouseRelease(event *widgets.QGraphicsSceneMouseEvent) {
 	fromSq := pi.square
 	piecescale := pi.scene.view.squaresize
 	move := fromSq.ToRune() + toSq.ToRune()
-	legal, mindex := pi.scene.view.game.IsMoveInPotentialMoves(move)
+	legal, _ := pi.scene.view.game.IsMoveInPotentialMoves(move)
 	if legal {
 		log.Info("Making Move: " + move)
 		pi.scene.view.game.AppendMove(move)
+		log.Info("Appended move")
 		if pi.scene.view.game.WasCapture() {
 			pi.scene.RemovePieceItemOnSquare(toSq)
 		}
+		log.Infof("Moving PieceItem from: %v", fromSq)
 		delete(pi.scene.pieceitems, fromSq)
 		pi.square = toSq
 		pi.qpix.SetPos2(float64(toSq.File()*piecescale), float64(toSq.Rank()*piecescale))
 		pi.scene.pieceitems[toSq] = pi
+		log.Info("Updating PGN")
 		pi.scene.view.cdbv.UpdatePGN()
 		//		pi.bv.UpdateSideToMoveIndicator()
 	} else {

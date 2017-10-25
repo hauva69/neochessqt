@@ -46,7 +46,7 @@ func initCDBView(w *widgets.QMainWindow) *ChessDBView {
 	view.gamelistdock.tableview.ConnectDoubleClicked(view.gameselected)
 	w.AddDockWidget(core.Qt__BottomDockWidgetArea, view.gamelistdock)
 
-	view.gamedetaildock = initGameDetailDock(w, view)
+	view.gamedetaildock = initGameDetailDock(w)
 	w.AddDockWidget(core.Qt__RightDockWidgetArea, view.gamedetaildock)
 	w.TabifyDockWidget(view.pgndock, view.gamedetaildock)
 	w.SetTabPosition(core.Qt__RightDockWidgetArea, widgets.QTabWidget__North)

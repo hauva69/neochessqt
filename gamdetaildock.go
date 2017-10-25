@@ -9,14 +9,12 @@ import (
 // GameDetailDock comment
 type GameDetailDock struct {
 	widgets.QDockWidget
-	tagitem     map[string]*widgets.QLineEdit
-	currentgame *neochesslib.Game
+	tagitem map[string]*widgets.QLineEdit
 }
 
-func initGameDetailDock(w *widgets.QMainWindow, cdbv *ChessDBView) *GameDetailDock {
+func initGameDetailDock(w *widgets.QMainWindow) *GameDetailDock {
 	this := NewGameDetailDock("Game Detail", w, core.Qt__Widget)
 	this.tagitem = make(map[string]*widgets.QLineEdit)
-	this.currentgame = cdbv.currentgame
 	layout := widgets.NewQFormLayout(nil)
 	for _, tag := range neochesslib.TagNames() {
 		this.tagitem[tag] = widgets.NewQLineEdit2("", nil)
@@ -33,7 +31,7 @@ func initGameDetailDock(w *widgets.QMainWindow, cdbv *ChessDBView) *GameDetailDo
 // SetGameTags comment
 func (gd *GameDetailDock) SetGameTags(g *neochesslib.Game) {
 	for _, tag := range neochesslib.TagNames() {
-		tagval := g.GeTag(tag)
+		tagval := g.GetTag(tag)
 		gd.tagitem[tag].SetText(tagval)
 	}
 }
