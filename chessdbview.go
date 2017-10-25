@@ -33,7 +33,7 @@ func initCDBView(w *widgets.QMainWindow) *ChessDBView {
 	view.mainw = w
 	view.cdb = nil
 
-	view.pgndock = initPGNDock(w)
+	view.pgndock = initPGNDock(w, view)
 	w.AddDockWidget(core.Qt__RightDockWidgetArea, view.pgndock)
 
 	view.dbdock = initDBDock(w, view)

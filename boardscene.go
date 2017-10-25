@@ -23,6 +23,26 @@ func initBoardScene(bv *BoardView) *BoardScene {
 	this.dragging = false
 	this.AddSquares()
 	this.AddPieces()
+	this.view.ConnectKeyPressEvent(func(event *gui.QKeyEvent) {
+		switch int32(event.Key()) {
+		case int32(core.Qt__Key_Left):
+			this.view.cdbv.currentgame.ToPreviousMove()
+			this.view.cdbv.UpdatePGN()
+			this.UpdatePieces()
+		case int32(core.Qt__Key_Right):
+			this.view.cdbv.currentgame.ToNextMove()
+			this.view.cdbv.UpdatePGN()
+			this.UpdatePieces()
+		case int32(core.Qt__Key_Home):
+			this.view.cdbv.currentgame.ToFirstMove()
+			this.view.cdbv.UpdatePGN()
+			this.UpdatePieces()
+		case int32(core.Qt__Key_End):
+			this.view.cdbv.currentgame.ToLastMove()
+			this.view.cdbv.UpdatePGN()
+			this.UpdatePieces()
+		}
+	})
 	return this
 }
 

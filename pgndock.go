@@ -14,11 +14,13 @@ import (
 type PGNDock struct {
 	widgets.QDockWidget
 	editor *widgets.QTextEdit
+	cdbv   *ChessDBView
 }
 
-func initPGNDock(w *widgets.QMainWindow) *PGNDock {
+func initPGNDock(w *widgets.QMainWindow, cdbv *ChessDBView) *PGNDock {
 	this := NewPGNDock("Game", w, core.Qt__Widget)
 	var pgndock = this
+	pgndock.cdbv = cdbv
 	pgndock.editor = widgets.NewQTextEdit(nil)
 	figurinefont := gui.NewQFont2("FigurineSymbol T1", 16, 1, false)
 	pgndock.editor.SetFontFamily("FigurineSymbol T1")
@@ -26,6 +28,26 @@ func initPGNDock(w *widgets.QMainWindow) *PGNDock {
 	pgndock.editor.SetCurrentFontDefault(figurinefont)
 	pgndock.editor.SetFixedWidth(w.Width() / 5)
 	pgndock.SetWidget(pgndock.editor)
+	pgndock.editor.ConnectKeyPressEvent(func(event *gui.QKeyEvent) {
+		switch int32(event.Key()) {
+		case int32(core.Qt__Key_Left):
+			pgndock.cdbv.currentgame.ToPreviousMove()
+			pgndock.cdbv.UpdatePGN()
+			pgndock.cdbv.boardview.scene.UpdatePieces()
+		case int32(core.Qt__Key_Right):
+			pgndock.cdbv.currentgame.ToNextMove()
+			pgndock.cdbv.UpdatePGN()
+			pgndock.cdbv.boardview.scene.UpdatePieces()
+		case int32(core.Qt__Key_Home):
+			pgndock.cdbv.currentgame.ToFirstMove()
+			pgndock.cdbv.UpdatePGN()
+			pgndock.cdbv.boardview.scene.UpdatePieces()
+		case int32(core.Qt__Key_End):
+			pgndock.cdbv.currentgame.ToLastMove()
+			pgndock.cdbv.UpdatePGN()
+			pgndock.cdbv.boardview.scene.UpdatePieces()
+		}
+	})
 	return this
 }
 
