@@ -2,9 +2,11 @@ package main
 
 import (
 	"bytes"
+	"strings"
 	"text/template"
 
 	"github.com/rashwell/neochesslib"
+	log "github.com/sirupsen/logrus"
 	"github.com/therecipe/qt/core"
 	"github.com/therecipe/qt/gui"
 	"github.com/therecipe/qt/widgets"
@@ -28,6 +30,16 @@ func initPGNDock(w *widgets.QMainWindow, cdbv *ChessDBView) *PGNDock {
 	pgndock.editor.SetCurrentFontDefault(figurinefont)
 	pgndock.editor.SetFixedWidth(w.Width() / 5)
 	pgndock.SetWidget(pgndock.editor)
+	pgndock.editor.ConnectMousePressEvent(func(event *gui.QMouseEvent) {
+		tc := pgndock.editor.CursorForPosition(event.Pos())
+		tc.Select(gui.QTextCursor__WordUnderCursor)
+		enc := core.NewQByteArray2("UTF-8", 5)
+		content := tc.Selection().ToHtml(enc)
+		parts := strings.Split(content, `<a name=\ "`)
+		secondparts := strings.Split(parts[1], `\`)
+		number := secondparts[0]
+		log.Infof("Word Clicked: %s", number)
+	})
 	pgndock.editor.ConnectKeyPressEvent(func(event *gui.QKeyEvent) {
 		switch int32(event.Key()) {
 		case int32(core.Qt__Key_Left):

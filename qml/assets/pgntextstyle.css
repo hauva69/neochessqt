@@ -4,20 +4,20 @@ p.comment {
     display: inline-block; 
     font-family: "Times";
     font-style: italic; 
-    font-size: 16pt;    
+    font-size: 14pt;    
 } 
 
-span.move { 
+a.move { 
     font-family: "FigurineSymbol T1";
     font-size: 16pt;        
     color: #aaa;    
 } 
 
-span.current { 
+a.current { 
     color:#ffb38a !important;    
 } 
 
 span.movenumber {  
-    font-size: 16pt;    
+    font-size: 14pt;    
     color: rgb(154, 182, 230) !important;
 }
