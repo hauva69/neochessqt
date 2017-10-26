@@ -1,11 +1,8 @@
 package main
 
 import (
-	"encoding/json"
 	"strconv"
 
-	"github.com/boltdb/bolt"
-	log "github.com/sirupsen/logrus"
 	"github.com/therecipe/qt/core"
 	"github.com/therecipe/qt/gui"
 	"github.com/therecipe/qt/widgets"
@@ -41,37 +38,40 @@ func initDBDock(w *widgets.QMainWindow, cdbview *ChessDBView) *DBDock {
 	collectionbuckets := [][]byte{[]byte("NEObucket"), []byte("PGNbucket"), []byte("SCIDbucket")}
 	for index := 0; index < 3; index++ {
 		cat := categories[index]
-		bucket := collectionbuckets[index]
 		catnode := gui.NewQStandardItem2(cat)
 		switch {
 		case cat == "PGN DataBases":
 			dbdock.pgncat = catnode
-			catdb.View(func(tx *bolt.Tx) error {
-				b := tx.Bucket(bucket)
-				if b != nil {
-					c := b.Cursor()
-					for k, v := c.First(); k != nil; k, v = c.Next() {
-						var cdb *ChessDataBase
-						err := json.Unmarshal(v, &cdb)
-						if err != nil {
-							log.Error(err)
-						}
-						child := gui.NewQStandardItem()
-						child.SetEditable(false)
-						displaystr := core.NewQVariant17(cdb.Displayname)
-						child.SetData(displaystr, int(core.Qt__DisplayRole))
-						keystr := core.NewQVariant17(cdb.Fullpath)
-						child.SetData(keystr, int(core.Qt__UserRole))
-						typestr := core.NewQVariant17(cdb.Kind)
-						child.SetData(typestr, int(core.Qt__UserRole)+1)
-						countstr := core.NewQVariant17(strconv.Itoa(cdb.Count))
-						child.SetData(countstr, int(core.Qt__UserRole)+2)
-						catnode.AppendRow2(child)
-					}
-				}
-				return nil
-			})
+			pgnlist, err := neocatalog.List(collectionbuckets[index])
+			for cdb := range pgnlist {
+				child := gui.NewQStandardItem()
+				child.SetEditable(false)
+				displaystr := core.NewQVariant17(cdb.Displayname)
+				child.SetData(displaystr, int(core.Qt__DisplayRole))
+				keystr := core.NewQVariant17(cdb.Fullpath)
+				child.SetData(keystr, int(core.Qt__UserRole))
+				typestr := core.NewQVariant17(cdb.Kind)
+				child.SetData(typestr, int(core.Qt__UserRole)+1)
+				countstr := core.NewQVariant17(strconv.Itoa(cdb.Count))
+				child.SetData(countstr, int(core.Qt__UserRole)+2)
+				catnode.AppendRow2(child)
+			}
 		case cat == "NeoChess Databases":
+			dbdock.pgncat = catnode
+			neolist, err := neocatalog.List(collectionbuckets[index])
+			for cdb := range neolist {
+				child := gui.NewQStandardItem()
+				child.SetEditable(false)
+				displaystr := core.NewQVariant17(cdb.Displayname)
+				child.SetData(displaystr, int(core.Qt__DisplayRole))
+				keystr := core.NewQVariant17(cdb.Fullpath)
+				child.SetData(keystr, int(core.Qt__UserRole))
+				typestr := core.NewQVariant17(cdb.Kind)
+				child.SetData(typestr, int(core.Qt__UserRole)+1)
+				countstr := core.NewQVariant17(strconv.Itoa(cdb.Count))
+				child.SetData(countstr, int(core.Qt__UserRole)+2)
+				catnode.AppendRow2(child)
+			}
 		case cat == "SCID Databases":
 		}
 		dbdock.model.AppendRow2(catnode)

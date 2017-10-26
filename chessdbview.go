@@ -15,7 +15,7 @@ import (
 // ChessDBView A view of an Open Chess Database
 type ChessDBView struct {
 	mainw            *widgets.QMainWindow
-	cdb              *ChessDataBase
+	cdb              *neochesslib.ChessDataBase
 	model            *GameListModel
 	dbdock           *DBDock
 	dbdetaildock     *DBDetailDock

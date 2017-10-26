@@ -10,7 +10,7 @@ import (
 
 type GameListModel struct {
 	core.QAbstractTableModel
-	cdb       *ChessDataBase
+	cdb       *neochesslib.ChessDataBase
 	glHeaders []string
 	gamecount int
 	buffgames map[int]*neochesslib.Game

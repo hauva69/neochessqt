@@ -2,115 +2,19 @@ package main
 
 import (
 	"bufio"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
 	"os"
 	"strings"
-	"time"
 
-	"github.com/boltdb/bolt"
+	"github.com/rashwell/neochesslib"
 	log "github.com/sirupsen/logrus"
 	"github.com/therecipe/qt/widgets"
 )
 
-// ChessDataBase for holding reference to a loaded ChessDatabase file
-type ChessDataBase struct {
-	Displayname string    `json:"displayname"`
-	Fullpath    string    `json:"fullpath"`
-	Key         string    `json:"key"`
-	Basename    string    `json:"basename"`
-	Filemod     time.Time `json:"filemod"`
-	Filesize    int64     `json:"filesize"`
-	Count       int       `json:"count"`
-	Gameoffsets []int64   `json:"gameoffsets"`
-	Gamelengths []int     `json:"gamelengths"`
-	Notes       string    `json:"notes"`
-	InitIndex   bool      `json:"initindex"`
-	CheckIndex  bool      `json:"checkindex"`
-	Kind        string    `json:"kind"`
-}
-
-// NewCDB Create instance
-func NewCDB() *ChessDataBase {
-	return &ChessDataBase{}
-}
-
-// OpenFile of Chess Database
-func OpenFile(filename string, kind string) (*ChessDataBase, error) {
-	var cdb *ChessDataBase
-	bucket := kind + "bucket"
-	err := catdb.View(func(tx *bolt.Tx) error {
-		b := tx.Bucket([]byte(bucket))
-		if b == nil {
-			err := errors.New("bucket doesn't exist")
-			return err
-		}
-
-		k := []byte(filename)
-		v := b.Get(k)
-		if len(v) > 0 {
-			err := json.Unmarshal(v, &cdb)
-			if err != nil {
-				return err
-			}
-		}
-		return nil
-	})
-	if cdb == nil {
-		fhandle, fileerr := os.Open(filename)
-		if fileerr != nil {
-			return nil, fileerr
-		}
-		defer fhandle.Close()
-
-		fileinfo, staterr := fhandle.Stat()
-		if staterr != nil {
-			return nil, staterr
-		}
-		cdb = NewCDB()
-		cdb.Displayname = fileinfo.Name()
-		cdb.Basename = fileinfo.Name()
-		cdb.Fullpath = filename
-		cdb.Kind = kind
-		switch {
-		case cdb.Kind == "PGN":
-			cdb.Key = filename
-		default:
-			cdb.Key = filename
-		}
-		cdb.Filesize = fileinfo.Size()
-		cdb.Filemod = fileinfo.ModTime()
-		cdb.InitIndex = true
-		cdb.Save()
-	} else {
-		log.Info("Have index.")
-		cdb.CheckIndex = true
-	}
-	return cdb, err
-}
-
-// Save instance of ChessDatabase
-func (cdb *ChessDataBase) Save() error {
-	bucket := cdb.Kind + "bucket"
-	err := catdb.Update(func(tx *bolt.Tx) error {
-		b, err := tx.CreateBucketIfNotExists([]byte(bucket))
-		if err != nil {
-			return err
-		}
-
-		encoded, err := json.Marshal(cdb)
-		if err != nil {
-			return err
-		}
-		return b.Put([]byte(cdb.Key), encoded)
-	})
-	return err
-}
-
 // NeedIndex check database for need to refresh
-func (cdb *ChessDataBase) NeedIndex() (bool, error) {
+func (cdb *neochesslib.ChessDataBase) NeedIndex() (bool, error) {
 	log.Info("Checking for need to re-index")
 	fhandle, fileerr := os.Open(cdb.Fullpath)
 	if fileerr != nil {
@@ -129,7 +33,7 @@ func (cdb *ChessDataBase) NeedIndex() (bool, error) {
 }
 
 // GetGame from database
-func (cdb *ChessDataBase) GetGame(gamenumber int) ([]byte, error) {
+func (cdb *neochesslib.ChessDataBase) GetGame(gamenumber int) ([]byte, error) {
 	if gamenumber < 0 || gamenumber > cdb.Count {
 		err := errors.New("game number request not in rage of games in database")
 		return nil, err
@@ -152,7 +56,7 @@ func (cdb *ChessDataBase) GetGame(gamenumber int) ([]byte, error) {
 }
 
 // ReadThroughPGN of Game
-func (cdb *ChessDataBase) ReadThroughPGN(input io.ReadSeeker, start int64) (pos int64, gamelength int, err error) {
+func (cdb *neochesslib.ChessDataBase) ReadThroughPGN(input io.ReadSeeker, start int64) (pos int64, gamelength int, err error) {
 	ingame := false
 	inmoves := false
 	if _, err := input.Seek(start, 0); err != nil {
@@ -200,7 +104,7 @@ func (cdb *ChessDataBase) ReadThroughPGN(input io.ReadSeeker, start int64) (pos 
 }
 
 // Index ChessDataBase or reindex
-func (cdb *ChessDataBase) Index(progress *widgets.QProgressDialog) (int, error) {
+func (cdb *neochesslib.ChessDataBase) Index(progress *widgets.QProgressDialog) (int, error) {
 	fhandle, fileerr := os.Open(cdb.Fullpath)
 	if fileerr != nil {
 		return 0, fileerr

@@ -7,7 +7,6 @@ import (
 	"runtime/pprof"
 
 	"github.com/allan-simon/go-singleinstance"
-	"github.com/boltdb/bolt"
 	"github.com/nicksnyder/go-i18n/i18n"
 	log "github.com/sirupsen/logrus"
 
@@ -25,7 +24,7 @@ var (
 	// T translate function
 	T i18n.TranslateFunc
 
-	catdb *bolt.DB
+	neocatalog *NeoCatalog
 
 	config *AppConfig
 )
@@ -78,7 +77,7 @@ func main() {
 	config = initAppConfig(app, mainw)
 
 	var caterr error
-	catdb, caterr = bolt.Open(config.Datadir+"/catalog.db", 0644, nil)
+	neocatalog, caterr = GetCatalog(config.Datadir)
 	if caterr != nil {
 		log.Error(caterr)
 	}
