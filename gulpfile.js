@@ -100,7 +100,7 @@ gulp.task('copyhelp', function (done) {
  * Install stockfish engine
  */
 gulp.task('getengines', function (done) {
-    gutil.log('Grabbing Stockfis for ' + os.platform());
+    gutil.log('Grabbing Stockfish for ' + os.platform());
     var minimatch = require('minimatch');
     var flatten = require('gulp-flatten');
     stockfishurl = "";
